@@ -172,6 +172,32 @@
 - When working with database-related tasks, always check the `rentals-frontend/supabase/` directory first
 - Use relative paths from the frontend project root: `./supabase/migrations/`, `./supabase/config.toml`, etc.
 
+## Supabase Operations
+
+- **CRITICAL: Never chain insert with select operations in Supabase**
+- **Separate Operations**: Always perform insert and select as separate operations
+- **Insert Only**: Use `.insert().select("id")` or `.insert()` without select for insertions
+- **Select Separately**: Use separate `.select()` calls to fetch data after insertion
+- **Benefits**: Better error isolation, easier debugging, and more reliable RLS policy testing
+- **Example Pattern**:
+
+  ```typescript
+  // ❌ DON'T: Chain insert with select
+  const result = await supabase.from("table").insert(data).select("*").single();
+
+  // ✅ DO: Separate operations
+  const insertResult = await supabase
+    .from("table")
+    .insert(data)
+    .select("id")
+    .single();
+  const data = await supabase
+    .from("table")
+    .select("*")
+    .eq("id", insertResult.id)
+    .single();
+  ```
+
 ## Supabase Migrations
 
 - **CRITICAL: Always use Supabase migrations for database schema changes**

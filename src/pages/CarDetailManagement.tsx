@@ -496,10 +496,7 @@ const CarDetailManagement: React.FC = () => {
                       carId={carId!}
                       onSubmit={handleAddCarOwner}
                       onCancel={() => setShowCarOwnerForm(false)}
-                      existingOwners={[
-                        car.owner_id!,
-                        ...carOwners.map((co) => co.owner_id),
-                      ]}
+                      existingOwners={carOwners.map((co) => co.owner_id)}
                       organizationId={profile?.organization_id}
                     />
                   </Paper>

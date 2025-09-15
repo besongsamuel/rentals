@@ -42,7 +42,8 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
       setLoading(true);
       try {
         const allOwners = await profileService.getAllOwners(organizationId);
-        // Filter out existing owners
+        // Filter out existing car owners (from car_owners table)
+        // The main car owner (car.owner_id) is not included in existingOwners, so they can be added
         const availableOwners = allOwners.filter(
           (owner) => !existingOwners.includes(owner.id)
         );
@@ -112,8 +113,8 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
     return (
       <Box sx={{ p: 2 }}>
         <Typography variant="body2" color="text.secondary">
-          No available owners to add (all owners are already assigned to this
-          car).
+          No available owners to add (all owners are already in the car owners
+          list).
         </Typography>
         <Box sx={{ mt: 2 }}>
           <Button variant="outlined" onClick={onCancel}>
