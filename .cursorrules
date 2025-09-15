@@ -160,6 +160,18 @@
 - Use proper column names and data types as defined in the schema
 - Implement RLS policies as specified in the schema
 
+## Supabase Directory Reference
+
+- **CRITICAL: Always reference Supabase files from `rentals-frontend/supabase/` directory**
+- **Migration Files**: Located in `rentals-frontend/supabase/migrations/`
+- **Schema Documentation**: Located in `rentals-frontend/supabase/DATABASE_SCHEMA_UPDATED.md`
+- **Configuration**: Located in `rentals-frontend/supabase/config.toml`
+- **Seed Data**: Located in `rentals-frontend/supabase/seed.sql`
+- **RLS Policies**: Defined in migration files within `rentals-frontend/supabase/migrations/`
+- **Database Functions**: Defined in migration files within `rentals-frontend/supabase/migrations/`
+- When working with database-related tasks, always check the `rentals-frontend/supabase/` directory first
+- Use relative paths from the frontend project root: `./supabase/migrations/`, `./supabase/config.toml`, etc.
+
 ## Supabase Migrations
 
 - **CRITICAL: Always use Supabase migrations for database schema changes**
