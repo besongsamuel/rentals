@@ -20,15 +20,13 @@ import { Car } from "../types";
 interface CarListProps {
   cars: Car[];
   onRefresh: () => void;
-  showActionButtons?: boolean;
-  onManageAssignments?: () => void;
+  showAddCarButton?: boolean;
 }
 
 const CarList: React.FC<CarListProps> = ({
   cars,
   onRefresh,
-  showActionButtons = false,
-  onManageAssignments,
+  showAddCarButton = false,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -226,28 +224,17 @@ const CarList: React.FC<CarListProps> = ({
                       >
                         {t("cars.manage")}
                       </Button>
-                      {showActionButtons && (
-                        <>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            onClick={onManageAssignments}
-                            startIcon={<Settings />}
-                            sx={{ minWidth: "fit-content" }}
-                          >
-                            {t("dashboard.manageAssignments")}
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            component={Link}
-                            to="/cars/new"
-                            startIcon={<Add />}
-                            sx={{ minWidth: "fit-content" }}
-                          >
-                            {t("cars.addCar")}
-                          </Button>
-                        </>
+                      {showAddCarButton && (
+                        <Button
+                          size="small"
+                          variant="contained"
+                          component={Link}
+                          to="/cars/new"
+                          startIcon={<Add />}
+                          sx={{ minWidth: "fit-content" }}
+                        >
+                          {t("cars.addCar")}
+                        </Button>
                       )}
                     </Box>
                   )}

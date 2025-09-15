@@ -1,6 +1,7 @@
 import { Add, DirectionsCar, TrendingUp } from "@mui/icons-material";
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Container,
@@ -17,7 +18,6 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
 import { Car } from "../types";
-import CarManagement from "./CarManagement";
 
 const OwnerDashboard: React.FC = () => {
   const { user } = useUserContext();
@@ -26,7 +26,6 @@ const OwnerDashboard: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<"cars" | "management">("cars");
 
   const loadCars = useCallback(async () => {
     if (!user?.id) return;
@@ -50,10 +49,6 @@ const OwnerDashboard: React.FC = () => {
 
   if (loading) {
     return <SkeletonLoader variant="dashboard" />;
-  }
-
-  if (currentView === "management") {
-    return <CarManagement onBack={() => setCurrentView("cars")} />;
   }
 
   const activeCars = cars.filter(
@@ -105,9 +100,19 @@ const OwnerDashboard: React.FC = () => {
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
                 {totalCars}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 {t("dashboard.totalCars")}
               </Typography>
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                component={Link}
+                to="/cars/new"
+                size="small"
+                sx={{ minWidth: "fit-content" }}
+              >
+                {t("cars.addCar")}
+              </Button>
             </CardContent>
           </Card>
 
@@ -135,12 +140,7 @@ const OwnerDashboard: React.FC = () => {
         </Box>
 
         {/* Cars List */}
-        <CarList
-          cars={cars}
-          onRefresh={loadCars}
-          showActionButtons={true}
-          onManageAssignments={() => setCurrentView("management")}
-        />
+        <CarList cars={cars} onRefresh={loadCars} />
 
         {/* Floating Action Button for Mobile */}
         {isMobile && (
