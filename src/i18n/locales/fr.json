@@ -14,7 +14,14 @@
     "noAccount": "Vous n'avez pas de compte?",
     "hasAccount": "Vous avez déjà un compte?",
     "signIn": "Se connecter",
-    "signUp": "S'inscrire"
+    "signUp": "S'inscrire",
+    "joinPlatform": "Rejoignez la plateforme de location aujourd'hui",
+    "signupSuccess": "Compte créé avec succès!",
+    "nextSteps": "Prochaines étapes",
+    "checkEmail": "Vérifiez votre email ({email}) pour un lien de vérification",
+    "clickVerificationLink": "Cliquez sur le lien de vérification dans l'email",
+    "completeProfileAfterVerification": "Vous serez redirigé pour compléter votre profil",
+    "emailNotReceived": "Vous n'avez pas reçu l'email? Vérifiez votre dossier spam ou réessayez de vous inscrire."
   },
   "profile": {
     "completeProfile": "Compléter votre profil",

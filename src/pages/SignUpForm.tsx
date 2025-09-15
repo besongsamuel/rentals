@@ -8,6 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import EmailVerificationMessage from "../components/EmailVerificationMessage";
 import { useUserContext } from "../contexts/UserContext";
 
 interface SignUpFormProps {
@@ -22,6 +24,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const { signUp } = useUserContext();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,13 +33,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
     setSuccess("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("errors.passwordMismatch"));
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      setError(t("errors.password"));
       setLoading(false);
       return;
     }
@@ -46,9 +49,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
     if (error) {
       setError(error.message);
     } else {
-      setSuccess(
-        "Account created successfully! Please check your email to verify your account."
-      );
+      setSuccess(t("auth.signupSuccess"));
     }
 
     setLoading(false);
@@ -67,7 +68,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
         }}
       >
         <Typography component="h1" variant="h4" gutterBottom>
-          Create Account
+          {t("auth.signup")}
         </Typography>
         <Typography
           variant="body2"
@@ -75,7 +76,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
           align="center"
           sx={{ mb: 3 }}
         >
-          Join the rentals platform today
+          {t("auth.joinPlatform")}
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
@@ -85,18 +86,14 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
             </Alert>
           )}
 
-          {success && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {success}
-            </Alert>
-          )}
+          {success && <EmailVerificationMessage email={email} />}
 
           <TextField
             margin="normal"
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t("auth.email")}
             name="email"
             autoComplete="email"
             autoFocus
@@ -109,13 +106,13 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t("auth.password")}
             type="password"
             id="password"
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            helperText="Password must be at least 6 characters long"
+            helperText={t("errors.password")}
           />
 
           <TextField
@@ -123,7 +120,7 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
             required
             fullWidth
             name="confirmPassword"
-            label="Confirm Password"
+            label={t("auth.confirmPassword")}
             type="password"
             id="confirmPassword"
             value={confirmPassword}
@@ -137,18 +134,18 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onToggleMode }) => {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            {loading ? "Creating Account..." : "Sign Up"}
+            {loading ? t("common.loading") : t("auth.signUp")}
           </Button>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              Already have an account?{" "}
+              {t("auth.hasAccount")}{" "}
               <Button
                 variant="text"
                 onClick={onToggleMode}
                 sx={{ textTransform: "none" }}
               >
-                Sign In
+                {t("auth.signIn")}
               </Button>
             </Typography>
           </Box>

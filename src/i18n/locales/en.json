@@ -14,7 +14,14 @@
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "signIn": "Sign In",
-    "signUp": "Sign Up"
+    "signUp": "Sign Up",
+    "joinPlatform": "Join the rentals platform today",
+    "signupSuccess": "Account created successfully!",
+    "nextSteps": "Next Steps",
+    "checkEmail": "Check your email ({email}) for a verification link",
+    "clickVerificationLink": "Click the verification link in the email",
+    "completeProfileAfterVerification": "You'll be redirected back to complete your profile",
+    "emailNotReceived": "Didn't receive the email? Check your spam folder or try signing up again."
   },
   "profile": {
     "completeProfile": "Complete Your Profile",
