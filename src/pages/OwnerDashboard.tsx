@@ -1,12 +1,10 @@
-import { Add, DirectionsCar, Settings, TrendingUp } from "@mui/icons-material";
+import { Add, DirectionsCar, TrendingUp } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Card,
   CardContent,
   Container,
   Fab,
-  Stack,
   Typography,
   useMediaQuery,
   useTheme,
@@ -129,44 +127,20 @@ const OwnerDashboard: React.FC = () => {
           </Card>
         </Box>
 
-        {/* Action Buttons */}
+        {/* Cars Section Header */}
         <Box sx={{ mb: 4 }}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            sx={{
-              justifyContent: "space-between",
-              alignItems: { xs: "stretch", sm: "center" },
-            }}
-          >
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              {t("cars.title")}
-            </Typography>
-
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <Button
-                variant="outlined"
-                startIcon={<Settings />}
-                onClick={() => setCurrentView("management")}
-                fullWidth={isMobile}
-              >
-                {t("dashboard.manageAssignments")}
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                component={Link}
-                to="/cars/new"
-                fullWidth={isMobile}
-              >
-                {t("cars.addCar")}
-              </Button>
-            </Stack>
-          </Stack>
+          <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            {t("cars.title")}
+          </Typography>
         </Box>
 
         {/* Cars List */}
-        <CarList cars={cars} onRefresh={loadCars} />
+        <CarList
+          cars={cars}
+          onRefresh={loadCars}
+          showActionButtons={true}
+          onManageAssignments={() => setCurrentView("management")}
+        />
 
         {/* Floating Action Button for Mobile */}
         {isMobile && (

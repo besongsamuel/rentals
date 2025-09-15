@@ -47,6 +47,52 @@
 - Warning/Accent color: Yellow (#f57c00 or similar yellow shade)
 - Ensure all Material-UI components use this color palette consistently
 
+## Modern Design Principles
+
+- **CRITICAL: Always prioritize modern, beautiful, and visually appealing designs**
+- **Design System**: Use consistent design patterns throughout the app
+- **Visual Hierarchy**: Create clear visual hierarchy with proper typography, spacing, and color contrast
+- **Modern Aesthetics**: Implement contemporary design trends:
+  - **Glassmorphism**: Use subtle transparency and backdrop blur effects where appropriate
+  - **Neumorphism**: Apply soft shadows and subtle depth for modern card designs
+  - **Minimalism**: Keep designs clean and uncluttered with plenty of white space
+  - **Rounded Corners**: Use consistent border radius (8px-16px) for modern feel
+  - **Subtle Animations**: Add smooth transitions and micro-interactions for better UX
+- **Typography**: Use modern font stacks with proper font weights and sizes
+- **Spacing**: Implement consistent spacing system (8px grid system)
+- **Shadows**: Use subtle, layered shadows for depth and modern appearance
+- **Color Usage**: Apply colors strategically for branding and user guidance
+- **Iconography**: Use consistent icon styles and sizes throughout the app
+- **Icon Buttons Priority**: **CRITICAL: Always prioritize icon buttons over text buttons for better mobile UX and space efficiency**
+  - Use Material-UI IconButton components for primary actions
+  - Combine icons with tooltips for accessibility and clarity
+  - Prefer icon-only buttons in navigation menus and action bars
+  - Use icon buttons for secondary actions to save space
+  - Implement consistent icon button sizing (48px minimum for touch targets)
+  - Apply proper hover states and visual feedback for icon buttons
+  - Use meaningful icons that clearly represent the action
+  - Consider icon + text combinations only when space allows and clarity is essential
+- **Component Styling**:
+  - Use elevation and shadows for depth
+  - Apply consistent border radius across components
+  - Implement hover states and transitions
+  - Use proper color contrast ratios for accessibility
+- **Layout Design**:
+  - Create balanced layouts with proper proportions
+  - Use grid systems for consistent alignment
+  - Implement responsive spacing that scales with screen size
+  - Apply consistent margins and padding throughout
+- **Interactive Elements**:
+  - Design buttons with proper states (default, hover, active, disabled)
+  - Use consistent button styles and sizes
+  - Implement smooth transitions for all interactive elements
+  - Add visual feedback for user actions
+- **Data Visualization**:
+  - Use modern chart and graph designs
+  - Apply consistent color schemes for data representation
+  - Implement clean table designs with proper spacing
+  - Use cards and containers for better content organization
+
 ## Architecture & Patterns
 
 - Use TypeScript for all components and hooks

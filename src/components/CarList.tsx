@@ -1,4 +1,4 @@
-import { Edit, Settings, Visibility } from "@mui/icons-material";
+import { Add, Edit, Settings, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -20,9 +20,16 @@ import { Car } from "../types";
 interface CarListProps {
   cars: Car[];
   onRefresh: () => void;
+  showActionButtons?: boolean;
+  onManageAssignments?: () => void;
 }
 
-const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
+const CarList: React.FC<CarListProps> = ({
+  cars,
+  onRefresh,
+  showActionButtons = false,
+  onManageAssignments,
+}) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -181,42 +188,68 @@ const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
                       </IconButton>
                     </Stack>
                   ) : (
-                    <Stack spacing={2}>
-                      <Stack direction="row" spacing={2} flexWrap="wrap">
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          component={Link}
-                          to={`/cars/${car.id}/reports`}
-                          startIcon={<Visibility />}
-                          sx={{ flex: 1, minWidth: "fit-content" }}
-                        >
-                          {t("cars.viewReports")}
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          component={Link}
-                          to={`/cars/${car.id}/edit`}
-                          startIcon={<Edit />}
-                          sx={{ flex: 1, minWidth: "fit-content" }}
-                        >
-                          {t("common.edit")}
-                        </Button>
-                      </Stack>
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          component={Link}
-                          to={`/cars/${car.id}`}
-                          startIcon={<Settings />}
-                          sx={{ minWidth: "fit-content" }}
-                        >
-                          {t("cars.manage")}
-                        </Button>
-                      </Box>
-                    </Stack>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: 1,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        component={Link}
+                        to={`/cars/${car.id}/reports`}
+                        startIcon={<Visibility />}
+                        sx={{ minWidth: "fit-content" }}
+                      >
+                        {t("cars.viewReports")}
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        component={Link}
+                        to={`/cars/${car.id}/edit`}
+                        startIcon={<Edit />}
+                        sx={{ minWidth: "fit-content" }}
+                      >
+                        {t("common.edit")}
+                      </Button>
+                      <Button
+                        size="small"
+                        variant="contained"
+                        component={Link}
+                        to={`/cars/${car.id}`}
+                        startIcon={<Settings />}
+                        sx={{ minWidth: "fit-content" }}
+                      >
+                        {t("cars.manage")}
+                      </Button>
+                      {showActionButtons && (
+                        <>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={onManageAssignments}
+                            startIcon={<Settings />}
+                            sx={{ minWidth: "fit-content" }}
+                          >
+                            {t("dashboard.manageAssignments")}
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            component={Link}
+                            to="/cars/new"
+                            startIcon={<Add />}
+                            sx={{ minWidth: "fit-content" }}
+                          >
+                            {t("cars.addCar")}
+                          </Button>
+                        </>
+                      )}
+                    </Box>
                   )}
                 </Box>
               </CardContent>

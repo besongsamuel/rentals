@@ -186,7 +186,15 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
                   </Typography>
                 )}
 
-                <Box sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                <Box
+                  sx={{
+                    mt: 2,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 1,
+                    flexWrap: "wrap",
+                  }}
+                >
                   <Button
                     size="small"
                     variant="outlined"
