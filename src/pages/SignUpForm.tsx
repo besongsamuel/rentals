@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import EmailVerificationMessage from "../components/EmailVerificationMessage";
 import Header from "../components/Header";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
 const SignUpForm: React.FC = () => {
@@ -78,8 +79,19 @@ const SignUpForm: React.FC = () => {
             borderRadius: 3,
             border: "1px solid",
             borderColor: "divider",
+            position: "relative",
           }}
         >
+          {/* Language Switcher */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: { xs: 16, sm: 20 },
+              right: { xs: 16, sm: 20 },
+            }}
+          >
+            <LanguageSwitcher />
+          </Box>
           <Typography
             component="h1"
             variant="h4"

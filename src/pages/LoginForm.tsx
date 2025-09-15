@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
 const LoginForm: React.FC = () => {
@@ -61,8 +62,19 @@ const LoginForm: React.FC = () => {
             borderRadius: 3,
             border: "1px solid",
             borderColor: "divider",
+            position: "relative",
           }}
         >
+          {/* Language Switcher */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: { xs: 16, sm: 20 },
+              right: { xs: 16, sm: 20 },
+            }}
+          >
+            <LanguageSwitcher />
+          </Box>
           <Typography
             component="h1"
             variant="h4"
