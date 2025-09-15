@@ -64,21 +64,13 @@ export interface WeeklyReport {
   end_mileage: number;
   driver_earnings: number;
   maintenance_expenses: number;
+  ride_share_income: number;
+  rental_income: number;
+  currency: string;
   status: "draft" | "submitted" | "approved" | "rejected";
   submitted_at: string | null;
   approved_at: string | null;
   approved_by: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// Income Source interface matching database schema
-export interface IncomeSource {
-  id: string;
-  weekly_report_id: string;
-  source_type: "rentals" | "ride_share";
-  amount: number;
-  notes: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -131,4 +123,7 @@ export interface CreateWeeklyReportData {
   end_mileage: number;
   driver_earnings?: number;
   maintenance_expenses?: number;
+  ride_share_income?: number;
+  rental_income?: number;
+  currency?: string;
 }

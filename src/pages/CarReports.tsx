@@ -36,7 +36,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import IncomeSourceModal from "../components/IncomeSourceModal";
+import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
@@ -61,15 +61,15 @@ const CarReports: React.FC = () => {
   const [showAddReportForm, setShowAddReportForm] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
-  const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
-    null
-  );
-  const [modalOpen, setModalOpen] = useState(false);
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
+  const [earningsDialogOpen, setEarningsDialogOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
+    null
+  );
   const [editFormData, setEditFormData] = useState({
     week_start_date: "",
     week_end_date: "",
@@ -247,13 +247,13 @@ const CarReports: React.FC = () => {
     navigate(`/cars/${carId}`);
   };
 
-  const handleViewDetails = (report: WeeklyReport) => {
+  const handleViewEarnings = (report: WeeklyReport) => {
     setSelectedReport(report);
-    setModalOpen(true);
+    setEarningsDialogOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleCloseEarningsDialog = () => {
+    setEarningsDialogOpen(false);
     setSelectedReport(null);
   };
 
@@ -577,7 +577,7 @@ const CarReports: React.FC = () => {
                       reportsWithIncomeSources={reportsWithIncomeSources}
                       profile={profile}
                       user={user}
-                      onViewDetails={handleViewDetails}
+                      onViewDetails={handleViewEarnings}
                       onEditReport={handleEditReport}
                       onApproveReport={handleApproveReport}
                       onSubmitReport={handleSubmitReport}
@@ -746,7 +746,6 @@ const CarReports: React.FC = () => {
                             <Tooltip title="View earnings details">
                               <IconButton
                                 size="small"
-                                onClick={() => handleViewDetails(report)}
                                 sx={{
                                   border: "1px solid",
                                   borderColor: "divider",
@@ -770,13 +769,6 @@ const CarReports: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
-      <IncomeSourceModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        weeklyReport={selectedReport}
-        userType={profile?.user_type}
-      />
 
       {/* Weekly Report Dialog */}
       <WeeklyReportDialog
@@ -909,6 +901,13 @@ const CarReports: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Earnings Details Dialog */}
+      <EarningsDetailsDialog
+        open={earningsDialogOpen}
+        onClose={handleCloseEarningsDialog}
+        weeklyReport={selectedReport}
+      />
     </Container>
   );
 };

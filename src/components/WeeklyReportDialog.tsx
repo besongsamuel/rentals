@@ -7,6 +7,7 @@ import {
   DialogTitle,
   FormControl,
   Grid,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -47,6 +48,9 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     end_mileage: 0,
     driver_earnings: 0,
     maintenance_expenses: 0,
+    ride_share_income: 0,
+    rental_income: 0,
+    currency: "XAF",
   });
   const [error, setError] = useState("");
 
@@ -62,6 +66,9 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           end_mileage: editingReport.end_mileage,
           driver_earnings: editingReport.driver_earnings,
           maintenance_expenses: editingReport.maintenance_expenses,
+          ride_share_income: (editingReport as any).ride_share_income || 0,
+          rental_income: (editingReport as any).rental_income || 0,
+          currency: (editingReport as any).currency || "XAF",
         });
       } else {
         // Reset form for add mode
@@ -73,6 +80,9 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           end_mileage: 0,
           driver_earnings: 0,
           maintenance_expenses: 0,
+          ride_share_income: 0,
+          rental_income: 0,
+          currency: "XAF",
         });
       }
       setError("");
@@ -88,7 +98,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
         [field]:
           field.includes("mileage") ||
           field.includes("earnings") ||
-          field.includes("expenses")
+          field.includes("expenses") ||
+          field.includes("income")
             ? parseFloat(value) || 0
             : value,
       }));
@@ -259,7 +270,14 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 value={formData.driver_earnings}
                 onChange={handleInputChange("driver_earnings")}
                 inputProps={{ min: 0, step: 0.01 }}
-                helperText="XAF"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {formData.currency}
+                    </InputAdornment>
+                  ),
+                }}
+                helperText="Driver's earnings for the week"
                 required
               />
             </Grid>
@@ -271,7 +289,53 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 value={formData.maintenance_expenses}
                 onChange={handleInputChange("maintenance_expenses")}
                 inputProps={{ min: 0, step: 0.01 }}
-                helperText="XAF"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {formData.currency}
+                    </InputAdornment>
+                  ),
+                }}
+                helperText="Maintenance and repair costs"
+                required
+              />
+            </Grid>
+
+            <Grid size={6}>
+              <TextField
+                fullWidth
+                label="Ride Share Income"
+                type="number"
+                value={formData.ride_share_income}
+                onChange={handleInputChange("ride_share_income")}
+                inputProps={{ min: 0, step: 0.01 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {formData.currency}
+                    </InputAdornment>
+                  ),
+                }}
+                helperText="How much was made from Yango ride share this week?"
+                required
+              />
+            </Grid>
+            <Grid size={6}>
+              <TextField
+                fullWidth
+                label="Rental Income"
+                type="number"
+                value={formData.rental_income}
+                onChange={handleInputChange("rental_income")}
+                inputProps={{ min: 0, step: 0.01 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {formData.currency}
+                    </InputAdornment>
+                  ),
+                }}
+                helperText="Income from car rental services"
                 required
               />
             </Grid>

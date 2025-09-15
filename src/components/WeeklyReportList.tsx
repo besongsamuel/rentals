@@ -10,7 +10,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { weeklyReportService } from "../services/weeklyReportService";
 import { WeeklyReport } from "../types";
-import IncomeSourceModal from "./IncomeSourceModal";
 
 interface WeeklyReportListProps {
   reports: WeeklyReport[];
@@ -25,10 +24,6 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
   currentUserId,
   userType,
 }) => {
-  const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
-    null
-  );
-  const [modalOpen, setModalOpen] = useState(false);
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
@@ -127,16 +122,6 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
   const handleCancelAction = () => {
     setConfirmDialogOpen(false);
     setConfirmAction(null);
-  };
-
-  const handleViewDetails = (report: WeeklyReport) => {
-    setSelectedReport(report);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedReport(null);
   };
 
   const handleEditReport = (report: WeeklyReport) => {
@@ -258,11 +243,7 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
                     flexWrap: "wrap",
                   }}
                 >
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() => handleViewDetails(report)}
-                  >
+                  <Button size="small" variant="outlined">
                     Details
                   </Button>
                   {userType === "driver" && report.status === "draft" && (
@@ -286,13 +267,6 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
           </Grid>
         ))}
       </Grid>
-
-      <IncomeSourceModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        weeklyReport={selectedReport}
-        userType={userType}
-      />
     </Box>
   );
 };

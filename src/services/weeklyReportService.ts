@@ -1,14 +1,21 @@
 import { supabase } from "../lib/supabase";
-import { CreateWeeklyReportData, IncomeSource, WeeklyReport } from "../types";
-import { incomeSourceService } from "./incomeSourceService";
+import { CreateWeeklyReportData, WeeklyReport } from "../types";
 
 export const weeklyReportService = {
   async calculateTotalEarnings(reportId: string): Promise<number> {
     try {
-      const incomeSources = await incomeSourceService.getIncomeSourcesByReport(
-        reportId
-      );
-      return incomeSources.reduce((total, source) => total + source.amount, 0);
+      const { data: report, error } = await supabase
+        .from("weekly_reports")
+        .select("ride_share_income, rental_income")
+        .eq("id", reportId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching report for earnings calculation:", error);
+        return 0;
+      }
+
+      return (report.ride_share_income || 0) + (report.rental_income || 0);
     } catch (error) {
       console.error("Error calculating total earnings:", error);
       return 0;
@@ -17,10 +24,20 @@ export const weeklyReportService = {
 
   async hasIncomeSources(reportId: string): Promise<boolean> {
     try {
-      const incomeSources = await incomeSourceService.getIncomeSourcesByReport(
-        reportId
+      const { data: report, error } = await supabase
+        .from("weekly_reports")
+        .select("ride_share_income, rental_income")
+        .eq("id", reportId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching report for income check:", error);
+        return false;
+      }
+
+      return (
+        (report.ride_share_income || 0) > 0 || (report.rental_income || 0) > 0
       );
-      return incomeSources.length > 0;
     } catch (error) {
       console.error("Error checking income sources:", error);
       return false;
@@ -102,13 +119,12 @@ export const weeklyReportService = {
   ): Promise<(WeeklyReport & { total_earnings: number })[]> {
     const reports = await this.getReportsByCar(carId, year, month);
 
-    // Calculate total earnings for each report
-    const reportsWithEarnings = await Promise.all(
-      reports.map(async (report) => {
-        const totalEarnings = await this.calculateTotalEarnings(report.id);
-        return { ...report, total_earnings: totalEarnings };
-      })
-    );
+    // Calculate total earnings for each report from the new columns
+    const reportsWithEarnings = reports.map((report) => {
+      const totalEarnings =
+        (report.ride_share_income || 0) + (report.rental_income || 0);
+      return { ...report, total_earnings: totalEarnings };
+    });
 
     return reportsWithEarnings;
   },
@@ -268,69 +284,6 @@ export const weeklyReportService = {
 
     if (error) {
       console.error("Error deleting weekly report:", error);
-      throw error;
-    }
-  },
-
-  async getIncomeSources(reportId: string): Promise<IncomeSource[]> {
-    const { data, error } = await supabase
-      .from("income_sources")
-      .select("*")
-      .eq("weekly_report_id", reportId)
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Error fetching income sources:", error);
-      throw error;
-    }
-
-    return data || [];
-  },
-
-  async addIncomeSource(
-    incomeSource: Omit<IncomeSource, "id" | "created_at" | "updated_at">
-  ): Promise<IncomeSource> {
-    const { data, error } = await supabase
-      .from("income_sources")
-      .insert(incomeSource)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error adding income source:", error);
-      throw error;
-    }
-
-    return data;
-  },
-
-  async updateIncomeSource(
-    incomeSourceId: string,
-    updates: Partial<IncomeSource>
-  ): Promise<IncomeSource> {
-    const { data, error } = await supabase
-      .from("income_sources")
-      .update(updates)
-      .eq("id", incomeSourceId)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error updating income source:", error);
-      throw error;
-    }
-
-    return data;
-  },
-
-  async deleteIncomeSource(incomeSourceId: string): Promise<void> {
-    const { error } = await supabase
-      .from("income_sources")
-      .delete()
-      .eq("id", incomeSourceId);
-
-    if (error) {
-      console.error("Error deleting income source:", error);
       throw error;
     }
   },

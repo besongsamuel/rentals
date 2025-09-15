@@ -24,7 +24,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CarOwnerForm from "../components/CarOwnerForm";
-import IncomeSourceModal from "../components/IncomeSourceModal";
+import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
@@ -49,10 +49,6 @@ const CarDetailManagement: React.FC = () => {
   const [selectedDriverId, setSelectedDriverId] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
-  const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
-    null
-  );
-  const [modalOpen, setModalOpen] = useState(false);
   const [showCarOwnerForm, setShowCarOwnerForm] = useState(false);
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
@@ -64,6 +60,10 @@ const CarDetailManagement: React.FC = () => {
   } | null>(null);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
+  const [earningsDialogOpen, setEarningsDialogOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
+    null
+  );
 
   useEffect(() => {
     if (carId) {
@@ -196,6 +196,16 @@ const CarDetailManagement: React.FC = () => {
     setShowReportDialog(true);
   };
 
+  const handleViewEarnings = (report: WeeklyReport) => {
+    setSelectedReport(report);
+    setEarningsDialogOpen(true);
+  };
+
+  const handleCloseEarningsDialog = () => {
+    setEarningsDialogOpen(false);
+    setSelectedReport(null);
+  };
+
   const handleEditReport = (report: WeeklyReport) => {
     setEditingReport(report);
     setShowReportDialog(true);
@@ -241,16 +251,6 @@ const CarDetailManagement: React.FC = () => {
     } finally {
       setLoadingAssignments(false);
     }
-  };
-
-  const handleViewDetails = (report: WeeklyReport) => {
-    setSelectedReport(report);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedReport(null);
   };
 
   const handleAddCarOwner = async (carOwnerData: any) => {
@@ -732,7 +732,7 @@ const CarDetailManagement: React.FC = () => {
                 reportsWithIncomeSources={reportsWithIncomeSources}
                 profile={profile}
                 user={user}
-                onViewDetails={handleViewDetails}
+                onViewDetails={handleViewEarnings}
                 onEditReport={handleEditReport}
                 onApproveReport={handleApproveReport}
                 onSubmitReport={handleSubmitReport}
@@ -742,13 +742,6 @@ const CarDetailManagement: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
-      <IncomeSourceModal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        weeklyReport={selectedReport}
-        userType="owner"
-      />
 
       {/* Weekly Report Dialog */}
       <WeeklyReportDialog
@@ -793,6 +786,13 @@ const CarDetailManagement: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Earnings Details Dialog */}
+      <EarningsDetailsDialog
+        open={earningsDialogOpen}
+        onClose={handleCloseEarningsDialog}
+        weeklyReport={selectedReport}
+      />
     </Container>
   );
 };
