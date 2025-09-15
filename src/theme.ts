@@ -10,9 +10,9 @@ const theme = createTheme({
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#9c27b0", // Modern purple
-      light: "#ba68c8",
-      dark: "#7b1fa2",
+      main: "#d32f2f", // Modern red
+      light: "#ef5350",
+      dark: "#c62828",
       contrastText: "#ffffff",
     },
     warning: {
@@ -28,9 +28,9 @@ const theme = createTheme({
       contrastText: "#ffffff",
     },
     error: {
-      main: "#d32f2f",
-      light: "#ef5350",
-      dark: "#c62828",
+      main: "#f44336", // Different red shade for errors
+      light: "#e57373",
+      dark: "#d32f2f",
       contrastText: "#ffffff",
     },
     background: {

@@ -40,6 +40,11 @@ const Header: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const handleTitleClick = () => {
+    // Use window.location to navigate to home
+    window.location.href = "/";
+  };
+
   // Load organization data when profile is available
   useEffect(() => {
     const loadOrganization = async () => {
@@ -69,10 +74,16 @@ const Header: React.FC = () => {
         <Typography
           variant="h6"
           component="div"
+          onClick={handleTitleClick}
           sx={{
             flexGrow: 1,
             fontWeight: 700,
             fontSize: { xs: "1.1rem", sm: "1.25rem" },
+            color: "inherit",
+            cursor: "pointer",
+            "&:hover": {
+              opacity: 0.8,
+            },
           }}
         >
           {t("app.name")}

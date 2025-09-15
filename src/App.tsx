@@ -7,6 +7,7 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
+import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
@@ -53,6 +54,7 @@ function AppContent() {
             <Box sx={{ flexGrow: 1, bgcolor: "background.default" }}>
               <SkeletonLoader variant="dashboard" />
             </Box>
+            <Footer />
           </Box>
         </ThemeProvider>
       );
@@ -75,6 +77,7 @@ function AppContent() {
             <Box sx={{ flexGrow: 1, bgcolor: "background.default" }}>
               <ProfileCompletion />
             </Box>
+            <Footer />
           </Box>
         </ThemeProvider>
       );
@@ -103,6 +106,7 @@ function AppContent() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Box>
+            <Footer />
           </Box>
         </Router>
       </ThemeProvider>
