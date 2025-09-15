@@ -164,12 +164,17 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
           <FormControl fullWidth>
             <InputLabel>Primary Owner</InputLabel>
             <Select
-              value={formData.is_primary_owner}
-              onChange={handleSelectChange("is_primary_owner")}
+              value={(formData.is_primary_owner ?? false).toString()}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  is_primary_owner: e.target.value === "true",
+                }))
+              }
               label="Primary Owner"
             >
-              <MenuItem value={false}>No</MenuItem>
-              <MenuItem value={true}>Yes</MenuItem>
+              <MenuItem value="false">No</MenuItem>
+              <MenuItem value="true">Yes</MenuItem>
             </Select>
           </FormControl>
         </Grid>

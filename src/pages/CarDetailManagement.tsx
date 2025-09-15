@@ -96,6 +96,11 @@ const CarDetailManagement: React.FC = () => {
       setSelectedDriverId(""); // Reset selection
     } catch (error) {
       console.error("Error assigning car to driver:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to assign car to driver"
+      );
     } finally {
       setLoadingAssignments(false);
     }

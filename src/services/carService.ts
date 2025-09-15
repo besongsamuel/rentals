@@ -138,15 +138,38 @@ export const carService = {
 
     if (error) {
       console.error("Error assigning car:", error);
-      throw error;
+
+      // Provide more specific error messages
+      if (error.code === "PGRST116") {
+        throw new Error(
+          "Car not found or you don't have permission to assign this car"
+        );
+      } else if (error.code === "PGRST301") {
+        throw new Error("You don't have permission to assign this car");
+      } else {
+        throw new Error(error.message || "Failed to assign car to driver");
+      }
+    }
+
+    if (!data) {
+      throw new Error(
+        "Car not found or you don't have permission to assign this car"
+      );
     }
 
     // Create car assignment record
-    await supabase.from("car_assignments").insert({
-      car_id: carId,
-      driver_id: driverId,
-      assigned_by: assignedBy,
-    });
+    const { error: assignmentError } = await supabase
+      .from("car_assignments")
+      .insert({
+        car_id: carId,
+        driver_id: driverId,
+        assigned_by: assignedBy,
+      });
+
+    if (assignmentError) {
+      console.error("Error creating car assignment record:", assignmentError);
+      // Don't throw here as the car assignment was successful, just the record creation failed
+    }
 
     return data;
   },

@@ -1,7 +1,7 @@
 import { Session, User } from "@supabase/supabase-js";
 import React, { createContext, ReactNode, useContext } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { Profile } from "../types";
+import { CreateProfileData, Profile } from "../types";
 
 interface UserContextType {
   user: User | null;
@@ -18,11 +18,9 @@ interface UserContextType {
     password: string
   ) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<{ error: any }>;
-  createProfile: (profileData: {
-    full_name: string;
-    user_type: "driver" | "owner";
-    phone?: string;
-  }) => Promise<{ data?: any; error: any }>;
+  createProfile: (
+    profileData: CreateProfileData
+  ) => Promise<{ data?: any; error: any }>;
   updateProfile: (
     updates: Partial<Profile>
   ) => Promise<{ data?: any; error: any }>;
