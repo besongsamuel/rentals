@@ -159,7 +159,7 @@ const DriverDashboard: React.FC = () => {
                           <Tooltip title={t("reports.title")}>
                             <IconButton
                               component={Link}
-                              to={`/cars/${car.id}/reports`}
+                              to={`/cars/${car.id}`}
                               color="primary"
                               sx={{
                                 bgcolor: "primary.main",

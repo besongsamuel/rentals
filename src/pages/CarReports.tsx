@@ -18,6 +18,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   FormControl,
   Grid,
@@ -35,8 +36,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import AddWeeklyReportForm from "../components/AddWeeklyReportForm";
 import IncomeSourceModal from "../components/IncomeSourceModal";
+import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
@@ -77,6 +78,11 @@ const CarReports: React.FC = () => {
     driver_earnings: 0,
     maintenance_expenses: 0,
   });
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "submit" | "approve";
+    reportId: string;
+  } | null>(null);
 
   useEffect(() => {
     if (carId) {
@@ -196,28 +202,45 @@ const CarReports: React.FC = () => {
     }
   };
 
-  const handleApproveReport = async (reportId: string) => {
-    if (!user?.id) return;
+  const handleApproveReport = (reportId: string) => {
+    setConfirmAction({ type: "approve", reportId });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleSubmitReport = (reportId: string) => {
+    setConfirmAction({ type: "submit", reportId });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmAction || !user?.id) return;
 
     try {
-      await weeklyReportService.approveReport(reportId, user.id);
+      if (confirmAction.type === "approve") {
+        await weeklyReportService.approveReport(
+          confirmAction.reportId,
+          user.id
+        );
+      } else if (confirmAction.type === "submit") {
+        await weeklyReportService.submitReport(confirmAction.reportId);
+      }
       loadData(); // Refresh the data
     } catch (error) {
-      console.error("Error approving report:", error);
+      console.error(`Error ${confirmAction.type}ing report:`, error);
       alert(
-        error instanceof Error ? error.message : "Failed to approve report"
+        error instanceof Error
+          ? error.message
+          : `Failed to ${confirmAction.type} report`
       );
+    } finally {
+      setConfirmDialogOpen(false);
+      setConfirmAction(null);
     }
   };
 
-  const handleSubmitReport = async (reportId: string) => {
-    try {
-      await weeklyReportService.submitReport(reportId);
-      loadData(); // Refresh the data
-    } catch (error) {
-      console.error("Error submitting report:", error);
-      alert(error instanceof Error ? error.message : "Failed to submit report");
-    }
+  const handleCancelAction = () => {
+    setConfirmDialogOpen(false);
+    setConfirmAction(null);
   };
 
   const handleBackToCar = () => {
@@ -746,17 +769,6 @@ const CarReports: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-
-        {/* Add Weekly Report Form */}
-        {showAddReportForm && (
-          <Grid size={12}>
-            <AddWeeklyReportForm
-              onSubmit={handleAddReport}
-              onCancel={() => setShowAddReportForm(false)}
-              assignedCars={car ? [car] : []}
-            />
-          </Grid>
-        )}
       </Grid>
 
       <IncomeSourceModal
@@ -764,6 +776,16 @@ const CarReports: React.FC = () => {
         onClose={handleCloseModal}
         weeklyReport={selectedReport}
         userType={profile?.user_type}
+      />
+
+      {/* Weekly Report Dialog */}
+      <WeeklyReportDialog
+        open={showAddReportForm}
+        onClose={() => setShowAddReportForm(false)}
+        onSubmit={handleAddReport}
+        assignedCars={car ? [car] : []}
+        editingReport={null}
+        mode="add"
       />
 
       {/* Edit Report Dialog */}
@@ -850,6 +872,40 @@ const CarReports: React.FC = () => {
           <Button onClick={handleCloseEditDialog}>Cancel</Button>
           <Button onClick={handleUpdateReport} variant="contained">
             Update Report
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={handleCancelAction}
+        aria-labelledby="confirmation-dialog-title"
+        aria-describedby="confirmation-dialog-description"
+      >
+        <DialogTitle id="confirmation-dialog-title">
+          {confirmAction?.type === "approve"
+            ? "Approve Report"
+            : "Submit Report"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirmation-dialog-description">
+            {confirmAction?.type === "approve"
+              ? "Are you sure you want to approve this weekly report? This action cannot be undone."
+              : "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it."}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelAction} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmAction}
+            color={confirmAction?.type === "approve" ? "success" : "primary"}
+            variant="contained"
+            autoFocus
+          >
+            {confirmAction?.type === "approve" ? "Approve" : "Submit"}
           </Button>
         </DialogActions>
       </Dialog>

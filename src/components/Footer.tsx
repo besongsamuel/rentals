@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
         borderTop: "1px solid",
         borderColor: "divider",
         py: 3,
-        mt: "auto",
+        mt: 4,
       }}
     >
       <Container maxWidth="lg">
@@ -23,7 +23,8 @@ const Footer: React.FC = () => {
           align="center"
           sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
         >
-          © {new Date().getFullYear()} Aftermath Technologies. All rights reserved.
+          © {new Date().getFullYear()} Aftermath Technologies. All rights
+          reserved.
         </Typography>
       </Container>
     </Box>

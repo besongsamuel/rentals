@@ -1,4 +1,4 @@
-import { Add, Edit, Settings, Visibility } from "@mui/icons-material";
+import { Add, Edit, Settings } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -159,15 +159,6 @@ const CarList: React.FC<CarListProps> = ({
                     <Stack direction="row" spacing={2} justifyContent="center">
                       <IconButton
                         component={Link}
-                        to={`/cars/${car.id}/reports`}
-                        color="primary"
-                        size="small"
-                        title={t("cars.viewReports")}
-                      >
-                        <Visibility />
-                      </IconButton>
-                      <IconButton
-                        component={Link}
                         to={`/cars/${car.id}/edit`}
                         color="primary"
                         size="small"
@@ -194,16 +185,6 @@ const CarList: React.FC<CarListProps> = ({
                         flexWrap: "wrap",
                       }}
                     >
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        component={Link}
-                        to={`/cars/${car.id}/reports`}
-                        startIcon={<Visibility />}
-                        sx={{ minWidth: "fit-content" }}
-                      >
-                        {t("cars.viewReports")}
-                      </Button>
                       <Button
                         size="small"
                         variant="outlined"

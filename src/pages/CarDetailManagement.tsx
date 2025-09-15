@@ -1,3 +1,4 @@
+import { Add, ArrowBack, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -6,17 +7,25 @@ import {
   Chip,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   Grid,
+  IconButton,
   MenuItem,
   Paper,
   Select,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CarOwnerForm from "../components/CarOwnerForm";
 import IncomeSourceModal from "../components/IncomeSourceModal";
+import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { carOwnerService } from "../services/carOwnerService";
@@ -48,6 +57,13 @@ const CarDetailManagement: React.FC = () => {
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "submit" | "approve";
+    reportId: string;
+  } | null>(null);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
 
   useEffect(() => {
     if (carId) {
@@ -134,28 +150,77 @@ const CarDetailManagement: React.FC = () => {
     setSelectedDriverId(driverId);
   };
 
-  const handleApproveReport = async (reportId: string) => {
-    if (!user?.id) return;
+  const handleApproveReport = (reportId: string) => {
+    setConfirmAction({ type: "approve", reportId });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleSubmitReport = (reportId: string) => {
+    setConfirmAction({ type: "submit", reportId });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmAction || !user?.id) return;
 
     try {
-      await weeklyReportService.approveReport(reportId, user.id);
+      if (confirmAction.type === "approve") {
+        await weeklyReportService.approveReport(
+          confirmAction.reportId,
+          user.id
+        );
+      } else if (confirmAction.type === "submit") {
+        await weeklyReportService.submitReport(confirmAction.reportId);
+      }
       loadData(); // Refresh the data
     } catch (error) {
-      console.error("Error approving report:", error);
+      console.error(`Error ${confirmAction.type}ing report:`, error);
       alert(
-        error instanceof Error ? error.message : "Failed to approve report"
+        error instanceof Error
+          ? error.message
+          : `Failed to ${confirmAction.type} report`
       );
+    } finally {
+      setConfirmDialogOpen(false);
+      setConfirmAction(null);
     }
   };
 
-  const handleSubmitReport = async (reportId: string) => {
+  const handleCancelAction = () => {
+    setConfirmDialogOpen(false);
+    setConfirmAction(null);
+  };
+
+  const handleAddNewReport = () => {
+    setEditingReport(null);
+    setShowReportDialog(true);
+  };
+
+  const handleEditReport = (report: WeeklyReport) => {
+    setEditingReport(report);
+    setShowReportDialog(true);
+  };
+
+  const handleReportSubmit = async (reportData: any) => {
     try {
-      await weeklyReportService.submitReport(reportId);
+      if (editingReport) {
+        // Update existing report
+        await weeklyReportService.updateReport(editingReport.id, reportData);
+      } else {
+        // Create new report
+        await weeklyReportService.createReport(reportData);
+      }
+      setShowReportDialog(false);
+      setEditingReport(null);
       loadData(); // Refresh the data
     } catch (error) {
-      console.error("Error submitting report:", error);
-      alert(error instanceof Error ? error.message : "Failed to submit report");
+      console.error("Error saving report:", error);
     }
+  };
+
+  const handleReportDialogClose = () => {
+    setShowReportDialog(false);
+    setEditingReport(null);
   };
 
   const handleUnassignDriver = async () => {
@@ -318,24 +383,37 @@ const CarDetailManagement: React.FC = () => {
               <Typography variant="h4">
                 {car.year} {car.make} {car.model} - Management
               </Typography>
-              <Box sx={{ display: "flex", gap: 2 }}>
-                {profile?.user_type === "owner" && (
-                  <Button
-                    variant="outlined"
-                    onClick={() => navigate(`/cars/${carId}/edit`)}
+
+              {/* Action Buttons */}
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Tooltip title="Back to Dashboard">
+                  <IconButton
+                    onClick={() => navigate("/")}
+                    sx={{
+                      bgcolor: "primary.main",
+                      color: "white",
+                      "&:hover": { bgcolor: "primary.dark" },
+                      boxShadow: 2,
+                    }}
                   >
-                    Edit Car
-                  </Button>
+                    <ArrowBack />
+                  </IconButton>
+                </Tooltip>
+                {profile?.user_type === "owner" && (
+                  <Tooltip title="Edit Car">
+                    <IconButton
+                      onClick={() => navigate(`/cars/${carId}/edit`)}
+                      sx={{
+                        bgcolor: "secondary.main",
+                        color: "white",
+                        "&:hover": { bgcolor: "secondary.dark" },
+                        boxShadow: 2,
+                      }}
+                    >
+                      <Edit />
+                    </IconButton>
+                  </Tooltip>
                 )}
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate(`/cars/${carId}/reports`)}
-                >
-                  View Reports
-                </Button>
-                <Button variant="outlined" onClick={() => navigate("/")}>
-                  Back to Dashboard
-                </Button>
               </Box>
             </Box>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
@@ -621,9 +699,26 @@ const CarDetailManagement: React.FC = () => {
         <Grid size={12}>
           <Card elevation={2}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Weekly Reports Details
-              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h6">Weekly Reports Details</Typography>
+                {profile?.user_type === "driver" && (
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={handleAddNewReport}
+                    size="small"
+                  >
+                    Add New Report
+                  </Button>
+                )}
+              </Box>
 
               <WeeklyReportsTable
                 weeklyReports={weeklyReports}
@@ -632,6 +727,7 @@ const CarDetailManagement: React.FC = () => {
                 profile={profile}
                 user={user}
                 onViewDetails={handleViewDetails}
+                onEditReport={handleEditReport}
                 onApproveReport={handleApproveReport}
                 onSubmitReport={handleSubmitReport}
                 getReportStatusColor={getReportStatusColor}
@@ -647,6 +743,50 @@ const CarDetailManagement: React.FC = () => {
         weeklyReport={selectedReport}
         userType="owner"
       />
+
+      {/* Weekly Report Dialog */}
+      <WeeklyReportDialog
+        open={showReportDialog}
+        onClose={handleReportDialogClose}
+        onSubmit={handleReportSubmit}
+        assignedCars={car ? [car] : []}
+        editingReport={editingReport}
+        mode={editingReport ? "edit" : "add"}
+      />
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={confirmDialogOpen}
+        onClose={handleCancelAction}
+        aria-labelledby="confirmation-dialog-title"
+        aria-describedby="confirmation-dialog-description"
+      >
+        <DialogTitle id="confirmation-dialog-title">
+          {confirmAction?.type === "approve"
+            ? "Approve Report"
+            : "Submit Report"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirmation-dialog-description">
+            {confirmAction?.type === "approve"
+              ? "Are you sure you want to approve this weekly report? This action cannot be undone."
+              : "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it."}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelAction} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmAction}
+            color={confirmAction?.type === "approve" ? "success" : "primary"}
+            variant="contained"
+            autoFocus
+          >
+            {confirmAction?.type === "approve" ? "Approve" : "Submit"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

@@ -13,7 +13,6 @@ import SkeletonLoader from "./components/SkeletonLoader";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
-import CarReports from "./pages/CarReports";
 import Dashboard from "./pages/Dashboard";
 import LoginForm from "./pages/LoginForm";
 import ProfileCompletion from "./pages/ProfileCompletion";
@@ -102,7 +101,6 @@ function AppContent() {
                 <Route path="/cars/new" element={<CarForm />} />
                 <Route path="/cars/:carId" element={<CarDetailManagement />} />
                 <Route path="/cars/:carId/edit" element={<CarForm />} />
-                <Route path="/cars/:carId/reports" element={<CarReports />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Box>

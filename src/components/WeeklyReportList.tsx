@@ -32,6 +32,11 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "submit" | "approve";
+    reportId: string;
+  } | null>(null);
 
   // Check which reports have income sources
   useEffect(() => {
@@ -83,28 +88,45 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
     }).format(amount);
   };
 
-  const handleApproveReport = async (reportId: string) => {
-    if (!currentUserId) return;
+  const handleApproveReport = (reportId: string) => {
+    setConfirmAction({ type: "approve", reportId });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleSubmitReport = (reportId: string) => {
+    setConfirmAction({ type: "submit", reportId });
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmAction || !currentUserId) return;
 
     try {
-      await weeklyReportService.approveReport(reportId, currentUserId);
+      if (confirmAction.type === "approve") {
+        await weeklyReportService.approveReport(
+          confirmAction.reportId,
+          currentUserId
+        );
+      } else if (confirmAction.type === "submit") {
+        await weeklyReportService.submitReport(confirmAction.reportId);
+      }
       onRefresh(); // Refresh the data
     } catch (error) {
-      console.error("Error approving report:", error);
+      console.error(`Error ${confirmAction.type}ing report:`, error);
       alert(
-        error instanceof Error ? error.message : "Failed to approve report"
+        error instanceof Error
+          ? error.message
+          : `Failed to ${confirmAction.type} report`
       );
+    } finally {
+      setConfirmDialogOpen(false);
+      setConfirmAction(null);
     }
   };
 
-  const handleSubmitReport = async (reportId: string) => {
-    try {
-      await weeklyReportService.submitReport(reportId);
-      onRefresh(); // Refresh the data
-    } catch (error) {
-      console.error("Error submitting report:", error);
-      alert(error instanceof Error ? error.message : "Failed to submit report");
-    }
+  const handleCancelAction = () => {
+    setConfirmDialogOpen(false);
+    setConfirmAction(null);
   };
 
   const handleViewDetails = (report: WeeklyReport) => {
