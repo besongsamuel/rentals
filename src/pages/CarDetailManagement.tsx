@@ -208,7 +208,13 @@ const CarDetailManagement: React.FC = () => {
         await weeklyReportService.updateReport(editingReport.id, reportData);
       } else {
         // Create new report
-        await weeklyReportService.createReport(reportData);
+        if (!profile?.id) {
+          throw new Error("Driver ID is required to create a report");
+        }
+        await weeklyReportService.createReport({
+          ...reportData,
+          driver_id: profile.id,
+        });
       }
       setShowReportDialog(false);
       setEditingReport(null);
