@@ -4,9 +4,9 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#1976d2", // Modern blue
-      light: "#42a5f5",
-      dark: "#1565c0",
+      main: "#2e7d32", // Modern green
+      light: "#4caf50",
+      dark: "#1b5e20",
       contrastText: "#ffffff",
     },
     secondary: {
@@ -22,9 +22,9 @@ const theme = createTheme({
       contrastText: "#ffffff",
     },
     success: {
-      main: "#2e7d32",
-      light: "#4caf50",
-      dark: "#1b5e20",
+      main: "#388e3c", // Different green shade for success
+      light: "#66bb6a",
+      dark: "#2e7d32",
       contrastText: "#ffffff",
     },
     error: {

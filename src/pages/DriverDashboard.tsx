@@ -1,15 +1,18 @@
+import { Assessment } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Card,
   CardContent,
   Chip,
   Container,
   Grid,
+  IconButton,
   Paper,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import SkeletonLoader from "../components/SkeletonLoader";
 import WeeklyReportList from "../components/WeeklyReportList";
@@ -20,6 +23,7 @@ import { Car, WeeklyReport } from "../types";
 
 const DriverDashboard: React.FC = () => {
   const { profile } = useUserContext();
+  const { t } = useTranslation();
   const [reports, setReports] = useState<WeeklyReport[]>([]);
   const [assignedCars, setAssignedCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
@@ -167,23 +171,27 @@ const DriverDashboard: React.FC = () => {
                           />
                         </Box>
 
-                        <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
-                          <Button
-                            size="small"
-                            variant="outlined"
-                            component={Link}
-                            to={`/cars/${car.id}/reports`}
-                          >
-                            View Reports
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            component={Link}
-                            to={`/cars/${car.id}/reports`}
-                          >
-                            Add New Report
-                          </Button>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            mt: 2,
+                          }}
+                        >
+                          <Tooltip title={t("reports.title")}>
+                            <IconButton
+                              component={Link}
+                              to={`/cars/${car.id}/reports`}
+                              color="primary"
+                              sx={{
+                                bgcolor: "primary.main",
+                                color: "white",
+                                "&:hover": { bgcolor: "primary.dark" },
+                              }}
+                            >
+                              <Assessment />
+                            </IconButton>
+                          </Tooltip>
                         </Box>
                       </CardContent>
                     </Card>
