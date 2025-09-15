@@ -24,6 +24,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CarOwnerForm from "../components/CarOwnerForm";
+import CarStatistics from "../components/CarStatistics";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
@@ -441,6 +442,11 @@ const CarDetailManagement: React.FC = () => {
               />
             </Box>
           </Paper>
+        </Grid>
+
+        {/* Car Statistics Section */}
+        <Grid size={12}>
+          <CarStatistics carId={carId!} />
         </Grid>
 
         {/* Driver Assignment Section - Only for owners */}

@@ -287,4 +287,105 @@ export const weeklyReportService = {
       throw error;
     }
   },
+
+  async getCarStatistics(
+    carId: string,
+    timeframe: "monthly" | "yearly" | "all" = "all",
+    year?: number,
+    month?: number
+  ) {
+    try {
+      let query = supabase
+        .from("weekly_reports")
+        .select("*")
+        .eq("car_id", carId)
+        .order("week_start_date", { ascending: true });
+
+      // Apply timeframe filters
+      if (timeframe === "yearly" && year) {
+        const startDate = `${year}-01-01`;
+        const endDate = `${year}-12-31`;
+        query = query
+          .gte("week_start_date", startDate)
+          .lte("week_start_date", endDate);
+      } else if (timeframe === "monthly" && year && month) {
+        const startDate = `${year}-${month.toString().padStart(2, "0")}-01`;
+        const endDate = new Date(year, month, 0).toISOString().split("T")[0]; // Last day of month
+        query = query
+          .gte("week_start_date", startDate)
+          .lte("week_start_date", endDate);
+      }
+
+      const { data: reports, error } = await query;
+
+      if (error) {
+        console.error("Error fetching car statistics:", error);
+        throw error;
+      }
+
+      if (!reports || reports.length === 0) {
+        return {
+          totalReports: 0,
+          averageWeeklyMileage: 0,
+          totalMileage: 0,
+          averageWeeklyExpenses: 0,
+          totalExpenses: 0,
+          averageWeeklyRideShareIncome: 0,
+          totalRideShareIncome: 0,
+          averageWeeklyRentalIncome: 0,
+          totalRentalIncome: 0,
+          averageWeeklyDriverEarnings: 0,
+          totalDriverEarnings: 0,
+          averageWeeklyProfit: 0,
+          totalProfit: 0,
+          currency: "XAF",
+        };
+      }
+
+      // Calculate statistics
+      const totalReports = reports.length;
+      const totalMileage = reports.reduce(
+        (sum, report) => sum + (report.end_mileage - report.start_mileage),
+        0
+      );
+      const totalExpenses = reports.reduce(
+        (sum, report) => sum + (report.maintenance_expenses || 0),
+        0
+      );
+      const totalRideShareIncome = reports.reduce(
+        (sum, report) => sum + (report.ride_share_income || 0),
+        0
+      );
+      const totalRentalIncome = reports.reduce(
+        (sum, report) => sum + (report.rental_income || 0),
+        0
+      );
+      const totalDriverEarnings = reports.reduce(
+        (sum, report) => sum + (report.driver_earnings || 0),
+        0
+      );
+      const totalIncome = totalRideShareIncome + totalRentalIncome;
+      const totalProfit = totalIncome - totalExpenses;
+
+      return {
+        totalReports,
+        averageWeeklyMileage: totalMileage / totalReports,
+        totalMileage,
+        averageWeeklyExpenses: totalExpenses / totalReports,
+        totalExpenses,
+        averageWeeklyRideShareIncome: totalRideShareIncome / totalReports,
+        totalRideShareIncome,
+        averageWeeklyRentalIncome: totalRentalIncome / totalReports,
+        totalRentalIncome,
+        averageWeeklyDriverEarnings: totalDriverEarnings / totalReports,
+        totalDriverEarnings,
+        averageWeeklyProfit: totalProfit / totalReports,
+        totalProfit,
+        currency: reports[0]?.currency || "XAF",
+      };
+    } catch (error) {
+      console.error("Error calculating car statistics:", error);
+      throw error;
+    }
+  },
 };
