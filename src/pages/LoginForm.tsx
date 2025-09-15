@@ -9,19 +9,19 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 import { useUserContext } from "../contexts/UserContext";
 
-interface LoginFormProps {
-  onToggleMode: () => void;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
+const LoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn } = useUserContext();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,115 +38,136 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="sm"
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        py: 4,
-      }}
-    >
-      <Paper
-        elevation={0}
+    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Header />
+      <Container
+        component="main"
+        maxWidth="sm"
         sx={{
-          width: "100%",
-          p: { xs: 3, sm: 4 },
+          flexGrow: 1,
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
-          borderRadius: 3,
-          border: "1px solid",
-          borderColor: "divider",
+          py: 4,
         }}
       >
-        <Typography
-          component="h1"
-          variant="h4"
-          gutterBottom
+        <Paper
+          elevation={0}
           sx={{
-            fontWeight: 700,
-            textAlign: "center",
-            mb: 1,
+            width: "100%",
+            p: { xs: 3, sm: 4 },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
           }}
         >
-          {t("auth.login")}
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          align="center"
-          sx={{ mb: 4 }}
-        >
-          {t("auth.signIn")} to your rentals account
-        </Typography>
-
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label={t("auth.email")}
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label={t("auth.password")}
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
+          <Typography
+            component="h1"
+            variant="h4"
+            gutterBottom
             sx={{
-              mt: 3,
-              mb: 2,
-              py: 1.5,
-              fontSize: "1rem",
-              fontWeight: 600,
+              fontWeight: 700,
+              textAlign: "center",
+              mb: 1,
             }}
-            disabled={loading}
           >
-            {loading ? t("common.loading") : t("auth.signIn")}
-          </Button>
+            {t("auth.login")}
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            align="center"
+            sx={{ mb: 2, fontWeight: 500 }}
+          >
+            {t("auth.welcomeMessage")}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ mb: 2 }}
+          >
+            {t("auth.welcomeSubtitle")}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ mb: 4 }}
+          >
+            {t("auth.signIn")} to your account
+          </Typography>
 
-          <Box textAlign="center">
-            <Typography variant="body2">
-              {t("auth.noAccount")}{" "}
-              <Button
-                variant="text"
-                onClick={onToggleMode}
-                sx={{ textTransform: "none" }}
-              >
-                {t("auth.signUp")}
-              </Button>
-            </Typography>
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label={t("auth.email")}
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label={t("auth.password")}
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              size="large"
+              sx={{
+                mt: 3,
+                mb: 2,
+                py: 1.5,
+                fontSize: "1rem",
+                fontWeight: 600,
+              }}
+              disabled={loading}
+            >
+              {loading ? t("common.loading") : t("auth.signIn")}
+            </Button>
+
+            <Box textAlign="center">
+              <Typography variant="body2">
+                {t("auth.noAccount")}{" "}
+                <Button
+                  variant="text"
+                  onClick={() =>
+                    navigate("/login", { state: { mode: "signup" } })
+                  }
+                  sx={{ textTransform: "none" }}
+                >
+                  {t("auth.signUp")}
+                </Button>
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

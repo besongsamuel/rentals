@@ -22,6 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import CarOwnerForm from "../components/CarOwnerForm";
 import CarStatistics from "../components/CarStatistics";
@@ -36,6 +37,7 @@ import { weeklyReportService } from "../services/weeklyReportService";
 import { Car, CarOwnerWithProfile, Profile, WeeklyReport } from "../types";
 
 const CarDetailManagement: React.FC = () => {
+  const { t } = useTranslation();
   const { carId } = useParams<{ carId: string }>();
   const navigate = useNavigate();
   const { user, profile } = useUserContext();
@@ -329,18 +331,18 @@ const CarDetailManagement: React.FC = () => {
 
   const generateMonthOptions = () => {
     const months = [
-      { value: 1, label: "January" },
-      { value: 2, label: "February" },
-      { value: 3, label: "March" },
-      { value: 4, label: "April" },
-      { value: 5, label: "May" },
-      { value: 6, label: "June" },
-      { value: 7, label: "July" },
-      { value: 8, label: "August" },
-      { value: 9, label: "September" },
-      { value: 10, label: "October" },
-      { value: 11, label: "November" },
-      { value: 12, label: "December" },
+      { value: 1, label: t("months.january") },
+      { value: 2, label: t("months.february") },
+      { value: 3, label: t("months.march") },
+      { value: 4, label: t("months.april") },
+      { value: 5, label: t("months.may") },
+      { value: 6, label: t("months.june") },
+      { value: 7, label: t("months.july") },
+      { value: 8, label: t("months.august") },
+      { value: 9, label: t("months.september") },
+      { value: 10, label: t("months.october") },
+      { value: 11, label: t("months.november") },
+      { value: 12, label: t("months.december") },
     ];
     return months;
   };
@@ -393,7 +395,7 @@ const CarDetailManagement: React.FC = () => {
 
               {/* Action Buttons */}
               <Box sx={{ display: "flex", gap: 1 }}>
-                <Tooltip title="Back to Dashboard">
+                <Tooltip title={t("carManagement.backToDashboard")}>
                   <IconButton
                     onClick={() => navigate("/")}
                     sx={{
@@ -407,7 +409,7 @@ const CarDetailManagement: React.FC = () => {
                   </IconButton>
                 </Tooltip>
                 {profile?.user_type === "owner" && (
-                  <Tooltip title="Edit Car">
+                  <Tooltip title={t("carManagement.editCar")}>
                     <IconButton
                       onClick={() => navigate(`/cars/${carId}/edit`)}
                       sx={{
@@ -444,106 +446,7 @@ const CarDetailManagement: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Car Statistics Section */}
-        <Grid size={12}>
-          <CarStatistics carId={carId!} />
-        </Grid>
-
-        {/* Driver Assignment Section - Only for owners */}
-        {profile?.user_type === "owner" && (
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card elevation={2}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Driver Assignment
-                </Typography>
-
-                {currentDriver ? (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      Currently Assigned Driver:
-                    </Typography>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                      <Typography variant="body1">
-                        {currentDriver.full_name || currentDriver.email}
-                      </Typography>
-                      <Chip label="Assigned" color="primary" size="small" />
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={handleUnassignDriver}
-                        disabled={loadingAssignments}
-                      >
-                        Unassign
-                      </Button>
-                    </Box>
-                  </Box>
-                ) : (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      No driver currently assigned
-                    </Typography>
-                  </Box>
-                )}
-
-                <FormControl fullWidth size="small">
-                  <Select
-                    value={selectedDriverId}
-                    onChange={(e) =>
-                      handleDriverSelectionChange(e.target.value)
-                    }
-                    disabled={loadingAssignments}
-                    displayEmpty
-                  >
-                    <MenuItem value="">
-                      <em>Select a driver</em>
-                    </MenuItem>
-                    {drivers
-                      .filter((driver) => driver.id !== car.driver_id)
-                      .map((driver) => (
-                        <MenuItem key={driver.id} value={driver.id}>
-                          {driver.full_name || driver.email}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-
-                {selectedDriverId && (
-                  <Box sx={{ mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={handleAssignDriver}
-                      disabled={loadingAssignments}
-                    >
-                      Confirm Assignment
-                    </Button>
-                  </Box>
-                )}
-
-                {loadingAssignments && (
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                    <CircularProgress size={16} sx={{ mr: 1 }} />
-                    <Typography variant="caption">
-                      Updating driver assignment...
-                    </Typography>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
-
-        {/* Car Owner Management Section */}
+        {/* Car Owner Management Section - Only for main car owner */}
         {user && car && car.owner_id === user.id && (
           <Grid size={12}>
             <Card elevation={2}>
@@ -556,7 +459,9 @@ const CarDetailManagement: React.FC = () => {
                     mb: 2,
                   }}
                 >
-                  <Typography variant="h6">Car Owners Management</Typography>
+                  <Typography variant="h6">
+                    {t("carManagement.carOwnersManagement")}
+                  </Typography>
                   <Button
                     variant="contained"
                     size="small"
@@ -626,12 +531,115 @@ const CarDetailManagement: React.FC = () => {
           </Grid>
         )}
 
-        {/* Weekly Reports Section */}
-        <Grid size={{ xs: 12, md: 6 }}>
+        {/* Driver Assignment Section - Only for owners */}
+        {profile?.user_type === "owner" && (
+          <Grid size={12}>
+            <Card elevation={2}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  {t("carManagement.driverAssignment")}
+                </Typography>
+
+                {currentDriver ? (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {t("carManagement.currentlyAssignedDriver")}
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Typography variant="body1">
+                        {currentDriver.full_name || currentDriver.email}
+                      </Typography>
+                      <Chip
+                        label={t("carManagement.assigned")}
+                        color="primary"
+                        size="small"
+                      />
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={handleUnassignDriver}
+                        disabled={loadingAssignments}
+                      >
+                        {t("carManagement.unassign")}
+                      </Button>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {t("carManagement.noDriverAssigned")}
+                    </Typography>
+                  </Box>
+                )}
+
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={selectedDriverId}
+                    onChange={(e) =>
+                      handleDriverSelectionChange(e.target.value)
+                    }
+                    disabled={loadingAssignments}
+                    displayEmpty
+                  >
+                    <MenuItem value="">
+                      <em>{t("carManagement.selectDriver")}</em>
+                    </MenuItem>
+                    {drivers
+                      .filter((driver) => driver.id !== car.driver_id)
+                      .map((driver) => (
+                        <MenuItem key={driver.id} value={driver.id}>
+                          {driver.full_name || driver.email}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+
+                {selectedDriverId && (
+                  <Box sx={{ mt: 2 }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={handleAssignDriver}
+                      disabled={loadingAssignments}
+                    >
+                      {t("carManagement.confirmAssignment")}
+                    </Button>
+                  </Box>
+                )}
+
+                {loadingAssignments && (
+                  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                    <CircularProgress size={16} sx={{ mr: 1 }} />
+                    <Typography variant="caption">
+                      {t("carManagement.updatingDriverAssignment")}
+                    </Typography>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
+
+        {/* Car Statistics Section */}
+        <Grid size={12}>
+          <CarStatistics carId={carId!} />
+        </Grid>
+
+        {/* Weekly Reports Filters Section */}
+        <Grid size={12}>
           <Card elevation={2}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Weekly Reports
+                {t("reports.filterReports")}
               </Typography>
 
               {/* Filters */}
@@ -646,7 +654,7 @@ const CarDetailManagement: React.FC = () => {
                       displayEmpty
                     >
                       <MenuItem value="">
-                        <em>All Years</em>
+                        <em>{t("reports.allYears")}</em>
                       </MenuItem>
                       {generateYearOptions().map((year) => (
                         <MenuItem key={year} value={year}>
@@ -668,7 +676,7 @@ const CarDetailManagement: React.FC = () => {
                       disabled={!selectedYear}
                     >
                       <MenuItem value="">
-                        <em>All Months</em>
+                        <em>{t("reports.allMonths")}</em>
                       </MenuItem>
                       {generateMonthOptions().map((month) => (
                         <MenuItem key={month.value} value={month.value}>
@@ -686,13 +694,13 @@ const CarDetailManagement: React.FC = () => {
                     onClick={clearFilters}
                     disabled={!selectedYear && !selectedMonth}
                   >
-                    Clear Filters
+                    {t("reports.clearFilters")}
                   </Button>
                 </Grid>
               </Grid>
 
               <Typography variant="body2" color="text.secondary">
-                Found {weeklyReports.length} report(s)
+                {t("reports.found", { count: weeklyReports.length })}
                 {selectedYear && selectedMonth && (
                   <>
                     {" "}
@@ -719,7 +727,9 @@ const CarDetailManagement: React.FC = () => {
                   mb: 2,
                 }}
               >
-                <Typography variant="h6">Weekly Reports Details</Typography>
+                <Typography variant="h6">
+                  {t("carManagement.weeklyReportsDetails")}
+                </Typography>
                 {profile?.user_type === "driver" && (
                   <Button
                     variant="contained"
@@ -727,7 +737,7 @@ const CarDetailManagement: React.FC = () => {
                     onClick={handleAddNewReport}
                     size="small"
                   >
-                    Add New Report
+                    {t("carManagement.addNewReport")}
                   </Button>
                 )}
               </Box>
@@ -768,19 +778,19 @@ const CarDetailManagement: React.FC = () => {
       >
         <DialogTitle id="confirmation-dialog-title">
           {confirmAction?.type === "approve"
-            ? "Approve Report"
-            : "Submit Report"}
+            ? t("carManagement.approveReport")
+            : t("carManagement.submitReport")}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="confirmation-dialog-description">
             {confirmAction?.type === "approve"
-              ? "Are you sure you want to approve this weekly report? This action cannot be undone."
-              : "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it."}
+              ? t("carManagement.approveReportConfirm")
+              : t("carManagement.submitReportConfirm")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelAction} color="primary">
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={handleConfirmAction}
@@ -788,7 +798,9 @@ const CarDetailManagement: React.FC = () => {
             variant="contained"
             autoFocus
           >
-            {confirmAction?.type === "approve" ? "Approve" : "Submit"}
+            {confirmAction?.type === "approve"
+              ? t("reports.approve")
+              : t("reports.submit")}
           </Button>
         </DialogActions>
       </Dialog>

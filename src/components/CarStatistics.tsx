@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { weeklyReportService } from "../services/weeklyReportService";
 
 interface CarStatisticsProps {
@@ -36,6 +37,7 @@ interface CarStats {
 }
 
 const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
+  const { t } = useTranslation();
   const [statistics, setStatistics] = useState<CarStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState<"monthly" | "yearly" | "all">(
@@ -110,12 +112,12 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
           }}
         >
           <Typography variant="h6" component="h2">
-            Car Statistics
+            {t("statistics.title")}
           </Typography>
 
           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
             <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>Timeframe</InputLabel>
+              <InputLabel>{t("statistics.timeframe")}</InputLabel>
               <Select
                 value={timeframe}
                 onChange={(e) =>
@@ -123,15 +125,15 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                 }
                 label="Timeframe"
               >
-                <MenuItem value="monthly">Monthly</MenuItem>
-                <MenuItem value="yearly">Yearly</MenuItem>
-                <MenuItem value="all">All Time</MenuItem>
+                <MenuItem value="monthly">{t("statistics.monthly")}</MenuItem>
+                <MenuItem value="yearly">{t("statistics.yearly")}</MenuItem>
+                <MenuItem value="all">{t("statistics.allTime")}</MenuItem>
               </Select>
             </FormControl>
 
             {timeframe !== "all" && (
               <FormControl size="small" sx={{ minWidth: 100 }}>
-                <InputLabel>Year</InputLabel>
+                <InputLabel>{t("statistics.year")}</InputLabel>
                 <Select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
@@ -151,7 +153,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
 
             {timeframe === "monthly" && (
               <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Month</InputLabel>
+                <InputLabel>{t("statistics.month")}</InputLabel>
                 <Select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(Number(e.target.value))}
@@ -179,13 +181,14 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                 {formatMileage(statistics.averageWeeklyMileage)}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                Avg Weekly Usage
+                {t("statistics.averageWeeklyMileage")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Total: {formatMileage(statistics.totalMileage)}
+                {t("statistics.totalMileage")}:{" "}
+                {formatMileage(statistics.totalMileage)}
               </Typography>
               <Chip
-                label={`${statistics.totalReports} reports`}
+                label={`${statistics.totalReports} ${t("statistics.reports")}`}
                 size="small"
                 sx={{ mt: 1 }}
               />
@@ -199,10 +202,11 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                 {formatCurrency(statistics.averageWeeklyExpenses)}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                Avg Weekly Expenses
+                {t("statistics.averageWeeklyExpenses")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Total: {formatCurrency(statistics.totalExpenses)}
+                {t("statistics.totalExpenses")}:{" "}
+                {formatCurrency(statistics.totalExpenses)}
               </Typography>
             </Box>
           </Grid>
@@ -217,14 +221,14 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                 )}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                Avg Weekly Income
+                {t("statistics.averageWeeklyIncome")}
               </Typography>
               <Typography
                 variant="body2"
                 color="text.secondary"
                 sx={{ fontSize: "0.75rem" }}
               >
-                Ride Share:{" "}
+                {t("statistics.rideShare")}:{" "}
                 {formatCurrency(statistics.averageWeeklyRideShareIncome)}
               </Typography>
               <Typography
@@ -232,7 +236,8 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                 color="text.secondary"
                 sx={{ fontSize: "0.75rem" }}
               >
-                Rental: {formatCurrency(statistics.averageWeeklyRentalIncome)}
+                {t("statistics.rental")}:{" "}
+                {formatCurrency(statistics.averageWeeklyRentalIncome)}
               </Typography>
             </Box>
           </Grid>
@@ -254,14 +259,15 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                     {formatCurrency(statistics.averageWeeklyProfit)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Avg Weekly Profit
+                    {t("statistics.averageWeeklyProfit")}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ fontSize: "0.75rem" }}
                   >
-                    Total: {formatCurrency(statistics.totalProfit)}
+                    {t("statistics.totalProfit")}:{" "}
+                    {formatCurrency(statistics.totalProfit)}
                   </Typography>
                 </Card>
               </Grid>
@@ -271,14 +277,15 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                     {formatCurrency(statistics.averageWeeklyDriverEarnings)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Avg Weekly Driver Earnings
+                    {t("statistics.averageWeeklyDriverEarnings")}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ fontSize: "0.75rem" }}
                   >
-                    Total: {formatCurrency(statistics.totalDriverEarnings)}
+                    {t("statistics.totalDriverEarnings")}:{" "}
+                    {formatCurrency(statistics.totalDriverEarnings)}
                   </Typography>
                 </Card>
               </Grid>

@@ -202,7 +202,7 @@ const Header: React.FC = () => {
                   )}
 
                   <Chip
-                    label={profile.user_type}
+                    label={t(`profile.${profile.user_type}`)}
                     size="small"
                     sx={{
                       display: { xs: "none", sm: "flex" },
@@ -375,7 +375,7 @@ const Header: React.FC = () => {
                 </Typography>
               )}
               <Chip
-                label={profile.user_type}
+                label={t(`profile.${profile.user_type}`)}
                 size="small"
                 sx={{
                   mt: 1,

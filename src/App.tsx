@@ -1,11 +1,11 @@
 import { Box, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
 import {
   Navigate,
   Route,
   BrowserRouter as Router,
   Routes,
+  useLocation,
 } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -19,9 +19,15 @@ import ProfileCompletion from "./pages/ProfileCompletion";
 import SignUpForm from "./pages/SignUpForm";
 import theme from "./theme";
 
+function AuthRoutes() {
+  const location = useLocation();
+  const isSignupMode = location.state?.mode === "signup";
+
+  return isSignupMode ? <SignUpForm /> : <LoginForm />;
+}
+
 function AppContent() {
   const { user, profile, loading, profileLoading } = useUserContext();
-  const [isLoginMode, setIsLoginMode] = useState(true);
 
   // Show loading while checking authentication state
   if (loading) {
@@ -35,58 +41,12 @@ function AppContent() {
     );
   }
 
-  // User is authenticated
-  if (user) {
-    // Show loading while checking profile
-    if (profileLoading) {
-      return (
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <Header />
-            <Box sx={{ flexGrow: 1, bgcolor: "background.default" }}>
-              <SkeletonLoader variant="dashboard" />
-            </Box>
-            <Footer />
-          </Box>
-        </ThemeProvider>
-      );
-    }
-
-    // User is authenticated but doesn't have a profile in the profiles table
-    // This means they need to complete their profile
-    if (!profile) {
-      return (
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <Header />
-            <Box sx={{ flexGrow: 1, bgcolor: "background.default" }}>
-              <ProfileCompletion />
-            </Box>
-            <Footer />
-          </Box>
-        </ThemeProvider>
-      );
-    }
-
-    // User is authenticated and has a complete profile, show dashboard with routing
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        {user ? (
+          // User is authenticated
           <Box
             sx={{
               display: "flex",
@@ -97,31 +57,46 @@ function AppContent() {
             <Header />
             <Box sx={{ flexGrow: 1 }}>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/cars/new" element={<CarForm />} />
-                <Route path="/cars/:carId" element={<CarDetailManagement />} />
-                <Route path="/cars/:carId/edit" element={<CarForm />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                {/* Show loading while checking profile */}
+                {profileLoading ? (
+                  <Route
+                    path="*"
+                    element={<SkeletonLoader variant="dashboard" />}
+                  />
+                ) : profile ? (
+                  // User is authenticated and has a complete profile
+                  <>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/cars/new" element={<CarForm />} />
+                    <Route
+                      path="/cars/:carId"
+                      element={<CarDetailManagement />}
+                    />
+                    <Route path="/cars/:carId/edit" element={<CarForm />} />
+                    <Route
+                      path="/login"
+                      element={<Navigate to="/" replace />}
+                    />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </>
+                ) : (
+                  // User is authenticated but doesn't have a profile
+                  <Route path="*" element={<ProfileCompletion />} />
+                )}
               </Routes>
             </Box>
             <Footer />
           </Box>
-        </Router>
-      </ThemeProvider>
-    );
-  }
-
-  // User is not authenticated, show login/signup page
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-        {isLoginMode ? (
-          <LoginForm onToggleMode={() => setIsLoginMode(false)} />
         ) : (
-          <SignUpForm onToggleMode={() => setIsLoginMode(true)} />
+          // User is not authenticated, show login/signup pages
+          <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+            <Routes>
+              <Route path="/login" element={<AuthRoutes />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </Box>
         )}
-      </Box>
+      </Router>
     </ThemeProvider>
   );
 }
