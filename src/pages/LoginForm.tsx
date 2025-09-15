@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
 
 interface LoginFormProps {
@@ -20,6 +21,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn } = useUserContext();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +50,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
         }}
       >
         <Typography component="h1" variant="h4" gutterBottom>
-          Welcome Back
+          {t("auth.login")}
         </Typography>
         <Typography
           variant="body2"
@@ -56,7 +58,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
           align="center"
           sx={{ mb: 3 }}
         >
-          Sign in to your rentals account
+          {t("auth.signIn")} to your rentals account
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
@@ -71,7 +73,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t("auth.email")}
             name="email"
             autoComplete="email"
             autoFocus
@@ -84,7 +86,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t("auth.password")}
             type="password"
             id="password"
             autoComplete="current-password"
@@ -99,18 +101,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {loading ? t("common.loading") : t("auth.signIn")}
           </Button>
 
           <Box textAlign="center">
             <Typography variant="body2">
-              Don't have an account?{" "}
+              {t("auth.noAccount")}{" "}
               <Button
                 variant="text"
                 onClick={onToggleMode}
                 sx={{ textTransform: "none" }}
               >
-                Sign Up
+                {t("auth.signUp")}
               </Button>
             </Typography>
           </Box>

@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Car } from "../types";
 
@@ -17,6 +18,7 @@ interface CarListProps {
 }
 
 const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
+  const { t } = useTranslation();
   const getStatusColor = (status: string) => {
     switch (status) {
       case "available":
@@ -98,12 +100,13 @@ const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
                       color="text.secondary"
                       gutterBottom
                     >
-                      Current Mileage: {car.current_mileage.toLocaleString()} KM
+                      {t("cars.currentMileage")}:{" "}
+                      {car.current_mileage.toLocaleString()} {t("common.km")}
                     </Typography>
 
                     {car.driver_id && (
                       <Typography variant="body2" color="primary" gutterBottom>
-                        Assigned to Driver
+                        {t("cars.assigned")}
                       </Typography>
                     )}
                   </Box>
@@ -129,7 +132,7 @@ const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
                         component={Link}
                         to={`/cars/${car.id}/reports`}
                       >
-                        View Reports
+                        {t("cars.viewReports")}
                       </Button>
                       <Button
                         size="small"
@@ -137,7 +140,7 @@ const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
                         component={Link}
                         to={`/cars/${car.id}/edit`}
                       >
-                        Edit
+                        {t("common.edit")}
                       </Button>
                       <Button
                         size="small"
@@ -145,7 +148,7 @@ const CarList: React.FC<CarListProps> = ({ cars, onRefresh }) => {
                         component={Link}
                         to={`/cars/${car.id}`}
                       >
-                        Manage
+                        {t("cars.manage")}
                       </Button>
                     </Box>
                   </Box>

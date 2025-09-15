@@ -15,12 +15,14 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
 import { organizationService } from "../services/organizationService";
 import { Organization } from "../types";
 
 const ProfileCompletion: React.FC = () => {
   const { createProfile } = useUserContext();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     full_name: "",
     user_type: "driver" as "driver" | "owner",
@@ -105,7 +107,7 @@ const ProfileCompletion: React.FC = () => {
         }}
       >
         <Typography component="h1" variant="h4" gutterBottom>
-          Complete Your Profile
+          {t("profile.completeProfile")}
         </Typography>
         <Typography
           variant="body2"
@@ -113,8 +115,7 @@ const ProfileCompletion: React.FC = () => {
           align="center"
           sx={{ mb: 3 }}
         >
-          Welcome! Please complete your profile to get started with the rentals
-          platform.
+          {t("profile.welcomeMessage")}
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
@@ -129,7 +130,7 @@ const ProfileCompletion: React.FC = () => {
             required
             fullWidth
             id="full_name"
-            label="Full Name"
+            label={t("profile.fullName")}
             name="full_name"
             autoComplete="name"
             autoFocus
@@ -141,21 +142,23 @@ const ProfileCompletion: React.FC = () => {
             margin="normal"
             fullWidth
             id="phone"
-            label="Phone Number"
+            label={t("profile.phone")}
             name="phone"
             autoComplete="tel"
             value={formData.phone}
             onChange={handleInputChange("phone")}
-            helperText="Optional - for communication purposes"
+            helperText={t("profile.phoneHelper")}
           />
 
           <FormControl margin="normal" fullWidth>
-            <InputLabel id="organization-label">Organization *</InputLabel>
+            <InputLabel id="organization-label">
+              {t("profile.organization")} *
+            </InputLabel>
             <Select
               labelId="organization-label"
               id="organization"
               value={formData.organization_id}
-              label="Organization *"
+              label={`${t("profile.organization")} *`}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
@@ -172,14 +175,14 @@ const ProfileCompletion: React.FC = () => {
             </Select>
             {loadingOrganizations && (
               <Typography variant="caption" color="text.secondary">
-                Loading organizations...
+                {t("common.loading")}
               </Typography>
             )}
           </FormControl>
 
           <FormControl margin="normal" fullWidth>
             <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              User Type *
+              {t("profile.userType")} *
             </Typography>
             <RadioGroup
               value={formData.user_type}
@@ -195,9 +198,11 @@ const ProfileCompletion: React.FC = () => {
                 control={<Radio />}
                 label={
                   <Box>
-                    <Typography variant="body1">Driver</Typography>
+                    <Typography variant="body1">
+                      {t("profile.driver")}
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      I drive vehicles and track my earnings
+                      {t("profile.driverDescription")}
                     </Typography>
                   </Box>
                 }
@@ -207,9 +212,11 @@ const ProfileCompletion: React.FC = () => {
                 control={<Radio />}
                 label={
                   <Box>
-                    <Typography variant="body1">Owner</Typography>
+                    <Typography variant="body1">
+                      {t("profile.owner")}
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      I own vehicles and manage drivers
+                      {t("profile.ownerDescription")}
                     </Typography>
                   </Box>
                 }
@@ -224,7 +231,7 @@ const ProfileCompletion: React.FC = () => {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            {loading ? "Creating Profile..." : "Complete Profile"}
+            {loading ? t("common.loading") : t("profile.complete")}
           </Button>
         </Box>
       </Paper>

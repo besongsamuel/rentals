@@ -1,11 +1,14 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
 import { organizationService } from "../services/organizationService";
 import { Organization } from "../types";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Header: React.FC = () => {
   const { user, profile, signOut } = useUserContext();
+  const { t } = useTranslation();
   const [organization, setOrganization] = useState<Organization | null>(null);
 
   const handleSignOut = async () => {
@@ -39,12 +42,12 @@ const Header: React.FC = () => {
     <AppBar position="static" sx={{ borderRadius: 0 }}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          3 Brother Rentals
+          {t("app.name")}
         </Typography>
         {profile && (
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Typography variant="body2" sx={{ mr: 1 }}>
-              Welcome, {profile.full_name || user.email}
+              {t("app.welcome")}, {profile.full_name || user.email}
             </Typography>
             {organization && (
               <Typography
@@ -72,8 +75,9 @@ const Header: React.FC = () => {
             >
               {profile.user_type}
             </Typography>
+            <LanguageSwitcher />
             <Button color="inherit" onClick={handleSignOut}>
-              Sign Out
+              {t("app.signOut")}
             </Button>
           </Box>
         )}
