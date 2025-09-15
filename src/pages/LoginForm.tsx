@@ -38,25 +38,46 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   };
 
   return (
-    <Container component="main" maxWidth="sm">
+    <Container
+      component="main"
+      maxWidth="sm"
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        py: 4,
+      }}
+    >
       <Paper
-        elevation={3}
+        elevation={0}
         sx={{
-          mt: 8,
-          p: 4,
+          width: "100%",
+          p: { xs: 3, sm: 4 },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
-        <Typography component="h1" variant="h4" gutterBottom>
+        <Typography
+          component="h1"
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontWeight: 700,
+            textAlign: "center",
+            mb: 1,
+          }}
+        >
           {t("auth.login")}
         </Typography>
         <Typography
-          variant="body2"
+          variant="body1"
           color="text.secondary"
           align="center"
-          sx={{ mb: 3 }}
+          sx={{ mb: 4 }}
         >
           {t("auth.signIn")} to your rentals account
         </Typography>
@@ -98,7 +119,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            size="large"
+            sx={{
+              mt: 3,
+              mb: 2,
+              py: 1.5,
+              fontSize: "1rem",
+              fontWeight: 600,
+            }}
             disabled={loading}
           >
             {loading ? t("common.loading") : t("auth.signIn")}

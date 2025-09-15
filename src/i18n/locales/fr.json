@@ -138,7 +138,9 @@
     "recentReports": "Rapports récents",
     "totalCars": "Total des véhicules",
     "activeCars": "Véhicules actifs",
-    "totalDrivers": "Total des conducteurs"
+    "totalDrivers": "Total des conducteurs",
+    "manageCars": "Gérez votre flotte de véhicules, assignez des conducteurs et suivez les rapports hebdomadaires",
+    "manageAssignments": "Gérer les assignations"
   },
   "common": {
     "loading": "Chargement...",

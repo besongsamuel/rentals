@@ -138,7 +138,9 @@
     "recentReports": "Recent Reports",
     "totalCars": "Total Cars",
     "activeCars": "Active Cars",
-    "totalDrivers": "Total Drivers"
+    "totalDrivers": "Total Drivers",
+    "manageCars": "Manage your fleet of vehicles, assign drivers, and track weekly reports",
+    "manageAssignments": "Manage Assignments"
   },
   "common": {
     "loading": "Loading...",
