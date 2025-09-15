@@ -7,7 +7,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { weeklyReportService } from "../services/weeklyReportService";
 import { WeeklyReport } from "../types";
 import IncomeSourceModal from "./IncomeSourceModal";
@@ -29,6 +29,34 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
     null
   );
   const [modalOpen, setModalOpen] = useState(false);
+  const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
+    Set<string>
+  >(new Set());
+
+  // Check which reports have income sources
+  useEffect(() => {
+    const checkIncomeSources = async () => {
+      const reportsWithSources = new Set<string>();
+
+      for (const report of reports) {
+        if (report.status === "draft") {
+          const hasSources = await weeklyReportService.hasIncomeSources(
+            report.id
+          );
+          if (hasSources) {
+            reportsWithSources.add(report.id);
+          }
+        }
+      }
+
+      setReportsWithIncomeSources(reportsWithSources);
+    };
+
+    if (reports.length > 0) {
+      checkIncomeSources();
+    }
+  }, [reports]);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "draft":
@@ -87,6 +115,13 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedReport(null);
+  };
+
+  const handleEditReport = (report: WeeklyReport) => {
+    // TODO: Implement edit functionality
+    console.log("Edit report:", report);
+    // For now, just show an alert
+    alert("Edit functionality will be implemented");
   };
 
   if (reports.length === 0) {
@@ -150,6 +185,12 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
                         variant="contained"
                         color="primary"
                         onClick={() => handleSubmitReport(report.id)}
+                        disabled={!reportsWithIncomeSources.has(report.id)}
+                        title={
+                          !reportsWithIncomeSources.has(report.id)
+                            ? "Add income sources before submitting"
+                            : ""
+                        }
                       >
                         Submit
                       </Button>
@@ -200,13 +241,19 @@ const WeeklyReportList: React.FC<WeeklyReportListProps> = ({
                     variant="outlined"
                     onClick={() => handleViewDetails(report)}
                   >
-                    View Details
+                    Details
                   </Button>
                   {userType === "driver" && report.status === "draft" && (
                     <Button
                       size="small"
                       variant="outlined"
                       onClick={() => handleSubmitReport(report.id)}
+                      disabled={!reportsWithIncomeSources.has(report.id)}
+                      title={
+                        !reportsWithIncomeSources.has(report.id)
+                          ? "Add income sources before submitting"
+                          : ""
+                      }
                     >
                       Submit
                     </Button>

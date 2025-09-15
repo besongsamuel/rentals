@@ -1,6 +1,8 @@
 import {
   Add,
   ArrowBack,
+  AttachMoney,
+  Edit,
   FilterList,
   Home,
   Settings,
@@ -13,6 +15,10 @@ import {
   Chip,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   Grid,
   IconButton,
@@ -20,12 +26,7 @@ import {
   Paper,
   Select,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  TextField,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -36,6 +37,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import AddWeeklyReportForm from "../components/AddWeeklyReportForm";
 import IncomeSourceModal from "../components/IncomeSourceModal";
+import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
 import { profileService } from "../services/profileService";
@@ -51,7 +53,9 @@ const CarReports: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [car, setCar] = useState<Car | null>(null);
   const [drivers, setDrivers] = useState<Profile[]>([]);
-  const [weeklyReports, setWeeklyReports] = useState<WeeklyReport[]>([]);
+  const [weeklyReports, setWeeklyReports] = useState<
+    (WeeklyReport & { total_earnings: number })[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [showAddReportForm, setShowAddReportForm] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number | "">("");
@@ -60,12 +64,49 @@ const CarReports: React.FC = () => {
     null
   );
   const [modalOpen, setModalOpen] = useState(false);
+  const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
+    Set<string>
+  >(new Set());
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    week_start_date: "",
+    week_end_date: "",
+    start_mileage: 0,
+    end_mileage: 0,
+    driver_earnings: 0,
+    maintenance_expenses: 0,
+  });
 
   useEffect(() => {
     if (carId) {
       loadData();
     }
   }, [carId, selectedYear, selectedMonth]);
+
+  // Check which reports have income sources
+  useEffect(() => {
+    const checkIncomeSources = async () => {
+      const reportsWithSources = new Set<string>();
+
+      for (const report of weeklyReports) {
+        if (report.status === "draft") {
+          const hasSources = await weeklyReportService.hasIncomeSources(
+            report.id
+          );
+          if (hasSources) {
+            reportsWithSources.add(report.id);
+          }
+        }
+      }
+
+      setReportsWithIncomeSources(reportsWithSources);
+    };
+
+    if (weeklyReports.length > 0) {
+      checkIncomeSources();
+    }
+  }, [weeklyReports]);
 
   const loadData = async () => {
     if (!carId) return;
@@ -76,7 +117,7 @@ const CarReports: React.FC = () => {
       const [carData, driversData, reportsData] = await Promise.all([
         carService.getCarById(carId),
         profileService.getAllDrivers(profile?.organization_id),
-        weeklyReportService.getReportsByCar(
+        weeklyReportService.getReportsByCarWithTotalEarnings(
           carId,
           selectedYear || undefined,
           selectedMonth || undefined
@@ -193,6 +234,62 @@ const CarReports: React.FC = () => {
     setSelectedReport(null);
   };
 
+  const handleEditReport = (report: WeeklyReport) => {
+    setEditingReport(report);
+    setEditFormData({
+      week_start_date: report.week_start_date,
+      week_end_date: report.week_end_date,
+      start_mileage: report.start_mileage,
+      end_mileage: report.end_mileage,
+      driver_earnings: report.driver_earnings,
+      maintenance_expenses: report.maintenance_expenses,
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditDialogOpen(false);
+    setEditingReport(null);
+    setEditFormData({
+      week_start_date: "",
+      week_end_date: "",
+      start_mileage: 0,
+      end_mileage: 0,
+      driver_earnings: 0,
+      maintenance_expenses: 0,
+    });
+  };
+
+  const handleEditInputChange =
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value =
+        e.target.type === "number" ? Number(e.target.value) : e.target.value;
+      setEditFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    };
+
+  const handleUpdateReport = async () => {
+    if (!editingReport) return;
+
+    try {
+      await weeklyReportService.updateReport(editingReport.id, {
+        week_start_date: editFormData.week_start_date,
+        week_end_date: editFormData.week_end_date,
+        start_mileage: editFormData.start_mileage,
+        end_mileage: editFormData.end_mileage,
+        driver_earnings: editFormData.driver_earnings,
+        maintenance_expenses: editFormData.maintenance_expenses,
+      });
+      handleCloseEditDialog();
+      loadData(); // Refresh the data
+    } catch (error) {
+      console.error("Error updating report:", error);
+      alert(error instanceof Error ? error.message : "Failed to update report");
+    }
+  };
+
   const handleBackToDashboard = () => {
     navigate("/");
   };
@@ -301,22 +398,24 @@ const CarReports: React.FC = () => {
                     </IconButton>
                   </Tooltip>
                 )}
-                <Tooltip title={t("cars.manage")}>
-                  <IconButton
-                    onClick={handleBackToCar}
-                    color="primary"
-                    sx={{
-                      border: "1px solid",
-                      borderColor: "primary.main",
-                      "&:hover": {
-                        backgroundColor: "primary.main",
-                        color: "white",
-                      },
-                    }}
-                  >
-                    <Settings />
-                  </IconButton>
-                </Tooltip>
+                {profile?.user_type === "owner" && (
+                  <Tooltip title={t("cars.manage")}>
+                    <IconButton
+                      onClick={handleBackToCar}
+                      color="primary"
+                      sx={{
+                        border: "1px solid",
+                        borderColor: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "primary.main",
+                          color: "white",
+                        },
+                      }}
+                    >
+                      <Settings />
+                    </IconButton>
+                  </Tooltip>
+                )}
                 <Tooltip title={t("dashboard.title")}>
                   <IconButton
                     onClick={handleBackToDashboard}
@@ -448,127 +547,20 @@ const CarReports: React.FC = () => {
               ) : (
                 <>
                   {/* Desktop Table */}
-                  <TableContainer
-                    sx={{
-                      display: { xs: "none", md: "block" },
-                      "& .MuiTable-root": {
-                        minWidth: 650,
-                      },
-                    }}
-                  >
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>{t("reports.weekPeriod")}</TableCell>
-                          <TableCell>{t("reports.driver")}</TableCell>
-                          <TableCell align="right">
-                            {t("reports.startMileage")}
-                          </TableCell>
-                          <TableCell align="right">
-                            {t("reports.endMileage")}
-                          </TableCell>
-                          <TableCell align="right">
-                            {t("reports.driverEarnings")}
-                          </TableCell>
-                          <TableCell align="right">
-                            {t("reports.maintenance")}
-                          </TableCell>
-                          <TableCell>{t("reports.status")}</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {weeklyReports.map((report) => (
-                          <TableRow key={report.id}>
-                            <TableCell>
-                              {new Date(
-                                report.week_start_date
-                              ).toLocaleDateString()}{" "}
-                              -{" "}
-                              {new Date(
-                                report.week_end_date
-                              ).toLocaleDateString()}
-                            </TableCell>
-                            <TableCell>
-                              {drivers.find((d) => d.id === report.driver_id)
-                                ?.full_name ||
-                                drivers.find((d) => d.id === report.driver_id)
-                                  ?.email ||
-                                "Unknown Driver"}
-                            </TableCell>
-                            <TableCell align="right">
-                              {report.start_mileage.toLocaleString()} KM
-                            </TableCell>
-                            <TableCell align="right">
-                              {report.end_mileage.toLocaleString()} KM
-                            </TableCell>
-                            <TableCell align="right">
-                              {new Intl.NumberFormat("fr-FR", {
-                                style: "currency",
-                                currency: "XAF",
-                              }).format(report.driver_earnings)}
-                            </TableCell>
-                            <TableCell align="right">
-                              {new Intl.NumberFormat("fr-FR", {
-                                style: "currency",
-                                currency: "XAF",
-                              }).format(report.maintenance_expenses)}
-                            </TableCell>
-                            <TableCell>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: 1,
-                                }}
-                              >
-                                <Chip
-                                  label={report.status}
-                                  color={
-                                    getReportStatusColor(report.status) as any
-                                  }
-                                  size="small"
-                                />
-                                {profile?.user_type === "owner" &&
-                                  report.status === "submitted" && (
-                                    <Button
-                                      size="small"
-                                      variant="contained"
-                                      color="success"
-                                      onClick={() =>
-                                        handleApproveReport(report.id)
-                                      }
-                                    >
-                                      {t("reports.approve")}
-                                    </Button>
-                                  )}
-                                {profile?.user_type === "driver" &&
-                                  report.status === "draft" && (
-                                    <Button
-                                      size="small"
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={() =>
-                                        handleSubmitReport(report.id)
-                                      }
-                                    >
-                                      {t("reports.submit")}
-                                    </Button>
-                                  )}
-                                <Button
-                                  size="small"
-                                  variant="outlined"
-                                  onClick={() => handleViewDetails(report)}
-                                  sx={{ ml: 1 }}
-                                >
-                                  {t("reports.viewDetails")}
-                                </Button>
-                              </Box>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <Box sx={{ display: { xs: "none", md: "block" } }}>
+                    <WeeklyReportsTable
+                      weeklyReports={weeklyReports}
+                      drivers={drivers}
+                      reportsWithIncomeSources={reportsWithIncomeSources}
+                      profile={profile}
+                      user={user}
+                      onViewDetails={handleViewDetails}
+                      onEditReport={handleEditReport}
+                      onApproveReport={handleApproveReport}
+                      onSubmitReport={handleSubmitReport}
+                      getReportStatusColor={getReportStatusColor}
+                    />
+                  </Box>
 
                   {/* Mobile Cards */}
                   <Box sx={{ display: { xs: "block", md: "none" } }}>
@@ -698,17 +690,52 @@ const CarReports: React.FC = () => {
                                   variant="contained"
                                   color="primary"
                                   onClick={() => handleSubmitReport(report.id)}
+                                  disabled={
+                                    !reportsWithIncomeSources.has(report.id)
+                                  }
+                                  title={
+                                    !reportsWithIncomeSources.has(report.id)
+                                      ? "Add income sources before submitting"
+                                      : ""
+                                  }
                                 >
                                   {t("reports.submit")}
                                 </Button>
                               )}
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={() => handleViewDetails(report)}
-                            >
-                              {t("reports.viewDetails")}
-                            </Button>
+                            {report.status === "draft" && (
+                              <Tooltip title="Edit report">
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleEditReport(report)}
+                                  sx={{
+                                    border: "1px solid",
+                                    borderColor: "divider",
+                                    "&:hover": {
+                                      bgcolor: "action.hover",
+                                      borderColor: "primary.main",
+                                    },
+                                  }}
+                                >
+                                  <Edit />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                            <Tooltip title="View earnings details">
+                              <IconButton
+                                size="small"
+                                onClick={() => handleViewDetails(report)}
+                                sx={{
+                                  border: "1px solid",
+                                  borderColor: "divider",
+                                  "&:hover": {
+                                    bgcolor: "action.hover",
+                                    borderColor: "primary.main",
+                                  },
+                                }}
+                              >
+                                <AttachMoney />
+                              </IconButton>
+                            </Tooltip>
                           </Box>
                         </Stack>
                       </Card>
@@ -738,6 +765,94 @@ const CarReports: React.FC = () => {
         weeklyReport={selectedReport}
         userType={profile?.user_type}
       />
+
+      {/* Edit Report Dialog */}
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleCloseEditDialog}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Edit Weekly Report</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2 }}>
+            <Grid container spacing={2}>
+              <Grid size={6}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Week Start Date"
+                  type="date"
+                  value={editFormData.week_start_date}
+                  onChange={handleEditInputChange("week_start_date")}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Week End Date"
+                  type="date"
+                  value={editFormData.week_end_date}
+                  onChange={handleEditInputChange("week_end_date")}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField
+                  required
+                  fullWidth
+                  label="Start Mileage"
+                  type="number"
+                  value={editFormData.start_mileage}
+                  onChange={handleEditInputChange("start_mileage")}
+                  inputProps={{ min: 0 }}
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField
+                  required
+                  fullWidth
+                  label="End Mileage"
+                  type="number"
+                  value={editFormData.end_mileage}
+                  onChange={handleEditInputChange("end_mileage")}
+                  inputProps={{ min: 0 }}
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField
+                  fullWidth
+                  label="Driver Earnings"
+                  type="number"
+                  value={editFormData.driver_earnings}
+                  onChange={handleEditInputChange("driver_earnings")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  helperText="XAF"
+                />
+              </Grid>
+              <Grid size={6}>
+                <TextField
+                  fullWidth
+                  label="Maintenance Expenses"
+                  type="number"
+                  value={editFormData.maintenance_expenses}
+                  onChange={handleEditInputChange("maintenance_expenses")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  helperText="XAF"
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditDialog}>Cancel</Button>
+          <Button onClick={handleUpdateReport} variant="contained">
+            Update Report
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

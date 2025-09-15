@@ -11,18 +11,13 @@ import {
   MenuItem,
   Paper,
   Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CarOwnerForm from "../components/CarOwnerForm";
 import IncomeSourceModal from "../components/IncomeSourceModal";
+import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { carOwnerService } from "../services/carOwnerService";
 import { carService } from "../services/carService";
@@ -36,7 +31,9 @@ const CarDetailManagement: React.FC = () => {
   const { user, profile } = useUserContext();
   const [car, setCar] = useState<Car | null>(null);
   const [drivers, setDrivers] = useState<Profile[]>([]);
-  const [weeklyReports, setWeeklyReports] = useState<WeeklyReport[]>([]);
+  const [weeklyReports, setWeeklyReports] = useState<
+    (WeeklyReport & { total_earnings: number })[]
+  >([]);
   const [carOwners, setCarOwners] = useState<CarOwnerWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
@@ -48,12 +45,39 @@ const CarDetailManagement: React.FC = () => {
   );
   const [modalOpen, setModalOpen] = useState(false);
   const [showCarOwnerForm, setShowCarOwnerForm] = useState(false);
+  const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
+    Set<string>
+  >(new Set());
 
   useEffect(() => {
     if (carId) {
       loadData();
     }
   }, [carId, selectedYear, selectedMonth]);
+
+  // Check which reports have income sources
+  useEffect(() => {
+    const checkIncomeSources = async () => {
+      const reportsWithSources = new Set<string>();
+
+      for (const report of weeklyReports) {
+        if (report.status === "draft") {
+          const hasSources = await weeklyReportService.hasIncomeSources(
+            report.id
+          );
+          if (hasSources) {
+            reportsWithSources.add(report.id);
+          }
+        }
+      }
+
+      setReportsWithIncomeSources(reportsWithSources);
+    };
+
+    if (weeklyReports.length > 0) {
+      checkIncomeSources();
+    }
+  }, [weeklyReports]);
 
   const loadData = async () => {
     if (!carId) return;
@@ -65,7 +89,7 @@ const CarDetailManagement: React.FC = () => {
         [
           carService.getCarById(carId),
           profileService.getAllDrivers(profile?.organization_id),
-          weeklyReportService.getReportsByCar(
+          weeklyReportService.getReportsByCarWithTotalEarnings(
             carId,
             selectedYear || undefined,
             selectedMonth || undefined
@@ -295,12 +319,14 @@ const CarDetailManagement: React.FC = () => {
                 {car.year} {car.make} {car.model} - Management
               </Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate(`/cars/${carId}/edit`)}
-                >
-                  Edit Car
-                </Button>
+                {profile?.user_type === "owner" && (
+                  <Button
+                    variant="outlined"
+                    onClick={() => navigate(`/cars/${carId}/edit`)}
+                  >
+                    Edit Car
+                  </Button>
+                )}
                 <Button
                   variant="outlined"
                   onClick={() => navigate(`/cars/${carId}/reports`)}
@@ -333,95 +359,99 @@ const CarDetailManagement: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Driver Assignment Section */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Card elevation={2}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Driver Assignment
-              </Typography>
+        {/* Driver Assignment Section - Only for owners */}
+        {profile?.user_type === "owner" && (
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Card elevation={2}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Driver Assignment
+                </Typography>
 
-              {currentDriver ? (
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Currently Assigned Driver:
-                  </Typography>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Typography variant="body1">
-                      {currentDriver.full_name || currentDriver.email}
+                {currentDriver ? (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      Currently Assigned Driver:
                     </Typography>
-                    <Chip label="Assigned" color="primary" size="small" />
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Typography variant="body1">
+                        {currentDriver.full_name || currentDriver.email}
+                      </Typography>
+                      <Chip label="Assigned" color="primary" size="small" />
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="error"
+                        onClick={handleUnassignDriver}
+                        disabled={loadingAssignments}
+                      >
+                        Unassign
+                      </Button>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      No driver currently assigned
+                    </Typography>
+                  </Box>
+                )}
+
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={selectedDriverId}
+                    onChange={(e) =>
+                      handleDriverSelectionChange(e.target.value)
+                    }
+                    disabled={loadingAssignments}
+                    displayEmpty
+                  >
+                    <MenuItem value="">
+                      <em>Select a driver</em>
+                    </MenuItem>
+                    {drivers
+                      .filter((driver) => driver.id !== car.driver_id)
+                      .map((driver) => (
+                        <MenuItem key={driver.id} value={driver.id}>
+                          {driver.full_name || driver.email}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+
+                {selectedDriverId && (
+                  <Box sx={{ mt: 2 }}>
                     <Button
+                      variant="contained"
                       size="small"
-                      variant="outlined"
-                      color="error"
-                      onClick={handleUnassignDriver}
+                      onClick={handleAssignDriver}
                       disabled={loadingAssignments}
                     >
-                      Unassign
+                      Confirm Assignment
                     </Button>
                   </Box>
-                </Box>
-              ) : (
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    No driver currently assigned
-                  </Typography>
-                </Box>
-              )}
+                )}
 
-              <FormControl fullWidth size="small">
-                <Select
-                  value={selectedDriverId}
-                  onChange={(e) => handleDriverSelectionChange(e.target.value)}
-                  disabled={loadingAssignments}
-                  displayEmpty
-                >
-                  <MenuItem value="">
-                    <em>Select a driver</em>
-                  </MenuItem>
-                  {drivers
-                    .filter((driver) => driver.id !== car.driver_id)
-                    .map((driver) => (
-                      <MenuItem key={driver.id} value={driver.id}>
-                        {driver.full_name || driver.email}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-
-              {selectedDriverId && (
-                <Box sx={{ mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    onClick={handleAssignDriver}
-                    disabled={loadingAssignments}
-                  >
-                    Confirm Assignment
-                  </Button>
-                </Box>
-              )}
-
-              {loadingAssignments && (
-                <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                  <CircularProgress size={16} sx={{ mr: 1 }} />
-                  <Typography variant="caption">
-                    Updating driver assignment...
-                  </Typography>
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
+                {loadingAssignments && (
+                  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                    <CircularProgress size={16} sx={{ mr: 1 }} />
+                    <Typography variant="caption">
+                      Updating driver assignment...
+                    </Typography>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
 
         {/* Car Owner Management Section */}
         {user && car && car.owner_id === user.id && (
@@ -595,114 +625,17 @@ const CarDetailManagement: React.FC = () => {
                 Weekly Reports Details
               </Typography>
 
-              {weeklyReports.length === 0 ? (
-                <Box sx={{ textAlign: "center", py: 4 }}>
-                  <Typography variant="body1" color="text.secondary">
-                    No weekly reports found for the selected period.
-                  </Typography>
-                </Box>
-              ) : (
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Week Period</TableCell>
-                        <TableCell>Driver</TableCell>
-                        <TableCell align="right">Start Mileage</TableCell>
-                        <TableCell align="right">End Mileage</TableCell>
-                        <TableCell align="right">Driver Earnings</TableCell>
-                        <TableCell align="right">Maintenance</TableCell>
-                        <TableCell>Status</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {weeklyReports.map((report) => (
-                        <TableRow key={report.id}>
-                          <TableCell>
-                            {new Date(
-                              report.week_start_date
-                            ).toLocaleDateString()}{" "}
-                            -{" "}
-                            {new Date(
-                              report.week_end_date
-                            ).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            {drivers.find((d) => d.id === report.driver_id)
-                              ?.full_name ||
-                              drivers.find((d) => d.id === report.driver_id)
-                                ?.email ||
-                              "Unknown Driver"}
-                          </TableCell>
-                          <TableCell align="right">
-                            {report.start_mileage.toLocaleString()} KM
-                          </TableCell>
-                          <TableCell align="right">
-                            {report.end_mileage.toLocaleString()} KM
-                          </TableCell>
-                          <TableCell align="right">
-                            {new Intl.NumberFormat("fr-FR", {
-                              style: "currency",
-                              currency: "XAF",
-                            }).format(report.driver_earnings)}
-                          </TableCell>
-                          <TableCell align="right">
-                            {new Intl.NumberFormat("fr-FR", {
-                              style: "currency",
-                              currency: "XAF",
-                            }).format(report.maintenance_expenses)}
-                          </TableCell>
-                          <TableCell>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                              }}
-                            >
-                              <Chip
-                                label={report.status}
-                                color={
-                                  getReportStatusColor(report.status) as any
-                                }
-                                size="small"
-                              />
-                              {user && report.status === "submitted" && (
-                                <Button
-                                  size="small"
-                                  variant="contained"
-                                  color="success"
-                                  onClick={() => handleApproveReport(report.id)}
-                                >
-                                  Approve
-                                </Button>
-                              )}
-                              {user && report.status === "draft" && (
-                                <Button
-                                  size="small"
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={() => handleSubmitReport(report.id)}
-                                >
-                                  Submit
-                                </Button>
-                              )}
-                              <Button
-                                size="small"
-                                variant="outlined"
-                                onClick={() => handleViewDetails(report)}
-                                sx={{ ml: 1 }}
-                              >
-                                View Details
-                              </Button>
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              )}
+              <WeeklyReportsTable
+                weeklyReports={weeklyReports}
+                drivers={drivers}
+                reportsWithIncomeSources={reportsWithIncomeSources}
+                profile={profile}
+                user={user}
+                onViewDetails={handleViewDetails}
+                onApproveReport={handleApproveReport}
+                onSubmitReport={handleSubmitReport}
+                getReportStatusColor={getReportStatusColor}
+              />
             </CardContent>
           </Card>
         </Grid>

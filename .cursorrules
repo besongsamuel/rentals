@@ -198,6 +198,47 @@
     .single();
   ```
 
+## Supabase RLS Policies by User Type
+
+- **CRITICAL: Create separate RLS policies for different user types (driver, owner)**
+- **User Type Separation**: Always create distinct policies for drivers and owners instead of generic policies
+- **Policy Naming**: Use descriptive names that indicate the user type and action
+- **Examples**:
+  - `"Drivers can view their weekly reports"` instead of `"Users can view relevant weekly reports"`
+  - `"Owners can view weekly reports for cars they own"` instead of generic user policies
+- **Benefits**:
+  - Clearer policy logic and easier debugging
+  - Better security isolation between user types
+  - Easier to maintain and understand permissions
+- **Policy Structure**:
+
+  ```sql
+  -- ✅ DO: Separate policies by user type
+  CREATE POLICY "Drivers can view their weekly reports" ON weekly_reports
+    FOR SELECT USING (
+      EXISTS (
+        SELECT 1 FROM profiles p
+        WHERE p.id = auth.uid()
+        AND p.user_type = 'driver'
+        AND weekly_reports.driver_id = auth.uid()
+      )
+    );
+
+  CREATE POLICY "Owners can view weekly reports for cars they own" ON weekly_reports
+    FOR SELECT USING (
+      EXISTS (
+        SELECT 1 FROM profiles p
+        WHERE p.id = auth.uid()
+        AND p.user_type = 'owner'
+        AND EXISTS (
+          SELECT 1 FROM cars c
+          WHERE c.id = weekly_reports.car_id
+          AND c.owner_id = auth.uid()
+        )
+      )
+    );
+  ```
+
 ## Supabase Migrations
 
 - **CRITICAL: Always use Supabase migrations for database schema changes**

@@ -15,6 +15,18 @@ export const weeklyReportService = {
     }
   },
 
+  async hasIncomeSources(reportId: string): Promise<boolean> {
+    try {
+      const incomeSources = await incomeSourceService.getIncomeSourcesByReport(
+        reportId
+      );
+      return incomeSources.length > 0;
+    } catch (error) {
+      console.error("Error checking income sources:", error);
+      return false;
+    }
+  },
+
   async getReportWithCalculatedEarnings(
     reportId: string
   ): Promise<(WeeklyReport & { total_earnings: number }) | null> {
@@ -81,6 +93,24 @@ export const weeklyReportService = {
     }
 
     return data || [];
+  },
+
+  async getReportsByCarWithTotalEarnings(
+    carId: string,
+    year?: number,
+    month?: number
+  ): Promise<(WeeklyReport & { total_earnings: number })[]> {
+    const reports = await this.getReportsByCar(carId, year, month);
+
+    // Calculate total earnings for each report
+    const reportsWithEarnings = await Promise.all(
+      reports.map(async (report) => {
+        const totalEarnings = await this.calculateTotalEarnings(report.id);
+        return { ...report, total_earnings: totalEarnings };
+      })
+    );
+
+    return reportsWithEarnings;
   },
 
   async getReportById(reportId: string): Promise<WeeklyReport | null> {

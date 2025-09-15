@@ -15,16 +15,13 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import SkeletonLoader from "../components/SkeletonLoader";
-import WeeklyReportList from "../components/WeeklyReportList";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
-import { weeklyReportService } from "../services/weeklyReportService";
-import { Car, WeeklyReport } from "../types";
+import { Car } from "../types";
 
 const DriverDashboard: React.FC = () => {
   const { profile } = useUserContext();
   const { t } = useTranslation();
-  const [reports, setReports] = useState<WeeklyReport[]>([]);
   const [assignedCars, setAssignedCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,31 +36,13 @@ const DriverDashboard: React.FC = () => {
 
     setLoading(true);
     try {
-      // Load both assigned cars and reports in parallel
-      const [carsData, reportsData] = await Promise.all([
-        carService.getCarsByDriver(profile.id),
-        weeklyReportService.getReportsByDriver(profile.id),
-      ]);
-
+      // Load assigned cars
+      const carsData = await carService.getCarsByDriver(profile.id);
       setAssignedCars(carsData);
-      setReports(reportsData);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const loadReports = async () => {
-    if (!profile?.id) return;
-
-    try {
-      const reportsData = await weeklyReportService.getReportsByDriver(
-        profile.id
-      );
-      setReports(reportsData);
-    } catch (error) {
-      console.error("Error loading reports:", error);
     }
   };
 
@@ -77,11 +56,10 @@ const DriverDashboard: React.FC = () => {
         <Grid size={12}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Typography variant="h4" gutterBottom>
-              Driver Dashboard - Weekly Reports
+              Driver Dashboard
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
-              Track your weekly earnings, mileage, and expenses. Submit reports
-              for owner review.
+              View your assigned cars and access reports for each vehicle.
             </Typography>
           </Paper>
         </Grid>
@@ -200,15 +178,6 @@ const DriverDashboard: React.FC = () => {
               </Grid>
             )}
           </Paper>
-        </Grid>
-
-        <Grid size={12}>
-          <WeeklyReportList
-            reports={reports}
-            onRefresh={loadReports}
-            currentUserId={profile?.id}
-            userType={profile?.user_type}
-          />
         </Grid>
       </Grid>
     </Container>
