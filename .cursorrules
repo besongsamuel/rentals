@@ -1,0 +1,155 @@
+# Rentals App Cursor Rules
+
+## Code Style & Quality
+
+- Always clean up any unused variables across the codebase as a general rule to maintain code quality
+- Prefer concise code fixes, suggestions, and explanations
+- Use double quotes for string literals consistently
+- Import statements should be organized alphabetically within groups
+
+## UI/UX Standards
+
+- **CRITICAL: Always implement skeleton loading states in the frontend where possible (lists, cards, forms, pages) to improve perceived performance and UX**
+- Prioritize loading states over empty states - users should see skeleton components while data is being fetched
+- Use Material-UI Skeleton components for consistent loading experiences
+- Implement skeleton loading for:
+  - Data tables and lists
+  - Cards and content blocks
+  - Forms and input fields
+  - Dashboard widgets
+  - Any component that fetches data asynchronously
+
+## Mobile-First Design
+
+- **CRITICAL: Prioritize responsive mobile app designs - this app will mostly be viewed from mobile devices**
+- **Mobile-First Approach**: Design for mobile screens first, then enhance for larger screens
+- **Touch-Friendly**: Ensure all interactive elements are at least 44px in size for easy touch interaction
+- **Thumb Navigation**: Place primary actions within thumb reach (bottom half of screen)
+- **Responsive Breakpoints**: Use Material-UI breakpoints with mobile-first approach:
+  - `xs` (0px+): Mobile phones (primary focus)
+  - `sm` (600px+): Large phones/small tablets
+  - `md` (900px+): Tablets
+  - `lg` (1200px+): Desktop (secondary)
+  - `xl` (1536px+): Large desktop (tertiary)
+- **Grid Layout**: Default to single column on mobile, expand to multiple columns on larger screens
+- **Typography**: Use larger font sizes on mobile for better readability
+- **Spacing**: Increase padding and margins on mobile for better touch targets
+- **Navigation**: Use bottom navigation or hamburger menu patterns for mobile
+- **Forms**: Stack form fields vertically on mobile, use full-width inputs
+- **Tables**: Consider card layouts instead of tables on mobile, or horizontal scrolling
+- **Buttons**: Use full-width buttons on mobile for primary actions
+- **Modal/Dialog**: Full-screen modals on mobile, centered dialogs on desktop
+
+## Color Scheme
+
+- Primary color: Green (#2e7d32 or similar green shade)
+- Secondary color: Red (#d32f2f or similar red shade)
+- Warning/Accent color: Yellow (#f57c00 or similar yellow shade)
+- Ensure all Material-UI components use this color palette consistently
+
+## Architecture & Patterns
+
+- Use TypeScript for all components and hooks
+- Implement custom hooks for data fetching and state management
+- Follow React best practices with proper component composition
+- Use Material-UI theming system for consistent styling
+
+## Folder Structure
+
+- **CRITICAL: Organize code into proper folder structure**
+- Create separate folders for:
+  - `src/pages/` - Page-level components (Login, Dashboard, Profile, etc.)
+  - `src/components/` - Reusable UI components (forms, cards, buttons, etc.)
+  - `src/hooks/` - Custom React hooks for state management and data fetching
+  - `src/services/` - API calls, external service integrations, and business logic
+  - `src/types/` - TypeScript type definitions and interfaces
+  - `src/utils/` - Utility functions and helpers
+  - `src/lib/` - Configuration files and third-party library setup
+
+## Component Design
+
+- **CRITICAL: Prioritize reusable components with concise, focused code**
+- Keep components small and focused on single responsibility
+- Aim for components under 100 lines of code when possible
+- Extract complex logic into custom hooks or utility functions
+- Create generic, reusable components that can be used across multiple pages
+- Use composition over inheritance for component relationships
+- Prefer functional components with hooks over class components
+
+## Performance
+
+- Implement proper loading states to improve perceived performance
+- Use React.memo and useMemo where appropriate for optimization
+- Prioritize skeleton loading over spinners for better UX
+- **Mobile Performance**: Optimize for mobile devices:
+  - Minimize bundle size and loading times
+  - Use lazy loading for non-critical components
+  - Implement proper image optimization and responsive images
+  - Consider mobile-specific optimizations like touch events
+
+## Material-UI Grid Usage
+
+- **CRITICAL: Always use the updated Grid component, not GridLegacy**
+- Follow the [Material-UI Grid v2 migration guide](https://mui.com/material-ui/migration/upgrade-to-grid-v2/) when using grids
+- Import Grid from '@mui/material/Grid' (not GridLegacy)
+- Remove the `item` and `zeroMinWidth` props - they are no longer needed
+- Use the `size` prop instead of individual breakpoint props (xs, sm, md, lg, xl)
+- **Mobile-First Grid Sizing**: Default to mobile-first sizing:
+  - For single size across all breakpoints: `<Grid size={12}>` (mobile first)
+  - For responsive sizing: `<Grid size={{ xs: 12, sm: 6, md: 4 }}>` (mobile-first progression)
+  - Always start with `xs: 12` for mobile, then add larger breakpoints
+- Use `size="grow"` instead of `size={true}` for growing grids
+- All grids are considered items without specifying the `item` prop
+- Use `sx={{ width: '100%' }}` or `sx={{ flexGrow: 1 }}` on container if full width is needed
+- **Mobile Grid Patterns**:
+  - Single column on mobile: `size={{ xs: 12 }}`
+  - Two columns on tablet: `size={{ xs: 12, sm: 6 }}`
+  - Three columns on desktop: `size={{ xs: 12, sm: 6, md: 4 }}`
+
+## Database Schema Reference
+
+- **CRITICAL: Always reference `supabase/DATABASE_SCHEMA_UPDATED.md` for database schema information**
+- Update the schema file when making database changes
+- Follow the existing table structure and relationships
+- Use proper column names and data types as defined in the schema
+- Implement RLS policies as specified in the schema
+
+## Supabase Migrations
+
+- **CRITICAL: Always use Supabase migrations for database schema changes**
+- Follow the [Supabase migrations guide](https://supabase.com/docs/guides/deployment/database-migrations)
+- Create new migration files using `supabase migration new <description>`
+- Never modify existing migration files - create new ones for changes
+- Test migrations locally using `supabase db reset` before deploying
+- Use `supabase db push` to deploy migrations to remote projects
+- Always include proper RLS policies and indexes in migrations
+- Use descriptive migration names that explain the change
+- Include rollback instructions in migration comments when complex
+- Test migrations with seed data when applicable
+
+## Supabase Migration Commands
+
+- **Create Migration**: `supabase migration new <description>` - Creates new migration file
+- **Apply Migrations Locally**: `supabase migration up` - Applies pending migrations
+- **Reset Database**: `supabase db reset` - Resets local DB and reapplies all migrations
+- **Push to Remote**: `supabase db push` - Deploys migrations to remote database
+- **Push with Seed Data**: `supabase db push --include-seed` - Deploys migrations and seeds data
+- **Check Schema Diff**: `supabase db diff` - Shows differences between local and remote
+- **Generate Diff Migration**: `supabase db diff -f <description>` - Creates migration from Dashboard changes
+- **Check Status**: `supabase status` - Shows local development environment status
+- **List Projects**: `supabase projects list` - Lists available remote projects
+- **Link Project**: `supabase link` - Links to remote project for deployment
+
+## Authentication & Supabase
+
+- Always use the useAuth hook for authentication state
+- Handle loading states properly in auth-related components
+- Show skeleton loading while checking authentication status
+
+## Dashboard Structure
+
+- **CRITICAL: Create separate dashboards based on user_type**
+- Owner Dashboard: Car management, driver assignment, weekly reports viewing
+- Driver Dashboard: Weekly report creation and editing
+- Route users to appropriate dashboard based on profile.user_type
+- Implement role-based access control for different functionalities
