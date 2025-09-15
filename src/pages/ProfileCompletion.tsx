@@ -2,21 +2,19 @@ import {
   Alert,
   Box,
   Button,
+  Card,
+  CardContent,
   Container,
   FormControl,
-  FormControlLabel,
   InputLabel,
   MenuItem,
   Paper,
-  Radio,
-  RadioGroup,
   Select,
   TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Header from "../components/Header";
 import { useUserContext } from "../contexts/UserContext";
 import { organizationService } from "../services/organizationService";
 import { Organization } from "../types";
@@ -96,181 +94,302 @@ const ProfileCompletion: React.FC = () => {
     };
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Header />
-      <Container component="main" maxWidth="sm" sx={{ flexGrow: 1, py: 4 }}>
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+    <Container component="main" maxWidth="sm" sx={{ py: 4 }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography component="h1" variant="h4" gutterBottom>
+          {t("profile.completeProfile")}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          sx={{ mb: 2 }}
         >
-          <Typography component="h1" variant="h4" gutterBottom>
-            {t("profile.completeProfile")}
-          </Typography>
+          {t("profile.welcomeMessage")}
+        </Typography>
+
+        {formData.user_type === "driver" ? (
           <Typography
             variant="body2"
-            color="text.secondary"
+            color="primary.main"
             align="center"
-            sx={{ mb: 2 }}
+            sx={{
+              mb: 3,
+              fontWeight: 500,
+              p: 2,
+              bgcolor: "primary.50",
+              borderRadius: 1,
+            }}
           >
-            {t("profile.welcomeMessage")}
+            {t("profile.driverProfileMessage")}
           </Typography>
+        ) : (
+          <Typography
+            variant="body2"
+            color="secondary.main"
+            align="center"
+            sx={{
+              mb: 3,
+              fontWeight: 500,
+              p: 2,
+              bgcolor: "secondary.50",
+              borderRadius: 1,
+            }}
+          >
+            {t("profile.ownerProfileMessage")}
+          </Typography>
+        )}
 
-          {formData.user_type === "driver" ? (
-            <Typography
-              variant="body2"
-              color="primary.main"
-              align="center"
-              sx={{
-                mb: 3,
-                fontWeight: 500,
-                p: 2,
-                bgcolor: "primary.50",
-                borderRadius: 1,
-              }}
-            >
-              {t("profile.driverProfileMessage")}
-            </Typography>
-          ) : (
-            <Typography
-              variant="body2"
-              color="secondary.main"
-              align="center"
-              sx={{
-                mb: 3,
-                fontWeight: 500,
-                p: 2,
-                bgcolor: "secondary.50",
-                borderRadius: 1,
-              }}
-            >
-              {t("profile.ownerProfileMessage")}
-            </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="full_name"
+            label={t("profile.fullName")}
+            name="full_name"
+            autoComplete="name"
+            autoFocus
+            value={formData.full_name}
+            onChange={handleInputChange("full_name")}
+          />
 
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="full_name"
-              label={t("profile.fullName")}
-              name="full_name"
-              autoComplete="name"
-              autoFocus
-              value={formData.full_name}
-              onChange={handleInputChange("full_name")}
-            />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="phone"
+            label={t("profile.phone")}
+            name="phone"
+            autoComplete="tel"
+            value={formData.phone}
+            onChange={handleInputChange("phone")}
+            helperText={t("profile.phoneHelper")}
+          />
 
-            <TextField
-              margin="normal"
-              fullWidth
-              id="phone"
-              label={t("profile.phone")}
-              name="phone"
-              autoComplete="tel"
-              value={formData.phone}
-              onChange={handleInputChange("phone")}
-              helperText={t("profile.phoneHelper")}
-            />
-
-            <FormControl margin="normal" fullWidth>
-              <InputLabel id="organization-label">
-                {t("profile.organization")} *
-              </InputLabel>
-              <Select
-                labelId="organization-label"
-                id="organization"
-                value={formData.organization_id}
-                label={`${t("profile.organization")} *`}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    organization_id: e.target.value,
-                  }))
-                }
-                disabled={loadingOrganizations}
-              >
-                {organizations.map((org) => (
-                  <MenuItem key={org.id} value={org.id}>
-                    {org.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              {loadingOrganizations && (
-                <Typography variant="caption" color="text.secondary">
-                  {t("common.loading")}
-                </Typography>
-              )}
-            </FormControl>
-
-            <FormControl margin="normal" fullWidth>
-              <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                {t("profile.userType")} *
-              </Typography>
-              <RadioGroup
-                value={formData.user_type}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    user_type: e.target.value as "driver" | "owner",
-                  }))
-                }
-              >
-                <FormControlLabel
-                  value="driver"
-                  control={<Radio />}
-                  label={
-                    <Box>
-                      <Typography variant="body1">
-                        {t("profile.driver")}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t("profile.driverDescription")}
-                      </Typography>
-                    </Box>
-                  }
-                />
-                <FormControlLabel
-                  value="owner"
-                  control={<Radio />}
-                  label={
-                    <Box>
-                      <Typography variant="body1">
-                        {t("profile.owner")}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {t("profile.ownerDescription")}
-                      </Typography>
-                    </Box>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
+          <FormControl margin="normal" fullWidth>
+            <InputLabel id="organization-label">
+              {t("profile.organization")} *
+            </InputLabel>
+            <Select
+              labelId="organization-label"
+              id="organization"
+              value={formData.organization_id}
+              label={`${t("profile.organization")} *`}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  organization_id: e.target.value,
+                }))
+              }
+              disabled={loadingOrganizations}
             >
-              {loading ? t("common.loading") : t("profile.complete")}
-            </Button>
+              {organizations.map((org) => (
+                <MenuItem key={org.id} value={org.id}>
+                  {org.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {loadingOrganizations && (
+              <Typography variant="caption" color="text.secondary">
+                {t("common.loading")}
+              </Typography>
+            )}
+          </FormControl>
+
+          <Box sx={{ mt: 3, mb: 2 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                mb: 2,
+                fontWeight: 600,
+                textAlign: "center",
+                color: "primary.main",
+              }}
+            >
+              {t("profile.userType")} *
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                mb: 3,
+                textAlign: "center",
+                fontStyle: "italic",
+              }}
+            >
+              {t("profile.chooseRoleCarefully")}
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "center",
+              }}
+            >
+              <Card
+                sx={{
+                  flex: 1,
+                  cursor: "pointer",
+                  border: formData.user_type === "driver" ? 3 : 1,
+                  borderColor:
+                    formData.user_type === "driver"
+                      ? "primary.main"
+                      : "divider",
+                  backgroundColor:
+                    formData.user_type === "driver"
+                      ? "primary.50"
+                      : "background.paper",
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    backgroundColor:
+                      formData.user_type === "driver"
+                        ? "primary.100"
+                        : "primary.25",
+                    transform: "translateY(-2px)",
+                    boxShadow: 3,
+                  },
+                }}
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    user_type: "driver",
+                  }))
+                }
+              >
+                <CardContent sx={{ p: 3, textAlign: "center" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 600,
+                      mb: 1,
+                      color:
+                        formData.user_type === "driver"
+                          ? "primary.main"
+                          : "text.primary",
+                    }}
+                  >
+                    🚗 {t("profile.driver")}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ lineHeight: 1.6 }}
+                  >
+                    {t("profile.driverDescription")}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{
+                      display: "block",
+                      mt: 1,
+                      fontStyle: "italic",
+                      opacity: 0.8,
+                    }}
+                  >
+                    {t("profile.driverAdditionalInfo")}
+                  </Typography>
+                </CardContent>
+              </Card>
+
+              <Card
+                sx={{
+                  flex: 1,
+                  cursor: "pointer",
+                  border: formData.user_type === "owner" ? 3 : 1,
+                  borderColor:
+                    formData.user_type === "owner"
+                      ? "secondary.main"
+                      : "divider",
+                  backgroundColor:
+                    formData.user_type === "owner"
+                      ? "secondary.50"
+                      : "background.paper",
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    borderColor: "secondary.main",
+                    backgroundColor:
+                      formData.user_type === "owner"
+                        ? "secondary.100"
+                        : "secondary.25",
+                    transform: "translateY(-2px)",
+                    boxShadow: 3,
+                  },
+                }}
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    user_type: "owner",
+                  }))
+                }
+              >
+                <CardContent sx={{ p: 3, textAlign: "center" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 600,
+                      mb: 1,
+                      color:
+                        formData.user_type === "owner"
+                          ? "secondary.main"
+                          : "text.primary",
+                    }}
+                  >
+                    🏢 {t("profile.owner")}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ lineHeight: 1.6 }}
+                  >
+                    {t("profile.ownerDescription")}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{
+                      display: "block",
+                      mt: 1,
+                      fontStyle: "italic",
+                      opacity: 0.8,
+                    }}
+                  >
+                    {t("profile.ownerAdditionalInfo")}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
           </Box>
-        </Paper>
-      </Container>
-    </Box>
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
+          >
+            {loading ? t("common.loading") : t("profile.complete")}
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

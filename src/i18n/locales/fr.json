@@ -43,6 +43,9 @@
     "driverDescription": "Je conduis des véhicules et je suis mes gains",
     "owner": "Propriétaire",
     "ownerDescription": "Je possède des véhicules et je gère les conducteurs",
+    "chooseRoleCarefully": "Choisissez votre rôle avec soin - cela ne peut pas être modifié plus tard",
+    "driverAdditionalInfo": "Suivez les gains et le kilométrage des véhicules assignés",
+    "ownerAdditionalInfo": "Gérez la flotte, assignez des conducteurs et surveillez les performances",
     "complete": "Compléter le profil"
   },
   "cars": {
@@ -102,7 +105,6 @@
     "allMonths": "Tous les mois",
     "clearFilters": "Effacer les filtres",
     "allReports": "Tous les rapports",
-    "totalEarnings": "Gains totaux",
     "details": "Détails des rapports hebdomadaires",
     "found": "{{count}} rapport(s) trouvé(s)"
   },
@@ -157,7 +159,9 @@
     "activeCars": "Véhicules actifs",
     "totalDrivers": "Total des conducteurs",
     "manageCars": "Gérez votre flotte de véhicules, assignez des conducteurs et suivez les rapports hebdomadaires",
-    "manageAssignments": "Gérer les assignations"
+    "manageAssignments": "Gérer les assignations",
+    "driverDashboardDescription": "Consultez vos véhicules assignés et accédez aux rapports pour chaque véhicule.",
+    "noCarsAssigned": "Aucun véhicule ne vous a encore été assigné. Contactez un propriétaire pour vous faire assigner un véhicule."
   },
   "common": {
     "loading": "Chargement...",

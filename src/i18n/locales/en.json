@@ -43,6 +43,9 @@
     "driverDescription": "I drive vehicles and track my earnings",
     "owner": "Owner",
     "ownerDescription": "I own vehicles and manage drivers",
+    "chooseRoleCarefully": "Choose your role carefully - this cannot be changed later",
+    "driverAdditionalInfo": "Track earnings and mileage for assigned vehicles",
+    "ownerAdditionalInfo": "Manage fleet, assign drivers, and monitor performance",
     "complete": "Complete Profile"
   },
   "cars": {
@@ -102,7 +105,6 @@
     "allMonths": "All Months",
     "clearFilters": "Clear Filters",
     "allReports": "All Reports",
-    "totalEarnings": "Total Earnings",
     "details": "Weekly Reports Details",
     "found": "Found {{count}} report(s)"
   },
@@ -157,7 +159,9 @@
     "activeCars": "Active Cars",
     "totalDrivers": "Total Drivers",
     "manageCars": "Manage your fleet of vehicles, assign drivers, and track weekly reports",
-    "manageAssignments": "Manage Assignments"
+    "manageAssignments": "Manage Assignments",
+    "driverDashboardDescription": "View your assigned cars and access reports for each vehicle.",
+    "noCarsAssigned": "No cars assigned to you yet. Contact an owner to get assigned to a vehicle."
   },
   "common": {
     "loading": "Loading...",

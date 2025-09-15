@@ -165,136 +165,149 @@ const Header: React.FC = () => {
             {t("app.name")}
           </Typography>
 
-          {profile && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: { xs: 0.5, sm: 1.5, md: 2 },
-              }}
-            >
-              {!isMobile && (
-                <>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      display: { xs: "none", sm: "block" },
-                      fontSize: { sm: "0.875rem", md: "0.9rem" },
-                      fontWeight: 500,
-                    }}
-                  >
-                    {t("app.welcome")}, {profile.full_name || user?.email}
-                  </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { xs: 0.5, sm: 1.5, md: 2 },
+            }}
+          >
+            {profile && !isMobile && (
+              <>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    display: { xs: "none", sm: "block" },
+                    fontSize: { sm: "0.875rem", md: "0.9rem" },
+                    fontWeight: 500,
+                  }}
+                >
+                  {t("app.welcome")}, {profile.full_name || user?.email}
+                </Typography>
 
-                  {organization && (
-                    <Chip
-                      label={organization.name}
-                      size="small"
-                      variant="outlined"
-                      sx={{
-                        display: { xs: "none", lg: "flex" },
-                        borderColor: "rgba(255,255,255,0.3)",
-                        color: "inherit",
-                        fontSize: "0.75rem",
-                        height: 24,
-                      }}
-                    />
-                  )}
-
+                {organization && (
                   <Chip
-                    label={t(`profile.${profile.user_type}`)}
+                    label={organization.name}
                     size="small"
+                    variant="outlined"
                     sx={{
-                      display: { xs: "none", sm: "flex" },
-                      backgroundColor: "rgba(255,255,255,0.2)",
+                      display: { xs: "none", lg: "flex" },
+                      borderColor: "rgba(255,255,255,0.3)",
                       color: "inherit",
-                      textTransform: "capitalize",
                       fontSize: "0.75rem",
                       height: 24,
                     }}
                   />
-                </>
-              )}
+                )}
 
-              <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                <LanguageSwitcher />
-              </Box>
+                <Chip
+                  label={t(`profile.${profile.user_type}`)}
+                  size="small"
+                  sx={{
+                    display: { xs: "none", sm: "flex" },
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    color: "inherit",
+                    textTransform: "capitalize",
+                    fontSize: "0.75rem",
+                    height: 24,
+                  }}
+                />
+              </>
+            )}
 
-              {isMobile ? (
-                <>
-                  <IconButton
-                    size="medium"
-                    aria-label="account menu"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenuOpen}
-                    color="inherit"
+            {!profile && !isMobile && (
+              <Typography
+                variant="body2"
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  fontSize: { sm: "0.875rem", md: "0.9rem" },
+                  fontWeight: 500,
+                }}
+              >
+                {t("app.welcome")}, {user?.email}
+              </Typography>
+            )}
+
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              <LanguageSwitcher />
+            </Box>
+
+            {isMobile ? (
+              <>
+                <IconButton
+                  size="medium"
+                  aria-label="account menu"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenuOpen}
+                  color="inherit"
+                  sx={{
+                    p: 1,
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                    },
+                  }}
+                >
+                  <MoreVert />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      mt: 1,
+                      minWidth: 200,
+                      borderRadius: 2,
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                    },
+                  }}
+                >
+                  <MenuItem
+                    onClick={handleMenuClose}
                     sx={{
-                      p: 1,
+                      py: 2,
+                      borderBottom: "1px solid",
+                      borderColor: "divider",
                       "&:hover": {
-                        backgroundColor: "rgba(255,255,255,0.1)",
+                        backgroundColor: "transparent",
                       },
                     }}
                   >
-                    <MoreVert />
-                  </IconButton>
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                    PaperProps={{
-                      sx: {
-                        mt: 1,
-                        minWidth: 200,
-                        borderRadius: 2,
-                        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                      },
-                    }}
-                  >
-                    <MenuItem
-                      onClick={handleMenuClose}
+                    <Box
                       sx={{
-                        py: 2,
-                        borderBottom: "1px solid",
-                        borderColor: "divider",
-                        "&:hover": {
-                          backgroundColor: "transparent",
-                        },
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        width: "100%",
                       }}
                     >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          width: "100%",
-                        }}
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: 600, mb: 0.5 }}
                       >
+                        {profile?.full_name || user?.email}
+                      </Typography>
+                      {organization && (
                         <Typography
-                          variant="body1"
-                          sx={{ fontWeight: 600, mb: 0.5 }}
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mb: 0.5 }}
                         >
-                          {profile.full_name || user?.email}
+                          {organization.name}
                         </Typography>
-                        {organization && (
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mb: 0.5 }}
-                          >
-                            {organization.name}
-                          </Typography>
-                        )}
+                      )}
+                      {profile && (
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -302,41 +315,41 @@ const Header: React.FC = () => {
                         >
                           {profile.user_type}
                         </Typography>
-                      </Box>
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleSignOut}
-                      sx={{
-                        py: 1.5,
-                        "&:hover": {
-                          backgroundColor: "action.hover",
-                        },
-                      }}
-                    >
-                      <AccountCircle sx={{ mr: 1.5, fontSize: 20 }} />
-                      {t("app.signOut")}
-                    </MenuItem>
-                  </Menu>
-                </>
-              ) : (
-                <Button
-                  color="inherit"
-                  onClick={handleSignOut}
-                  startIcon={<AccountCircle />}
-                  sx={{
-                    borderRadius: 2,
-                    px: 2,
-                    py: 1,
-                    "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.1)",
-                    },
-                  }}
-                >
-                  {t("app.signOut")}
-                </Button>
-              )}
-            </Box>
-          )}
+                      )}
+                    </Box>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={handleSignOut}
+                    sx={{
+                      py: 1.5,
+                      "&:hover": {
+                        backgroundColor: "action.hover",
+                      },
+                    }}
+                  >
+                    <AccountCircle sx={{ mr: 1.5, fontSize: 20 }} />
+                    {t("app.signOut")}
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button
+                color="inherit"
+                onClick={handleSignOut}
+                startIcon={<AccountCircle />}
+                sx={{
+                  borderRadius: 2,
+                  px: 2,
+                  py: 1,
+                  "&:hover": {
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  },
+                }}
+              >
+                {t("app.signOut")}
+              </Button>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
 

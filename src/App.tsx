@@ -81,7 +81,16 @@ function AppContent() {
                   </>
                 ) : (
                   // User is authenticated but doesn't have a profile
-                  <Route path="*" element={<ProfileCompletion />} />
+                  <>
+                    <Route
+                      path="/complete-profile"
+                      element={<ProfileCompletion />}
+                    />
+                    <Route
+                      path="*"
+                      element={<Navigate to="/complete-profile" replace />}
+                    />
+                  </>
                 )}
               </Routes>
             </Box>
