@@ -91,6 +91,8 @@ CREATE TABLE cars (
   owner_id UUID REFERENCES profiles(id) ON DELETE SET NULL, -- Main owner of the car
   driver_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   status TEXT DEFAULT 'available' CHECK (status IN ('available', 'assigned', 'maintenance', 'retired')),
+  fuel_type TEXT CHECK (fuel_type IN ('gasoline', 'diesel', 'hybrid', 'electric')),
+  transmission_type TEXT CHECK (transmission_type IN ('manual', 'automatic')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -325,7 +327,7 @@ CREATE POLICY "Drivers can delete income sources" ON income_sources
 ### Get all car makes with their models
 
 ```sql
-SELECT 
+SELECT
   cm.name as make_name,
   cm.country,
   cm.founded_year,
@@ -340,7 +342,7 @@ ORDER BY cm.name;
 ### Get all models for a specific make
 
 ```sql
-SELECT 
+SELECT
   cmod.name as model_name,
   cmod.year_start,
   cmod.year_end,
@@ -355,15 +357,15 @@ ORDER BY cmod.name, cmod.year_start;
 ### Get all SUVs from German manufacturers
 
 ```sql
-SELECT 
+SELECT
   cm.name as make_name,
   cmod.name as model_name,
   cmod.year_start,
   cmod.year_end
 FROM car_models cmod
 JOIN car_makes cm ON cmod.make_id = cm.id
-WHERE cm.country = 'Germany' 
-  AND cmod.body_type = 'SUV' 
+WHERE cm.country = 'Germany'
+  AND cmod.body_type = 'SUV'
   AND cmod.is_active = true
 ORDER BY cm.name, cmod.name;
 ```
@@ -371,7 +373,7 @@ ORDER BY cm.name, cmod.name;
 ### Get all electric vehicles
 
 ```sql
-SELECT 
+SELECT
   cm.name as make_name,
   cmod.name as model_name,
   cmod.year_start,
@@ -379,9 +381,61 @@ SELECT
   cmod.body_type
 FROM car_models cmod
 JOIN car_makes cm ON cmod.make_id = cm.id
-WHERE cmod.fuel_type = 'electric' 
+WHERE cmod.fuel_type = 'electric'
   AND cmod.is_active = true
 ORDER BY cm.name, cmod.name;
+```
+
+### Get cars by fuel type
+
+```sql
+SELECT
+  c.vin,
+  c.make,
+  c.model,
+  c.year,
+  c.fuel_type,
+  c.transmission_type,
+  p.full_name as owner_name
+FROM cars c
+LEFT JOIN profiles p ON c.owner_id = p.id
+WHERE c.fuel_type = 'electric'
+ORDER BY c.make, c.model;
+```
+
+### Get cars by transmission type
+
+```sql
+SELECT
+  c.vin,
+  c.make,
+  c.model,
+  c.year,
+  c.fuel_type,
+  c.transmission_type,
+  p.full_name as owner_name
+FROM cars c
+LEFT JOIN profiles p ON c.owner_id = p.id
+WHERE c.transmission_type = 'manual'
+ORDER BY c.make, c.model;
+```
+
+### Get hybrid and electric cars with automatic transmission
+
+```sql
+SELECT
+  c.vin,
+  c.make,
+  c.model,
+  c.year,
+  c.fuel_type,
+  c.transmission_type,
+  p.full_name as owner_name
+FROM cars c
+LEFT JOIN profiles p ON c.owner_id = p.id
+WHERE c.fuel_type IN ('hybrid', 'electric')
+  AND c.transmission_type = 'automatic'
+ORDER BY c.fuel_type, c.make, c.model;
 ```
 
 ### Get driver dashboard data with income sources

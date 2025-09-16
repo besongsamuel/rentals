@@ -38,6 +38,8 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
     license_plate: "",
     initial_mileage: 0,
     owner_id: "",
+    fuel_type: "",
+    transmission_type: "",
   });
   const [owners, setOwners] = useState<Profile[]>([]);
   const [carMakes, setCarMakes] = useState<CarMake[]>([]);
@@ -101,6 +103,8 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
         license_plate: formData.license_plate.trim() || undefined,
         initial_mileage: formData.initial_mileage,
         owner_id: formData.owner_id,
+        fuel_type: (formData.fuel_type as "gasoline" | "diesel" | "hybrid" | "electric") || undefined,
+        transmission_type: (formData.transmission_type as "manual" | "automatic") || undefined,
       });
     } catch (error) {
       setError("Failed to add car. Please try again.");
@@ -286,6 +290,42 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
               onChange={handleInputChange("year")}
               inputProps={{ min: 1900, max: new Date().getFullYear() + 1 }}
             />
+          </Grid>
+
+          <Grid size={4}>
+            <FormControl fullWidth>
+              <InputLabel>Fuel Type</InputLabel>
+              <Select
+                value={formData.fuel_type}
+                onChange={handleSelectChange("fuel_type")}
+                label="Fuel Type"
+              >
+                <MenuItem value="">
+                  <em>Select fuel type</em>
+                </MenuItem>
+                <MenuItem value="gasoline">Gasoline</MenuItem>
+                <MenuItem value="diesel">Diesel</MenuItem>
+                <MenuItem value="hybrid">Hybrid</MenuItem>
+                <MenuItem value="electric">Electric</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid size={4}>
+            <FormControl fullWidth>
+              <InputLabel>Transmission</InputLabel>
+              <Select
+                value={formData.transmission_type}
+                onChange={handleSelectChange("transmission_type")}
+                label="Transmission"
+              >
+                <MenuItem value="">
+                  <em>Select transmission</em>
+                </MenuItem>
+                <MenuItem value="manual">Manual</MenuItem>
+                <MenuItem value="automatic">Automatic</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid size={4}>

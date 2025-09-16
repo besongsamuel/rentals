@@ -148,6 +148,22 @@ const CarList: React.FC<CarListProps> = ({
                     </Typography>
                   )}
 
+                  {car.fuel_type && (
+                    <Typography variant="body2" color="text.secondary">
+                      <strong>Fuel:</strong>{" "}
+                      {car.fuel_type.charAt(0).toUpperCase() +
+                        car.fuel_type.slice(1)}
+                    </Typography>
+                  )}
+
+                  {car.transmission_type && (
+                    <Typography variant="body2" color="text.secondary">
+                      <strong>Transmission:</strong>{" "}
+                      {car.transmission_type.charAt(0).toUpperCase() +
+                        car.transmission_type.slice(1)}
+                    </Typography>
+                  )}
+
                   <Typography variant="body2" color="text.secondary">
                     <strong>{t("cars.currentMileage")}:</strong>{" "}
                     {car.current_mileage.toLocaleString()} {t("common.km")}

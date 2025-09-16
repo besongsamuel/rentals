@@ -110,6 +110,7 @@
     "reportsFound": "rapports trouvés",
     "viewDetails": "Détails",
     "noReports": "Aucun rapport hebdomadaire trouvé pour la période sélectionnée.",
+    "noReportsFound": "Aucun rapport trouvé",
     "filter": "Filtrer les rapports",
     "filterReports": "Filtrer les rapports",
     "year": "Année",
@@ -126,8 +127,6 @@
     "nextWeek": "Semaine suivante",
     "driverEarningsHelper": "Gains du conducteur pour la semaine",
     "maintenanceExpensesHelper": "Coûts de maintenance et de réparation",
-    "rideShareIncomeHelper": "Combien a été gagné avec Yango covoiturage cette semaine?",
-    "rentalIncomeHelper": "Revenus des services de location de voitures",
     "totalDistance": "Distance totale"
   },
   "incomeSources": {

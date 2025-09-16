@@ -64,6 +64,8 @@ export interface Car {
   owner_id: string | null; // Main owner of the car
   driver_id: string | null;
   status: "available" | "assigned" | "maintenance" | "retired";
+  fuel_type: "gasoline" | "diesel" | "hybrid" | "electric" | null;
+  transmission_type: "manual" | "automatic" | null;
   created_at: string;
   updated_at: string;
 }
@@ -145,6 +147,8 @@ export interface CreateCarData {
   license_plate?: string;
   initial_mileage?: number;
   owner_id: string; // Required - main owner of the car
+  fuel_type?: "gasoline" | "diesel" | "hybrid" | "electric";
+  transmission_type?: "manual" | "automatic";
 }
 
 export interface CreateWeeklyReportData {

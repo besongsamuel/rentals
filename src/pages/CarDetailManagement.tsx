@@ -442,6 +442,20 @@ const CarDetailManagement: React.FC = () => {
               <Typography variant="body2" color="text.secondary">
                 Mileage: {car.current_mileage.toLocaleString()} KM
               </Typography>
+              {car.fuel_type && (
+                <Typography variant="body2" color="text.secondary">
+                  Fuel:{" "}
+                  {car.fuel_type.charAt(0).toUpperCase() +
+                    car.fuel_type.slice(1)}
+                </Typography>
+              )}
+              {car.transmission_type && (
+                <Typography variant="body2" color="text.secondary">
+                  Transmission:{" "}
+                  {car.transmission_type.charAt(0).toUpperCase() +
+                    car.transmission_type.slice(1)}
+                </Typography>
+              )}
               <Chip
                 label={car.status}
                 color={getStatusColor(car.status) as any}

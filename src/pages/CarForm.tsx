@@ -37,6 +37,8 @@ const CarForm: React.FC = () => {
     license_plate: "",
     initial_mileage: 0,
     owner_id: "",
+    fuel_type: "",
+    transmission_type: "",
   });
 
   const [owners, setOwners] = useState<Profile[]>([]);
@@ -75,6 +77,8 @@ const CarForm: React.FC = () => {
               license_plate: car.license_plate || "",
               initial_mileage: car.initial_mileage,
               owner_id: car.owner_id || "",
+              fuel_type: car.fuel_type || "",
+              transmission_type: car.transmission_type || "",
             });
 
             // Load models for the selected make
@@ -152,6 +156,8 @@ const CarForm: React.FC = () => {
         license_plate: formData.license_plate.trim() || undefined,
         initial_mileage: formData.initial_mileage,
         owner_id: formData.owner_id,
+        fuel_type: (formData.fuel_type as "gasoline" | "diesel" | "hybrid" | "electric") || undefined,
+        transmission_type: (formData.transmission_type as "manual" | "automatic") || undefined,
       };
 
       if (isEditMode) {
@@ -392,6 +398,44 @@ const CarForm: React.FC = () => {
                 inputProps={{ min: 1900, max: new Date().getFullYear() + 1 }}
                 disabled={saving}
               />
+            </Grid>
+
+            <Grid size={4}>
+              <FormControl fullWidth>
+                <InputLabel>Fuel Type</InputLabel>
+                <Select
+                  value={formData.fuel_type}
+                  onChange={handleSelectChange("fuel_type")}
+                  label="Fuel Type"
+                  disabled={saving}
+                >
+                  <MenuItem value="">
+                    <em>Select fuel type</em>
+                  </MenuItem>
+                  <MenuItem value="gasoline">Gasoline</MenuItem>
+                  <MenuItem value="diesel">Diesel</MenuItem>
+                  <MenuItem value="hybrid">Hybrid</MenuItem>
+                  <MenuItem value="electric">Electric</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid size={4}>
+              <FormControl fullWidth>
+                <InputLabel>Transmission</InputLabel>
+                <Select
+                  value={formData.transmission_type}
+                  onChange={handleSelectChange("transmission_type")}
+                  label="Transmission"
+                  disabled={saving}
+                >
+                  <MenuItem value="">
+                    <em>Select transmission</em>
+                  </MenuItem>
+                  <MenuItem value="manual">Manual</MenuItem>
+                  <MenuItem value="automatic">Automatic</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid size={4}>
