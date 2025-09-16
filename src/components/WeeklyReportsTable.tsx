@@ -3,7 +3,11 @@ import {
   Box,
   Button,
   Chip,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -29,6 +33,8 @@ interface WeeklyReportsTableProps {
   onApproveReport?: (reportId: string) => void;
   onSubmitReport?: (reportId: string) => void;
   getReportStatusColor: (status: string) => string;
+  selectedDriverId?: string;
+  onDriverFilterChange?: (driverId: string) => void;
 }
 
 const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
@@ -42,6 +48,8 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
   onApproveReport,
   onSubmitReport,
   getReportStatusColor,
+  selectedDriverId = "",
+  onDriverFilterChange,
 }) => {
   const { t } = useTranslation();
   const [earningsDialogOpen, setEarningsDialogOpen] = useState(false);
@@ -63,6 +71,11 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
     setSelectedReport(null);
   };
 
+  // Filter reports by selected driver
+  const filteredReports = selectedDriverId
+    ? weeklyReports.filter((report) => report.driver_id === selectedDriverId)
+    : weeklyReports;
+
   if (weeklyReports.length === 0) {
     return (
       <Box sx={{ textAlign: "center", py: 4 }}>
@@ -75,13 +88,38 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
 
   return (
     <>
+      {/* Driver Filter */}
+      {drivers.length > 1 && onDriverFilterChange && (
+        <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>{t("reports.filterByDriver")}</InputLabel>
+            <Select
+              value={selectedDriverId}
+              onChange={(e) => onDriverFilterChange(e.target.value)}
+              label={t("reports.filterByDriver")}
+            >
+              <MenuItem value="">
+                <em>{t("reports.allDrivers")}</em>
+              </MenuItem>
+              {drivers.map((driver) => (
+                <MenuItem key={driver.id} value={driver.id}>
+                  {driver.full_name || driver.email}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Typography variant="body2" color="text.secondary">
+            {filteredReports.length} {t("reports.reportsFound")}
+          </Typography>
+        </Box>
+      )}
+
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Actions</TableCell>
               <TableCell>{t("reports.weekPeriod")}</TableCell>
-              <TableCell>{t("reports.driver")}</TableCell>
               <TableCell align="right">{t("reports.startMileage")}</TableCell>
               <TableCell align="right">{t("reports.endMileage")}</TableCell>
               <TableCell align="right">{t("reports.driverEarnings")}</TableCell>
@@ -91,7 +129,7 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {weeklyReports.map((report) => (
+            {filteredReports.map((report) => (
               <TableRow key={report.id}>
                 <TableCell>
                   <Box sx={{ display: "flex", gap: 1 }}>
@@ -134,11 +172,6 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                 <TableCell>
                   {new Date(report.week_start_date).toLocaleDateString()} -{" "}
                   {new Date(report.week_end_date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {drivers.find((d) => d.id === report.driver_id)?.full_name ||
-                    drivers.find((d) => d.id === report.driver_id)?.email ||
-                    "Unknown Driver"}
                 </TableCell>
                 <TableCell align="right">
                   {report.start_mileage.toLocaleString()} KM

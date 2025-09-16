@@ -7,6 +7,37 @@ export interface Organization {
   updated_at: string;
 }
 
+// Car Make interface matching database schema
+export interface CarMake {
+  id: string;
+  name: string;
+  country: string | null;
+  founded_year: number | null;
+  logo_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Car Model interface matching database schema
+export interface CarModel {
+  id: string;
+  make_id: string;
+  name: string;
+  year_start: number | null;
+  year_end: number | null;
+  body_type: string | null;
+  fuel_type: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Car Model with Make data (for joins)
+export interface CarModelWithMake extends CarModel {
+  car_makes: CarMake | null;
+}
+
 // Profile interface matching database schema
 export interface Profile {
   id: string; // Now directly references auth.users(id)
@@ -64,6 +95,7 @@ export interface WeeklyReport {
   end_mileage: number;
   driver_earnings: number;
   maintenance_expenses: number;
+  gas_expense: number;
   ride_share_income: number;
   rental_income: number;
   currency: string;
@@ -123,6 +155,7 @@ export interface CreateWeeklyReportData {
   end_mileage: number;
   driver_earnings?: number;
   maintenance_expenses?: number;
+  gas_expense?: number;
   ride_share_income?: number;
   rental_income?: number;
   currency?: string;

@@ -25,6 +25,8 @@ interface CarStats {
   totalMileage: number;
   averageWeeklyExpenses: number;
   totalExpenses: number;
+  averageWeeklyGasExpenses: number;
+  totalGasExpenses: number;
   averageWeeklyRideShareIncome: number;
   totalRideShareIncome: number;
   averageWeeklyRentalIncome: number;
@@ -175,7 +177,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
 
         <Grid container spacing={3}>
           {/* Usage Statistics */}
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="primary" gutterBottom>
                 {formatMileage(statistics.averageWeeklyMileage)}
@@ -196,7 +198,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
           </Grid>
 
           {/* Expenses */}
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="error.main" gutterBottom>
                 {formatCurrency(statistics.averageWeeklyExpenses)}
@@ -211,8 +213,24 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
             </Box>
           </Grid>
 
+          {/* Gas Expenses */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h4" color="warning.main" gutterBottom>
+                {formatCurrency(statistics.averageWeeklyGasExpenses)}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                {t("statistics.averageWeeklyGasExpenses")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t("statistics.totalGasExpenses")}:{" "}
+                {formatCurrency(statistics.totalGasExpenses)}
+              </Typography>
+            </Box>
+          </Grid>
+
           {/* Income Breakdown */}
-          <Grid size={{ xs: 12, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="success.main" gutterBottom>
                 {formatCurrency(

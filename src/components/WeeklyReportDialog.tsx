@@ -104,6 +104,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     end_mileage: 0,
     driver_earnings: 0,
     maintenance_expenses: 0,
+    gas_expense: 0,
     ride_share_income: 0,
     rental_income: 0,
     currency: "XAF",
@@ -122,6 +123,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           end_mileage: editingReport.end_mileage,
           driver_earnings: editingReport.driver_earnings,
           maintenance_expenses: editingReport.maintenance_expenses,
+          gas_expense: editingReport.gas_expense || 0,
           ride_share_income: (editingReport as any).ride_share_income || 0,
           rental_income: (editingReport as any).rental_income || 0,
           currency: (editingReport as any).currency || "XAF",
@@ -137,6 +139,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           end_mileage: 0,
           driver_earnings: 0,
           maintenance_expenses: 0,
+          gas_expense: 0,
           ride_share_income: 0,
           rental_income: 0,
           currency: "XAF",
@@ -312,6 +315,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 value={formData.week_start_date}
                 onChange={handleInputChange("week_start_date")}
                 InputLabelProps={{ shrink: true }}
+                helperText={t("reports.weekStartHelper")}
+                disabled
                 required
               />
             </Grid>
@@ -323,6 +328,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 value={formData.week_end_date}
                 onChange={handleInputChange("week_end_date")}
                 InputLabelProps={{ shrink: true }}
+                helperText={t("reports.weekEndHelper")}
+                disabled
                 required
               />
             </Grid>
@@ -335,7 +342,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 value={formData.start_mileage}
                 onChange={handleInputChange("start_mileage")}
                 inputProps={{ min: 0, step: 1 }}
-                helperText={t("common.km")}
+                helperText={t("reports.startMileageHelper")}
                 required
               />
             </Grid>
@@ -347,7 +354,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 value={formData.end_mileage}
                 onChange={handleInputChange("end_mileage")}
                 inputProps={{ min: 0, step: 1 }}
-                helperText={t("common.km")}
+                helperText={t("reports.endMileageHelper")}
                 required
               />
             </Grid>
@@ -387,6 +394,26 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                   ),
                 }}
                 helperText={t("reports.maintenanceExpensesHelper")}
+                required
+              />
+            </Grid>
+
+            <Grid size={6}>
+              <TextField
+                fullWidth
+                label={t("reports.gasExpense")}
+                type="number"
+                value={formData.gas_expense}
+                onChange={handleInputChange("gas_expense")}
+                inputProps={{ min: 0, step: 0.01 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {formData.currency}
+                    </InputAdornment>
+                  ),
+                }}
+                helperText={t("reports.gasExpenseHelper")}
                 required
               />
             </Grid>

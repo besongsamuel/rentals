@@ -52,6 +52,7 @@ const CarDetailManagement: React.FC = () => {
   const [selectedDriverId, setSelectedDriverId] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
+  const [selectedDriverFilter, setSelectedDriverFilter] = useState<string>("");
   const [showCarOwnerForm, setShowCarOwnerForm] = useState(false);
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
@@ -202,6 +203,10 @@ const CarDetailManagement: React.FC = () => {
   const handleViewEarnings = (report: WeeklyReport) => {
     setSelectedReport(report);
     setEarningsDialogOpen(true);
+  };
+
+  const handleDriverFilterChange = (driverId: string) => {
+    setSelectedDriverFilter(driverId);
   };
 
   const handleCloseEarningsDialog = () => {
@@ -753,6 +758,8 @@ const CarDetailManagement: React.FC = () => {
                 onApproveReport={handleApproveReport}
                 onSubmitReport={handleSubmitReport}
                 getReportStatusColor={getReportStatusColor}
+                selectedDriverId={selectedDriverFilter}
+                onDriverFilterChange={handleDriverFilterChange}
               />
             </CardContent>
           </Card>

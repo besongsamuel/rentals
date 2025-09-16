@@ -61,6 +61,7 @@ const CarReports: React.FC = () => {
   const [showAddReportForm, setShowAddReportForm] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
+  const [selectedDriverFilter, setSelectedDriverFilter] = useState<string>("");
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
@@ -250,6 +251,10 @@ const CarReports: React.FC = () => {
   const handleViewEarnings = (report: WeeklyReport) => {
     setSelectedReport(report);
     setEarningsDialogOpen(true);
+  };
+
+  const handleDriverFilterChange = (driverId: string) => {
+    setSelectedDriverFilter(driverId);
   };
 
   const handleCloseEarningsDialog = () => {
@@ -582,12 +587,20 @@ const CarReports: React.FC = () => {
                       onApproveReport={handleApproveReport}
                       onSubmitReport={handleSubmitReport}
                       getReportStatusColor={getReportStatusColor}
+                      selectedDriverId={selectedDriverFilter}
+                      onDriverFilterChange={handleDriverFilterChange}
                     />
                   </Box>
 
                   {/* Mobile Cards */}
                   <Box sx={{ display: { xs: "block", md: "none" } }}>
-                    {weeklyReports.map((report) => (
+                    {weeklyReports
+                      .filter((report) =>
+                        selectedDriverFilter
+                          ? report.driver_id === selectedDriverFilter
+                          : true
+                      )
+                      .map((report) => (
                       <Card key={report.id} sx={{ mb: 2, p: 2 }}>
                         <Stack spacing={2}>
                           <Box>
@@ -608,21 +621,6 @@ const CarReports: React.FC = () => {
                             </Typography>
                           </Box>
 
-                          <Box>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
-                            >
-                              {t("reports.driver")}
-                            </Typography>
-                            <Typography variant="body2">
-                              {drivers.find((d) => d.id === report.driver_id)
-                                ?.full_name ||
-                                drivers.find((d) => d.id === report.driver_id)
-                                  ?.email ||
-                                "Unknown Driver"}
-                            </Typography>
-                          </Box>
 
                           <Grid container spacing={2}>
                             <Grid size={6}>

@@ -153,6 +153,7 @@ export const weeklyReportService = {
         ...reportData,
         driver_earnings: reportData.driver_earnings || 0,
         maintenance_expenses: reportData.maintenance_expenses || 0,
+        gas_expense: reportData.gas_expense || 0,
         status: "draft",
       })
       .select()
@@ -330,6 +331,8 @@ export const weeklyReportService = {
           totalMileage: 0,
           averageWeeklyExpenses: 0,
           totalExpenses: 0,
+          averageWeeklyGasExpenses: 0,
+          totalGasExpenses: 0,
           averageWeeklyRideShareIncome: 0,
           totalRideShareIncome: 0,
           averageWeeklyRentalIncome: 0,
@@ -352,6 +355,10 @@ export const weeklyReportService = {
         (sum, report) => sum + (report.maintenance_expenses || 0),
         0
       );
+      const totalGasExpenses = reports.reduce(
+        (sum, report) => sum + (report.gas_expense || 0),
+        0
+      );
       const totalRideShareIncome = reports.reduce(
         (sum, report) => sum + (report.ride_share_income || 0),
         0
@@ -365,7 +372,8 @@ export const weeklyReportService = {
         0
       );
       const totalIncome = totalRideShareIncome + totalRentalIncome;
-      const totalProfit = totalIncome - totalExpenses;
+      const totalAllExpenses = totalExpenses + totalGasExpenses;
+      const totalProfit = totalIncome - totalAllExpenses;
 
       return {
         totalReports,
@@ -373,6 +381,8 @@ export const weeklyReportService = {
         totalMileage,
         averageWeeklyExpenses: totalExpenses / totalReports,
         totalExpenses,
+        averageWeeklyGasExpenses: totalGasExpenses / totalReports,
+        totalGasExpenses,
         averageWeeklyRideShareIncome: totalRideShareIncome / totalReports,
         totalRideShareIncome,
         averageWeeklyRentalIncome: totalRentalIncome / totalReports,

@@ -41,7 +41,9 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
 
   const totalIncome =
     (weeklyReport.ride_share_income || 0) + (weeklyReport.rental_income || 0);
-  const netEarnings = totalIncome - (weeklyReport.maintenance_expenses || 0);
+  const totalExpenses =
+    (weeklyReport.maintenance_expenses || 0) + (weeklyReport.gas_expense || 0);
+  const netEarnings = totalIncome - totalExpenses;
 
   return (
     <Dialog
@@ -115,6 +117,27 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
               </Typography>
 
               <Box sx={{ pl: 2 }}>
+                <Grid container spacing={2}>
+                  <Grid size={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Maintenance Expenses
+                    </Typography>
+                    <Typography variant="h6" color="error.main">
+                      {formatCurrency(weeklyReport.maintenance_expenses || 0)}
+                    </Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Gas Expenses
+                    </Typography>
+                    <Typography variant="h6" color="error.main">
+                      {formatCurrency(weeklyReport.gas_expense || 0)}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ my: 2 }} />
+
                 <Box
                   sx={{
                     display: "flex",
@@ -122,11 +145,11 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
                     alignItems: "center",
                   }}
                 >
-                  <Typography variant="body2" color="text.secondary">
-                    Maintenance Expenses
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Total Expenses
                   </Typography>
-                  <Typography variant="h6" color="error.main">
-                    {formatCurrency(weeklyReport.maintenance_expenses || 0)}
+                  <Typography variant="h6" color="error.main" fontWeight="bold">
+                    {formatCurrency(totalExpenses)}
                   </Typography>
                 </Box>
               </Box>
@@ -187,7 +210,7 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
                       Total Expenses
                     </Typography>
                     <Typography variant="subtitle1" color="error.main">
-                      {formatCurrency(weeklyReport.maintenance_expenses || 0)}
+                      {formatCurrency(totalExpenses)}
                     </Typography>
                   </Grid>
                   <Grid size={6}>
