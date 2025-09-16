@@ -106,7 +106,16 @@
     "clearFilters": "Effacer les filtres",
     "allReports": "Tous les rapports",
     "details": "Détails des rapports hebdomadaires",
-    "found": "{{count}} rapport(s) trouvé(s)"
+    "found": "{{count}} rapport(s) trouvé(s)",
+    "editReport": "Modifier le rapport hebdomadaire",
+    "updateReport": "Mettre à jour le rapport",
+    "previousWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "driverEarningsHelper": "Gains du conducteur pour la semaine",
+    "maintenanceExpensesHelper": "Coûts de maintenance et de réparation",
+    "rideShareIncomeHelper": "Combien a été gagné avec Yango covoiturage cette semaine?",
+    "rentalIncomeHelper": "Revenus des services de location de voitures",
+    "totalDistance": "Distance totale"
   },
   "incomeSources": {
     "title": "Sources de revenus",
@@ -200,7 +209,14 @@
     "failedToApprove": "Échec de l'approbation du rapport",
     "failedToSubmit": "Échec de la soumission du rapport",
     "failedToAddOwner": "Échec de l'ajout du propriétaire de véhicule",
-    "failedToRemoveOwner": "Échec de la suppression du propriétaire de véhicule"
+    "failedToRemoveOwner": "Échec de la suppression du propriétaire de véhicule",
+    "carSelectionRequired": "La sélection du véhicule est requise",
+    "onlyAssignedCars": "Vous ne pouvez créer des rapports que pour les véhicules qui vous sont assignés",
+    "weekDatesRequired": "Les dates de début et de fin de semaine sont requises",
+    "mileageNonNegative": "Les valeurs de kilométrage doivent être non négatives",
+    "endMileageGreater": "Le kilométrage de fin doit être supérieur ou égal au kilométrage de début",
+    "earningsNonNegative": "Les gains du conducteur doivent être non négatifs",
+    "expensesNonNegative": "Les dépenses de maintenance doivent être non négatives"
   },
   "language": {
     "switch": "Changer de langue",

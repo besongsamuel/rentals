@@ -106,7 +106,16 @@
     "clearFilters": "Clear Filters",
     "allReports": "All Reports",
     "details": "Weekly Reports Details",
-    "found": "Found {{count}} report(s)"
+    "found": "Found {{count}} report(s)",
+    "editReport": "Edit Weekly Report",
+    "updateReport": "Update Report",
+    "previousWeek": "Previous Week",
+    "nextWeek": "Next Week",
+    "driverEarningsHelper": "Driver's earnings for the week",
+    "maintenanceExpensesHelper": "Maintenance and repair costs",
+    "rideShareIncomeHelper": "How much was made from Yango ride share this week?",
+    "rentalIncomeHelper": "Income from car rental services",
+    "totalDistance": "Total Distance"
   },
   "incomeSources": {
     "title": "Income Sources",
@@ -200,7 +209,14 @@
     "failedToApprove": "Failed to approve report",
     "failedToSubmit": "Failed to submit report",
     "failedToAddOwner": "Failed to add car owner",
-    "failedToRemoveOwner": "Failed to remove car owner"
+    "failedToRemoveOwner": "Failed to remove car owner",
+    "carSelectionRequired": "Car selection is required",
+    "onlyAssignedCars": "You can only create reports for cars assigned to you",
+    "weekDatesRequired": "Week start and end dates are required",
+    "mileageNonNegative": "Mileage values must be non-negative",
+    "endMileageGreater": "End mileage must be greater than or equal to start mileage",
+    "earningsNonNegative": "Driver earnings must be non-negative",
+    "expensesNonNegative": "Maintenance expenses must be non-negative"
   },
   "language": {
     "switch": "Switch Language",
