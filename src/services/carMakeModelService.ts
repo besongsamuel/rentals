@@ -106,10 +106,12 @@ export const carMakeModelService = {
   async getCarModelsWithMake(): Promise<CarModelWithMake[]> {
     const { data, error } = await supabase
       .from("car_models")
-      .select(`
+      .select(
+        `
         *,
         car_makes (*)
-      `)
+      `
+      )
       .eq("is_active", true)
       .order("car_makes.name, name");
 
@@ -125,10 +127,12 @@ export const carMakeModelService = {
   async getCarModelsByBodyType(bodyType: string): Promise<CarModelWithMake[]> {
     const { data, error } = await supabase
       .from("car_models")
-      .select(`
+      .select(
+        `
         *,
         car_makes (*)
-      `)
+      `
+      )
       .eq("body_type", bodyType)
       .eq("is_active", true)
       .order("car_makes.name, name");
@@ -145,10 +149,12 @@ export const carMakeModelService = {
   async getCarModelsByFuelType(fuelType: string): Promise<CarModelWithMake[]> {
     const { data, error } = await supabase
       .from("car_models")
-      .select(`
+      .select(
+        `
         *,
         car_makes (*)
-      `)
+      `
+      )
       .eq("fuel_type", fuelType)
       .eq("is_active", true)
       .order("car_makes.name, name");
@@ -165,10 +171,12 @@ export const carMakeModelService = {
   async getCarModelsByCountry(country: string): Promise<CarModelWithMake[]> {
     const { data, error } = await supabase
       .from("car_models")
-      .select(`
+      .select(
+        `
         *,
         car_makes (*)
-      `)
+      `
+      )
       .eq("car_makes.country", country)
       .eq("is_active", true)
       .order("car_makes.name, name");
@@ -202,10 +210,12 @@ export const carMakeModelService = {
   async searchCarModels(query: string): Promise<CarModelWithMake[]> {
     const { data, error } = await supabase
       .from("car_models")
-      .select(`
+      .select(
+        `
         *,
         car_makes (*)
-      `)
+      `
+      )
       .ilike("name", `%${query}%`)
       .eq("is_active", true)
       .order("car_makes.name, name")
@@ -232,7 +242,9 @@ export const carMakeModelService = {
       throw error;
     }
 
-    const uniqueBodyTypes = [...new Set(data?.map(item => item.body_type).filter(Boolean))];
+    const uniqueBodyTypes = Array.from(
+      new Set(data?.map((item) => item.body_type).filter(Boolean))
+    );
     return uniqueBodyTypes.sort();
   },
 
@@ -249,7 +261,9 @@ export const carMakeModelService = {
       throw error;
     }
 
-    const uniqueFuelTypes = [...new Set(data?.map(item => item.fuel_type).filter(Boolean))];
+    const uniqueFuelTypes = Array.from(
+      new Set(data?.map((item) => item.fuel_type).filter(Boolean))
+    );
     return uniqueFuelTypes.sort();
   },
 
@@ -266,7 +280,9 @@ export const carMakeModelService = {
       throw error;
     }
 
-    const uniqueCountries = [...new Set(data?.map(item => item.country).filter(Boolean))];
+    const uniqueCountries = Array.from(
+      new Set(data?.map((item) => item.country).filter(Boolean))
+    );
     return uniqueCountries.sort();
   },
 };

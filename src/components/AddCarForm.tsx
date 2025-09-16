@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -12,8 +13,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { carMakeModelService } from "../services/carMakeModelService";
 import { profileService } from "../services/profileService";
-import { CreateCarData, Profile } from "../types";
+import { CarMake, CarModel, CreateCarData, Profile } from "../types";
 import ErrorAlert from "./ErrorAlert";
 
 interface AddCarFormProps {
@@ -38,25 +40,34 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
     owner_id: "",
   });
   const [owners, setOwners] = useState<Profile[]>([]);
+  const [carMakes, setCarMakes] = useState<CarMake[]>([]);
+  const [carModels, setCarModels] = useState<CarModel[]>([]);
   const [loadingOwners, setLoadingOwners] = useState(true);
+  const [loadingMakes, setLoadingMakes] = useState(true);
+  const [loadingModels, setLoadingModels] = useState(false);
   const [error, setError] = useState("");
 
-  // Load owners on component mount
+  // Load owners and car makes on component mount
   useEffect(() => {
-    const loadOwners = async () => {
+    const loadData = async () => {
       try {
-        const ownersData = await profileService.getAllOwners(organizationId);
+        const [ownersData, makesData] = await Promise.all([
+          profileService.getAllOwners(organizationId),
+          carMakeModelService.getCarMakes(),
+        ]);
         setOwners(ownersData);
+        setCarMakes(makesData);
       } catch (error) {
-        console.error("Error loading owners:", error);
-        setError("Failed to load owners. Please try again.");
+        console.error("Error loading data:", error);
+        setError("Failed to load data. Please try again.");
       } finally {
         setLoadingOwners(false);
+        setLoadingMakes(false);
       }
     };
 
-    loadOwners();
-  }, []);
+    loadData();
+  }, [organizationId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,6 +124,43 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
     }));
   };
 
+  const handleMakeChange = async (event: any, newValue: string | null) => {
+    const selectedMakeName = newValue || "";
+    setFormData((prev) => ({
+      ...prev,
+      make: selectedMakeName,
+      model: "", // Reset model when make changes
+    }));
+
+    // Load models for the selected make
+    if (selectedMakeName) {
+      setLoadingModels(true);
+      try {
+        const selectedMake = carMakes.find((m) => m.name === selectedMakeName);
+        if (selectedMake) {
+          const models = await carMakeModelService.getCarModelsByMakeId(
+            selectedMake.id
+          );
+          setCarModels(models);
+        }
+      } catch (error) {
+        console.error("Error loading models:", error);
+        setError("Failed to load car models. Please try again.");
+      } finally {
+        setLoadingModels(false);
+      }
+    } else {
+      setCarModels([]);
+    }
+  };
+
+  const handleModelChange = (event: any, newValue: string | null) => {
+    setFormData((prev) => ({
+      ...prev,
+      model: newValue || "",
+    }));
+  };
+
   return (
     <Paper elevation={3} sx={{ p: 4 }}>
       <Typography variant="h5" gutterBottom>
@@ -160,24 +208,71 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
           </Grid>
 
           <Grid size={6}>
-            <TextField
-              required
-              fullWidth
-              label="Make"
+            <Autocomplete
+              freeSolo
+              options={carMakes.map((make) => make.name)}
               value={formData.make}
-              onChange={handleInputChange("make")}
-              placeholder="e.g., Toyota"
+              onChange={handleMakeChange}
+              onInputChange={(event, newInputValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  make: newInputValue,
+                  model: "", // Reset model when make changes
+                }));
+              }}
+              loading={loadingMakes}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Make"
+                  required
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loadingMakes ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                />
+              )}
             />
           </Grid>
 
           <Grid size={6}>
-            <TextField
-              required
-              fullWidth
-              label="Model"
+            <Autocomplete
+              freeSolo
+              options={carModels.map((model) => model.name)}
               value={formData.model}
-              onChange={handleInputChange("model")}
-              placeholder="e.g., Camry"
+              onChange={handleModelChange}
+              onInputChange={(event, newInputValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  model: newInputValue,
+                }));
+              }}
+              loading={loadingModels}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Model"
+                  required
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loadingModels ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  }}
+                />
+              )}
             />
           </Grid>
 
