@@ -224,7 +224,6 @@ const CarOwners: React.FC<CarOwnersProps> = ({ currentUser, carId }) => {
             onSubmit={handleAddCarOwner}
             onCancel={handleAddOwnerDialogClose}
             existingOwners={carOwners.map((owner) => owner.owner_id)}
-            organizationId={currentUser.organization_id}
           />
         </DialogContent>
       </Dialog>

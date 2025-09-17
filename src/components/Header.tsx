@@ -24,8 +24,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
-import { organizationService } from "../services/organizationService";
-import { Organization } from "../types";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const Header: React.FC = () => {
@@ -33,7 +31,6 @@ const Header: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [organization, setOrganization] = useState<Organization | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -94,24 +91,6 @@ const Header: React.FC = () => {
 
     return baseItems;
   };
-
-  // Load organization data when profile is available
-  useEffect(() => {
-    const loadOrganization = async () => {
-      if (profile?.organization_id) {
-        try {
-          const org = await organizationService.getOrganizationById(
-            profile.organization_id
-          );
-          setOrganization(org);
-        } catch (error) {
-          console.error("Error loading organization:", error);
-        }
-      }
-    };
-
-    loadOrganization();
-  }, [profile?.organization_id]);
 
   // Update current path when component mounts
   useEffect(() => {
@@ -199,21 +178,6 @@ const Header: React.FC = () => {
                 >
                   {t("app.welcome")}, {profile.full_name || user?.email}
                 </Typography>
-
-                {organization && (
-                  <Chip
-                    label={organization.name}
-                    size="small"
-                    variant="outlined"
-                    sx={{
-                      display: { xs: "none", lg: "flex" },
-                      borderColor: "rgba(255,255,255,0.3)",
-                      color: "inherit",
-                      fontSize: "0.75rem",
-                      height: 24,
-                    }}
-                  />
-                )}
 
                 <Chip
                   label={t(`profile.${profile.user_type}`)}
@@ -313,15 +277,6 @@ const Header: React.FC = () => {
                       >
                         {profile?.full_name || user?.email}
                       </Typography>
-                      {organization && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ mb: 0.5 }}
-                        >
-                          {organization.name}
-                        </Typography>
-                      )}
                       {profile && (
                         <Typography
                           variant="body2"
@@ -410,11 +365,6 @@ const Header: React.FC = () => {
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 {profile.full_name || user?.email}
               </Typography>
-              {organization && (
-                <Typography variant="body2" color="text.secondary">
-                  {organization.name}
-                </Typography>
-              )}
               <Chip
                 label={t(`profile.${profile.user_type}`)}
                 size="small"

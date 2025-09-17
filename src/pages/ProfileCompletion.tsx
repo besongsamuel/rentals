@@ -16,8 +16,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
-import { organizationService } from "../services/organizationService";
-import { Organization } from "../types";
 
 const ProfileCompletion: React.FC = () => {
   const { createProfile } = useUserContext();
@@ -26,33 +24,10 @@ const ProfileCompletion: React.FC = () => {
     full_name: "",
     user_type: "driver" as "driver" | "owner",
     phone: "",
-    organization_id: "",
   });
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loadingOrganizations, setLoadingOrganizations] = useState(true);
 
-  // Load organizations on component mount
-  useEffect(() => {
-    const loadOrganizations = async () => {
-      try {
-        const orgs = await organizationService.getAllOrganizations();
-        setOrganizations(orgs);
-        // Set default organization if available
-        if (orgs.length > 0) {
-          setFormData((prev) => ({ ...prev, organization_id: orgs[0].id }));
-        }
-      } catch (error) {
-        console.error("Error loading organizations:", error);
-        setError("Failed to load organizations");
-      } finally {
-        setLoadingOrganizations(false);
-      }
-    };
-
-    loadOrganizations();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,17 +40,11 @@ const ProfileCompletion: React.FC = () => {
       return;
     }
 
-    if (!formData.organization_id) {
-      setError("Organization is required");
-      setLoading(false);
-      return;
-    }
 
     const { error } = await createProfile({
       full_name: formData.full_name.trim(),
       user_type: formData.user_type,
       phone: formData.phone.trim() || undefined,
-      organization_id: formData.organization_id,
     });
 
     if (error) {
@@ -180,35 +149,6 @@ const ProfileCompletion: React.FC = () => {
             helperText={t("profile.phoneHelper")}
           />
 
-          <FormControl margin="normal" fullWidth>
-            <InputLabel id="organization-label">
-              {t("profile.organization")} *
-            </InputLabel>
-            <Select
-              labelId="organization-label"
-              id="organization"
-              value={formData.organization_id}
-              label={`${t("profile.organization")} *`}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  organization_id: e.target.value,
-                }))
-              }
-              disabled={loadingOrganizations}
-            >
-              {organizations.map((org) => (
-                <MenuItem key={org.id} value={org.id}>
-                  {org.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {loadingOrganizations && (
-              <Typography variant="caption" color="text.secondary">
-                {t("common.loading")}
-              </Typography>
-            )}
-          </FormControl>
 
           <Box sx={{ mt: 3, mb: 2 }}>
             <Typography

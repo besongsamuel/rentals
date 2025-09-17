@@ -1,11 +1,5 @@
-// Organization interface matching database schema
-export interface Organization {
-  id: string;
-  name: string;
-  description: string | null;
-  created_at: string;
-  updated_at: string;
-}
+// Organization interface - REMOVED from database schema
+// The organizations table has been dropped to simplify the application structure
 
 // Car Make interface matching database schema
 export interface CarMake {
@@ -45,7 +39,6 @@ export interface Profile {
   full_name: string | null;
   user_type: "driver" | "owner";
   phone: string | null;
-  organization_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -125,7 +118,6 @@ export interface CreateProfileData {
   full_name: string;
   user_type: UserType;
   phone?: string;
-  organization_id?: string;
 }
 
 // Type for creating car ownership

@@ -17,18 +17,12 @@ export const profileService = {
     return data;
   },
 
-  async getAllOwners(organizationId?: string): Promise<Profile[]> {
-    let query = supabase
+  async getAllOwners(): Promise<Profile[]> {
+    const { data, error } = await supabase
       .from("profiles")
       .select("*")
       .eq("user_type", "owner")
       .order("full_name");
-
-    if (organizationId) {
-      query = query.eq("organization_id", organizationId);
-    }
-
-    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching owners:", error);
@@ -38,18 +32,12 @@ export const profileService = {
     return data || [];
   },
 
-  async getAllDrivers(organizationId?: string): Promise<Profile[]> {
-    let query = supabase
+  async getAllDrivers(): Promise<Profile[]> {
+    const { data, error } = await supabase
       .from("profiles")
       .select("*")
       .eq("user_type", "driver")
       .order("full_name");
-
-    if (organizationId) {
-      query = query.eq("organization_id", organizationId);
-    }
-
-    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching drivers:", error);
@@ -59,14 +47,11 @@ export const profileService = {
     return data || [];
   },
 
-  async getAllProfiles(organizationId?: string): Promise<Profile[]> {
-    let query = supabase.from("profiles").select("*").order("full_name");
-
-    if (organizationId) {
-      query = query.eq("organization_id", organizationId);
-    }
-
-    const { data, error } = await query;
+  async getAllProfiles(): Promise<Profile[]> {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("full_name");
 
     if (error) {
       console.error("Error fetching profiles:", error);

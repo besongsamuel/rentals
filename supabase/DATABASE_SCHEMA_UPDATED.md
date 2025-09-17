@@ -6,18 +6,7 @@ This schema supports a car rental/ride-share tracking application with two user 
 
 ## Organizations Table
 
-```sql
-CREATE TABLE organizations (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  description TEXT,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-**Purpose**: Multi-tenant support for different rental companies
-**Seed Data**: "Aftermath Car Management" organization is automatically created with ID `550e8400-e29b-41d4-a716-446655440000`
+**Status**: Removed - The organizations table and organization_id column have been dropped from the schema to simplify the application structure.
 
 ## Updated Tables
 
@@ -69,7 +58,6 @@ CREATE TABLE profiles (
   full_name TEXT,
   user_type TEXT NOT NULL CHECK (user_type IN ('driver', 'owner')),
   phone TEXT,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE SET NULL DEFAULT '550e8400-e29b-41d4-a716-446655440000',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

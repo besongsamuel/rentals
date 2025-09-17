@@ -52,8 +52,8 @@ const CarManagement: React.FC<CarManagementProps> = ({ onBack }) => {
       // Load cars, drivers, and owners in parallel
       const [carsData, driversData, ownersData] = await Promise.all([
         carService.getCarsByOwner(user.id),
-        profileService.getAllDrivers(profile?.organization_id),
-        profileService.getAllOwners(profile?.organization_id),
+        profileService.getAllDrivers(),
+        profileService.getAllOwners(),
       ]);
 
       setCars(carsData);

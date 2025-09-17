@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { carService } from "../services/carService";
 import { profileService } from "../services/profileService";
@@ -38,18 +38,14 @@ const DriverAssignment: React.FC<DriverAssignmentProps> = ({
   const isMainOwner = car?.owner_id === currentUser.id;
   const currentDriver = drivers.find((driver) => driver.id === car?.driver_id);
 
-  useEffect(() => {
-    loadData();
-  }, [carId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!carId) return;
 
     setLoading(true);
     try {
       const [carData, driversData] = await Promise.all([
         carService.getCarById(carId),
-        profileService.getAllDrivers(currentUser.organization_id),
+        profileService.getAllDrivers(),
       ]);
 
       setCar(carData);
@@ -66,7 +62,11 @@ const DriverAssignment: React.FC<DriverAssignmentProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [carId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleAssignDriver = async () => {
     if (!car || !selectedDriverId) return;

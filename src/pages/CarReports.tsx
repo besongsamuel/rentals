@@ -123,7 +123,7 @@ const CarReports: React.FC = () => {
       // Load car details, drivers, and weekly reports in parallel
       const [carData, driversData, reportsData] = await Promise.all([
         carService.getCarById(carId),
-        profileService.getAllDrivers(profile?.organization_id),
+        profileService.getAllDrivers(),
         weeklyReportService.getReportsByCarWithTotalEarnings(
           carId,
           selectedYear || undefined,

@@ -61,9 +61,7 @@ const CarForm: React.FC = () => {
 
         // Only load owners when editing
         if (isEditMode) {
-          const owners = await profileService.getAllOwners(
-            profile?.organization_id
-          );
+          const owners = await profileService.getAllOwners();
           setOwners(owners);
         }
 
@@ -120,7 +118,7 @@ const CarForm: React.FC = () => {
     };
 
     loadData();
-  }, [carId, isEditMode, user?.id, profile?.organization_id]);
+  }, [carId, isEditMode, user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

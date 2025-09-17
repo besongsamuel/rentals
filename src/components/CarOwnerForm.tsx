@@ -17,7 +17,6 @@ interface CarOwnerFormProps {
   onSubmit: (data: CreateCarOwnerData) => void;
   onCancel: () => void;
   existingOwners: string[]; // Array of existing owner IDs to exclude from selection
-  organizationId?: string; // Organization ID to filter owners by
 }
 
 const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
@@ -25,7 +24,6 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
   onSubmit,
   onCancel,
   existingOwners,
-  organizationId,
 }) => {
   const [formData, setFormData] = useState<CreateCarOwnerData>({
     car_id: carId,
@@ -38,7 +36,7 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
     const loadOwners = async () => {
       setLoading(true);
       try {
-        const allOwners = await profileService.getAllOwners(organizationId);
+        const allOwners = await profileService.getAllOwners();
         // Filter out existing car owners (from car_owners table)
         // The main car owner (car.owner_id) is not included in existingOwners, so they can be added
         const availableOwners = allOwners.filter(
@@ -54,15 +52,6 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
 
     loadOwners();
   }, [existingOwners]);
-
-  const handleInputChange =
-    (field: keyof CreateCarOwnerData) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: event.target.value,
-      }));
-    };
 
   const handleSelectChange =
     (field: keyof CreateCarOwnerData) => (event: any) => {
