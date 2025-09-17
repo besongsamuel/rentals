@@ -152,3 +152,31 @@ export interface CreateWeeklyReportData {
   rental_income?: number;
   currency?: string;
 }
+
+// Message interface for weekly report comments
+export interface Message {
+  id: string;
+  weekly_report_id: string;
+  user_id: string;
+  parent_message_id: string | null; // For replies
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Message with user profile data (for joins)
+export interface MessageWithProfile extends Message {
+  profiles: Profile | null;
+}
+
+// Message with nested replies
+export interface MessageWithReplies extends MessageWithProfile {
+  replies: MessageWithReplies[];
+}
+
+// Type for creating a new message
+export interface CreateMessageData {
+  weekly_report_id: string;
+  content: string;
+  parent_message_id?: string; // Optional for replies
+}

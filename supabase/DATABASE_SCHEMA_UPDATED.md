@@ -1,4 +1,4 @@
-# Updated Database Schema for 3 Brothers Rentals App
+# Updated Database Schema for Aftermath Car Management App
 
 ## Overview
 
@@ -631,4 +631,110 @@ CREATE POLICY "Anyone can view car makes" ON car_makes
 CREATE POLICY "Anyone can view car models" ON car_models
   FOR SELECT TO authenticated
   USING (true);
+```
+
+## Messages Table
+
+### 8. `messages` (Comments for Weekly Reports)
+
+```sql
+CREATE TABLE messages (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  weekly_report_id UUID NOT NULL REFERENCES weekly_reports(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  parent_message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+  content TEXT NOT NULL CHECK (length(content) > 0 AND length(content) <= 2000),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Purpose**: Stores comments and replies for weekly reports, allowing drivers and owners to communicate about specific reports.
+
+**Key Features**:
+- **Hierarchical Structure**: Supports nested replies through `parent_message_id`
+- **Content Validation**: Ensures messages are between 1-2000 characters
+- **Automatic Timestamps**: Tracks creation and update times
+- **Cascade Deletion**: Messages are deleted when reports or users are deleted
+
+**Indexes**:
+```sql
+CREATE INDEX idx_messages_weekly_report_id ON messages(weekly_report_id);
+CREATE INDEX idx_messages_user_id ON messages(user_id);
+CREATE INDEX idx_messages_parent_message_id ON messages(parent_message_id);
+CREATE INDEX idx_messages_created_at ON messages(created_at);
+```
+
+**RLS Policies**:
+
+#### Users can view messages for accessible weekly reports
+```sql
+CREATE POLICY "Users can view messages for accessible weekly reports" ON messages
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM weekly_reports wr
+      WHERE wr.id = messages.weekly_report_id
+      AND (
+        -- Driver can see messages for their own reports
+        (wr.driver_id = auth.uid())
+        OR
+        -- Owner can see messages for reports of cars they own
+        EXISTS (
+          SELECT 1 FROM cars c
+          WHERE c.id = wr.car_id
+          AND c.owner_id = auth.uid()
+        )
+        OR
+        -- Car owners can see messages for reports of cars they co-own
+        EXISTS (
+          SELECT 1 FROM car_owners co
+          WHERE co.car_id = wr.car_id
+          AND co.owner_id = auth.uid()
+        )
+      )
+    )
+  );
+```
+
+#### Users can insert messages for accessible weekly reports
+```sql
+CREATE POLICY "Users can insert messages for accessible weekly reports" ON messages
+  FOR INSERT WITH CHECK (
+    user_id = auth.uid()
+    AND EXISTS (
+      SELECT 1 FROM weekly_reports wr
+      WHERE wr.id = messages.weekly_report_id
+      AND (
+        -- Driver can add messages to their own reports
+        (wr.driver_id = auth.uid())
+        OR
+        -- Owner can add messages to reports of cars they own
+        EXISTS (
+          SELECT 1 FROM cars c
+          WHERE c.id = wr.car_id
+          AND c.owner_id = auth.uid()
+        )
+        OR
+        -- Car owners can add messages to reports of cars they co-own
+        EXISTS (
+          SELECT 1 FROM car_owners co
+          WHERE co.car_id = wr.car_id
+          AND co.owner_id = auth.uid()
+        )
+      )
+    )
+  );
+```
+
+#### Users can update their own messages
+```sql
+CREATE POLICY "Users can update their own messages" ON messages
+  FOR UPDATE USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+```
+
+#### Users can delete their own messages
+```sql
+CREATE POLICY "Users can delete their own messages" ON messages
+  FOR DELETE USING (user_id = auth.uid());
 ```

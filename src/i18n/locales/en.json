@@ -212,6 +212,8 @@
     "view": "View",
     "back": "Back",
     "next": "Next",
+    "reply": "Reply",
+    "close": "Close",
     "previous": "Previous",
     "search": "Search",
     "filter": "Filter",
@@ -319,5 +321,15 @@
   },
   "confirmations": {
     "removeCarOwner": "Are you sure you want to remove this car owner?"
+  },
+  "messages": {
+    "title": "Comments & Messages",
+    "addComment": "Add Comment",
+    "commentPlaceholder": "Write your comment here...",
+    "replyPlaceholder": "Write your reply here...",
+    "comments": "Comments",
+    "noComments": "No comments yet. Be the first to comment!",
+    "replyToComment": "Reply to Comment",
+    "reply": "Reply"
   }
 }

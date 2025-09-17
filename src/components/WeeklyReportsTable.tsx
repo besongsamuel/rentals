@@ -1,4 +1,4 @@
-import { AttachMoney, Edit } from "@mui/icons-material";
+import { AttachMoney, Edit, Comment } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Profile, WeeklyReport } from "../types";
 import EarningsDetailsDialog from "./EarningsDetailsDialog";
+import MessagesManager from "./MessagesManager";
 
 interface WeeklyReportsTableProps {
   weeklyReports: WeeklyReport[];
@@ -39,6 +40,8 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
     null
   );
+  const [messagesDialogOpen, setMessagesDialogOpen] = useState(false);
+  const [selectedReportForMessages, setSelectedReportForMessages] = useState<WeeklyReport | null>(null);
 
   const handleViewEarnings = (report: WeeklyReport) => {
     if (onViewDetails) {
@@ -47,6 +50,11 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
       setSelectedReport(report);
       setEarningsDialogOpen(true);
     }
+  };
+
+  const handleViewMessages = (report: WeeklyReport) => {
+    setSelectedReportForMessages(report);
+    setMessagesDialogOpen(true);
   };
 
   const handleCloseEarningsDialog = () => {
@@ -96,7 +104,7 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
     {
       field: "actions",
       headerName: "Actions",
-      width: 120,
+      width: 160,
       sortable: false,
       filterable: false,
       renderCell: (params: GridRenderCellParams) => (
@@ -129,6 +137,20 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
               }}
             >
               <AttachMoney />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="View comments">
+            <IconButton
+              size="small"
+              onClick={() => handleViewMessages(params.row)}
+              sx={{
+                color: "info.main",
+                "&:hover": {
+                  bgcolor: "rgba(37, 99, 235, 0.08)",
+                },
+              }}
+            >
+              <Comment />
             </IconButton>
           </Tooltip>
         </Box>
@@ -343,6 +365,19 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
         onClose={handleCloseEarningsDialog}
         weeklyReport={selectedReport}
       />
+
+      {/* Messages Manager Dialog */}
+      {selectedReportForMessages && profile && (
+        <MessagesManager
+          weeklyReportId={selectedReportForMessages.id}
+          currentUser={profile}
+          open={messagesDialogOpen}
+          onClose={() => {
+            setMessagesDialogOpen(false);
+            setSelectedReportForMessages(null);
+          }}
+        />
+      )}
     </>
   );
 };
