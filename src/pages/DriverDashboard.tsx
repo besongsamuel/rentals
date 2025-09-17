@@ -14,7 +14,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import HowItWorksCards from "../components/HowItWorksCards";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
@@ -64,7 +63,6 @@ const DriverDashboard: React.FC = () => {
             </Typography>
           </Paper>
         </Grid>
-
 
         {/* Assigned Cars Section */}
         <Grid size={12}>

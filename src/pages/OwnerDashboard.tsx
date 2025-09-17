@@ -132,7 +132,6 @@ const OwnerDashboard: React.FC = () => {
           </Card>
         </Box>
 
-
         {/* Cars Section Header */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
