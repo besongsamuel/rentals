@@ -103,8 +103,14 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
         license_plate: formData.license_plate.trim() || undefined,
         initial_mileage: formData.initial_mileage,
         owner_id: formData.owner_id,
-        fuel_type: (formData.fuel_type as "gasoline" | "diesel" | "hybrid" | "electric") || undefined,
-        transmission_type: (formData.transmission_type as "manual" | "automatic") || undefined,
+        fuel_type:
+          (formData.fuel_type as
+            | "gasoline"
+            | "diesel"
+            | "hybrid"
+            | "electric") || undefined,
+        transmission_type:
+          (formData.transmission_type as "manual" | "automatic") || undefined,
       });
     } catch (error) {
       setError("Failed to add car. Please try again.");

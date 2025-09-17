@@ -217,28 +217,74 @@ CREATE POLICY "Anyone can view car models" ON car_models
 
 **Note**: Insert and Update policies for car makes and models will be added in a future migration for admin users.
 
+### Car Owners Policies
+
+```sql
+-- Car owners can view car ownership
+CREATE POLICY "Car owners can view car ownership" ON car_owners
+  FOR SELECT USING (
+    -- Allow any authenticated user to view car ownership records
+    auth.uid() IS NOT NULL
+  );
+
+-- Car owners can view ownership for their cars
+CREATE POLICY "Car owners can view ownership for their cars" ON car_owners
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'owner'
+      AND (
+        -- Main owner of the car (cars.owner_id)
+        EXISTS (
+          SELECT 1 FROM cars c
+          WHERE c.id = car_owners.car_id
+          AND c.owner_id = auth.uid()
+        )
+        OR
+        -- Additional car owner (already in car_owners table)
+        car_owners.owner_id = auth.uid()
+      )
+    )
+  );
+```
+
 ### Weekly Reports Policies
 
 ```sql
--- Users can view relevant weekly reports
-CREATE POLICY "Users can view relevant weekly reports" ON weekly_reports
-  FOR SELECT TO authenticated
-  USING (
-    -- Allow if user is the driver who created the report
-    driver_id = auth.uid()
-    OR
-    -- Allow if user is the main owner of the car
+-- Drivers can view their weekly reports
+CREATE POLICY "Drivers can view their weekly reports" ON weekly_reports
+  FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM cars
-      WHERE cars.id = weekly_reports.car_id
-      AND cars.owner_id = auth.uid()
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'driver'
+      AND weekly_reports.driver_id = auth.uid()
     )
-    OR
-    -- Allow if user is an additional owner of the car
+  );
+
+-- Owners can view weekly reports for cars they own
+CREATE POLICY "Owners can view weekly reports for cars they own" ON weekly_reports
+  FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM car_owners
-      WHERE car_owners.car_id = weekly_reports.car_id
-      AND car_owners.owner_id = auth.uid()
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'owner'
+      AND (
+        -- Main owner of the car (cars.owner_id)
+        EXISTS (
+          SELECT 1 FROM cars c
+          WHERE c.id = weekly_reports.car_id
+          AND c.owner_id = auth.uid()
+        )
+        OR
+        -- Additional car owner (car_owners table)
+        EXISTS (
+          SELECT 1 FROM car_owners co
+          WHERE co.car_id = weekly_reports.car_id
+          AND co.owner_id = auth.uid()
+        )
+      )
     )
   );
 
