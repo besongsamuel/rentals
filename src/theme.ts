@@ -4,42 +4,60 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#2e7d32", // Modern green
-      light: "#4caf50",
-      dark: "#1b5e20",
+      main: "#2563eb", // Professional blue
+      light: "#3b82f6",
+      dark: "#1d4ed8",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#d32f2f", // Modern red
-      light: "#ef5350",
-      dark: "#c62828",
-      contrastText: "#ffffff",
-    },
-    warning: {
-      main: "#ed6c02", // Modern orange
-      light: "#ff9800",
-      dark: "#e65100",
+      main: "#64748b", // Professional slate gray
+      light: "#94a3b8",
+      dark: "#475569",
       contrastText: "#ffffff",
     },
     success: {
-      main: "#388e3c", // Different green shade for success
-      light: "#66bb6a",
-      dark: "#2e7d32",
+      main: "#059669", // Professional green
+      light: "#10b981",
+      dark: "#047857",
       contrastText: "#ffffff",
     },
     error: {
-      main: "#f44336", // Different red shade for errors
-      light: "#e57373",
-      dark: "#d32f2f",
+      main: "#dc2626", // Professional red
+      light: "#ef4444",
+      dark: "#b91c1c",
+      contrastText: "#ffffff",
+    },
+    warning: {
+      main: "#d97706", // Professional amber
+      light: "#f59e0b",
+      dark: "#b45309",
+      contrastText: "#ffffff",
+    },
+    info: {
+      main: "#2563eb", // Same as primary for consistency
+      light: "#3b82f6",
+      dark: "#1d4ed8",
       contrastText: "#ffffff",
     },
     background: {
-      default: "#fafafa",
+      default: "#f8fafc",
       paper: "#ffffff",
     },
     text: {
-      primary: "#212121",
-      secondary: "#757575",
+      primary: "#0f172a",
+      secondary: "#64748b",
+    },
+    grey: {
+      50: "#f8fafc",
+      100: "#f1f5f9",
+      200: "#e2e8f0",
+      300: "#cbd5e1",
+      400: "#94a3b8",
+      500: "#64748b",
+      600: "#475569",
+      700: "#334155",
+      800: "#1e293b",
+      900: "#0f172a",
     },
   },
   typography: {
@@ -138,25 +156,26 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
-          borderRadius: 12,
+          borderRadius: 8,
           padding: "10px 24px",
           fontSize: "0.875rem",
-          fontWeight: 600,
+          fontWeight: 500,
           boxShadow: "none",
+          transition: "all 0.2s ease-in-out",
+          "&:hover": {
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          },
+        },
+        contained: {
           "&:hover": {
             boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
           },
         },
-        contained: {
-          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-          "&:hover": {
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-          },
-        },
         outlined: {
-          borderWidth: "2px",
+          borderWidth: "1px",
           "&:hover": {
-            borderWidth: "2px",
+            borderWidth: "1px",
+            background: "rgba(37, 99, 235, 0.04)",
           },
         },
       },
@@ -164,27 +183,32 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          borderRadius: 8,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
         },
         elevation1: {
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
         },
         elevation2: {
-          boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
         },
         elevation3: {
-          boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
+          boxShadow: "0 10px 15px rgba(0,0,0,0.1)",
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 16,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          borderRadius: 8,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          transition: "all 0.2s ease-in-out",
           "&:hover": {
-            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
           },
         },
       },
@@ -204,10 +228,10 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          backdropFilter: "blur(8px)",
-          backgroundColor: "rgba(255, 255, 255, 0.95)",
-          color: "#212121",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          background: "#ffffff",
+          color: "#0f172a",
+          borderBottom: "1px solid #e2e8f0",
         },
       },
     },

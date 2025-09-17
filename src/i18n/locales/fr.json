@@ -218,7 +218,8 @@
     "optional": "Optionnel",
     "km": "KM",
     "miles": "Miles",
-    "currency": "XAF"
+    "currency": "XAF",
+    "about": "À propos"
   },
   "errors": {
     "required": "Ce champ est requis",

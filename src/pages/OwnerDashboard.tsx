@@ -64,14 +64,19 @@ const OwnerDashboard: React.FC = () => {
           <Typography
             variant="h4"
             sx={{
-              fontWeight: 700,
+              fontWeight: 600,
               mb: 1,
               fontSize: { xs: "1.75rem", sm: "2rem" },
+              color: "text.primary",
             }}
           >
             {t("dashboard.ownerDashboard")}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ fontWeight: 500 }}
+          >
             {t("dashboard.manageCars")}
           </Typography>
         </Box>
@@ -91,16 +96,26 @@ const OwnerDashboard: React.FC = () => {
         >
           <Card
             elevation={0}
-            sx={{ border: "1px solid", borderColor: "divider" }}
+            sx={{
+              background: "#ffffff",
+              border: "1px solid #e2e8f0",
+            }}
           >
             <CardContent sx={{ textAlign: "center", p: 3 }}>
               <DirectionsCar
-                sx={{ fontSize: 40, color: "primary.main", mb: 1 }}
+                sx={{ fontSize: 48, color: "primary.main", mb: 1 }}
               />
-              <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+              <Typography
+                variant="h4"
+                sx={{ fontWeight: 700, mb: 0.5, color: "primary.main" }}
+              >
                 {totalCars}
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: 2, fontWeight: 500 }}
+              >
                 {t("dashboard.totalCars")}
               </Typography>
               <Button
@@ -118,14 +133,36 @@ const OwnerDashboard: React.FC = () => {
 
           <Card
             elevation={0}
-            sx={{ border: "1px solid", borderColor: "divider" }}
+            sx={{
+              background: "linear-gradient(145deg, #ffffff 0%, #e8f5e8 100%)",
+              border: "2px solid",
+              borderColor: "success.main",
+              position: "relative",
+              overflow: "hidden",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: "linear-gradient(90deg, #4caf50 0%, #81c784 100%)",
+              },
+            }}
           >
             <CardContent sx={{ textAlign: "center", p: 3 }}>
-              <TrendingUp sx={{ fontSize: 40, color: "success.main", mb: 1 }} />
-              <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+              <TrendingUp sx={{ fontSize: 48, color: "success.main", mb: 1 }} />
+              <Typography
+                variant="h4"
+                sx={{ fontWeight: 700, mb: 0.5, color: "success.main" }}
+              >
                 {activeCars}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontWeight: 500 }}
+              >
                 {t("dashboard.activeCars")}
               </Typography>
             </CardContent>

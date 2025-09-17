@@ -54,11 +54,46 @@ const DriverDashboard: React.FC = () => {
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Grid container spacing={3}>
         <Grid size={12}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h4" gutterBottom>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 4,
+              background: "linear-gradient(145deg, #ffffff 0%, #fff3e0 100%)",
+              border: "2px solid",
+              borderColor: "secondary.main",
+              position: "relative",
+              overflow: "hidden",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: "linear-gradient(90deg, #ff6b35 0%, #ff8a65 100%)",
+              },
+            }}
+          >
+            <Typography
+              variant="h4"
+              gutterBottom
+              sx={{
+                background: "linear-gradient(45deg, #ff6b35 30%, #ff8a65 90%)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontWeight: 700,
+                textShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            >
               Driver Dashboard
             </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              paragraph
+              sx={{ fontWeight: 500 }}
+            >
               View your assigned cars and access reports for each vehicle.
             </Typography>
           </Paper>

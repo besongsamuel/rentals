@@ -130,16 +130,16 @@ const Header: React.FC = () => {
         elevation={0}
         sx={{
           borderRadius: 0,
-          "& .MuiAppBar-root": {
-            borderRadius: 0,
-          },
+          background: "#ffffff",
+          color: "#0f172a",
+          borderBottom: "1px solid #e2e8f0",
         }}
       >
         <Toolbar
           sx={{
-            px: { xs: 1.5, sm: 3 },
-            py: { xs: 1, sm: 1.5 },
-            minHeight: { xs: 72, sm: 80 },
+            px: { xs: 1, sm: 2 },
+            py: { xs: 0.5, sm: 0.75 },
+            minHeight: { xs: 56, sm: 64 },
           }}
         >
           {/* Mobile Menu Button */}
@@ -173,7 +173,7 @@ const Header: React.FC = () => {
               src="/app_logo.png"
               alt="Aftermath Car Management Logo"
               sx={{
-                height: "96px",
+                height: "48px",
                 width: "auto",
                 display: "block",
               }}

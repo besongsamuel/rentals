@@ -220,7 +220,8 @@
     "optional": "Optional",
     "km": "KM",
     "miles": "Miles",
-    "currency": "XAF"
+    "currency": "XAF",
+    "about": "About"
   },
   "errors": {
     "required": "This field is required",

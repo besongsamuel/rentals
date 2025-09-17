@@ -245,8 +245,26 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
       maxWidth="md"
       fullWidth
       aria-labelledby="weekly-report-dialog-title"
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+        },
+      }}
     >
-      <DialogTitle id="weekly-report-dialog-title">
+      <DialogTitle
+        id="weekly-report-dialog-title"
+        sx={{
+          color: "text.primary",
+          fontWeight: 600,
+          textAlign: "center",
+          pt: 3,
+          pb: 2,
+          borderBottom: "1px solid #e2e8f0",
+        }}
+      >
         {mode === "add" ? t("reports.addReport") : t("reports.editReport")}
       </DialogTitle>
 
@@ -281,9 +299,25 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
 
             <Grid size={12}>
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  mb: 3,
+                  p: 2,
+                  background: "rgba(37, 99, 235, 0.02)",
+                  borderRadius: 1,
+                  border: "1px solid #e2e8f0",
+                }}
               >
-                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    flexGrow: 1,
+                    color: "text.primary",
+                    fontWeight: 600,
+                  }}
+                >
                   {t("reports.weekPeriod")}
                 </Typography>
                 <Button
@@ -291,7 +325,9 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                   size="small"
                   startIcon={<ChevronLeft />}
                   variant="outlined"
-                  sx={{ minWidth: "auto" }}
+                  sx={{
+                    minWidth: "auto",
+                  }}
                 >
                   {t("reports.previousWeek")}
                 </Button>
@@ -300,7 +336,9 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                   size="small"
                   endIcon={<ChevronRight />}
                   variant="outlined"
-                  sx={{ minWidth: "auto" }}
+                  sx={{
+                    minWidth: "auto",
+                  }}
                 >
                   {t("reports.nextWeek")}
                 </Button>
@@ -459,11 +497,32 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
 
             {formData.start_mileage > 0 && formData.end_mileage > 0 && (
               <Grid size={12}>
-                <Typography variant="body2" color="text.secondary">
-                  {t("reports.totalDistance")}:{" "}
-                  {formData.end_mileage - formData.start_mileage}{" "}
-                  {t("common.km")}
-                </Typography>
+                <Box
+                  sx={{
+                    p: 2,
+                    background: "rgba(5, 150, 105, 0.02)",
+                    borderRadius: 1,
+                    border: "1px solid #e2e8f0",
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: "text.primary",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {t("reports.totalDistance")}:{" "}
+                    <Box
+                      component="span"
+                      sx={{ color: "success.main", fontWeight: 600 }}
+                    >
+                      {formData.end_mileage - formData.start_mileage}{" "}
+                      {t("common.km")}
+                    </Box>
+                  </Typography>
+                </Box>
               </Grid>
             )}
           </Grid>

@@ -82,14 +82,15 @@ const SignUpForm: React.FC = () => {
             elevation={0}
             sx={{
               width: "100%",
-              p: { xs: 3, sm: 4 },
+              maxWidth: 500,
+              p: { xs: 4, sm: 5 },
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-              position: "relative",
+              borderRadius: 2,
+              background: "#ffffff",
+              border: "1px solid #e2e8f0",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             }}
           >
             {/* Language Switcher */}
@@ -127,8 +128,9 @@ const SignUpForm: React.FC = () => {
               variant="h4"
               gutterBottom
               sx={{
-                fontWeight: 700,
+                fontWeight: 600,
                 textAlign: "center",
+                color: "text.primary",
                 mb: 1,
               }}
             >

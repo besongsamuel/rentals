@@ -73,10 +73,28 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
 
   return (
     <>
-      <TableContainer>
+      <TableContainer
+        sx={{
+          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "divider",
+          overflow: "hidden",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        }}
+      >
         <Table>
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                background: "#f8fafc",
+                "& .MuiTableCell-head": {
+                  color: "text.primary",
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                  borderBottom: "1px solid #e2e8f0",
+                },
+              }}
+            >
               <TableCell>Actions</TableCell>
               <TableCell>{t("reports.weekPeriod")}</TableCell>
               <TableCell align="right">{t("reports.startMileage")}</TableCell>
@@ -88,8 +106,20 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {weeklyReports.map((report) => (
-              <TableRow key={report.id}>
+            {weeklyReports.map((report, index) => (
+              <TableRow
+                key={report.id}
+                sx={{
+                  backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8fafc",
+                  "&:hover": {
+                    backgroundColor: "rgba(37, 99, 235, 0.04)",
+                  },
+                  "& .MuiTableCell-root": {
+                    borderBottom: "1px solid #e2e8f0",
+                    padding: "12px 16px",
+                  },
+                }}
+              >
                 <TableCell>
                   <Box sx={{ display: "flex", gap: 1 }}>
                     {onEditReport && report.status === "draft" && (
@@ -98,11 +128,9 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                           size="small"
                           onClick={() => onEditReport(report)}
                           sx={{
-                            border: "1px solid",
-                            borderColor: "divider",
+                            color: "primary.main",
                             "&:hover": {
-                              bgcolor: "action.hover",
-                              borderColor: "primary.main",
+                              bgcolor: "rgba(37, 99, 235, 0.08)",
                             },
                           }}
                         >
@@ -115,11 +143,9 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                         size="small"
                         onClick={() => handleViewEarnings(report)}
                         sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
+                          color: "success.main",
                           "&:hover": {
-                            bgcolor: "action.hover",
-                            borderColor: "primary.main",
+                            bgcolor: "rgba(5, 150, 105, 0.08)",
                           },
                         }}
                       >
@@ -129,32 +155,62 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                   </Box>
                 </TableCell>
                 <TableCell>
-                  {new Date(report.week_start_date).toLocaleDateString()} -{" "}
-                  {new Date(report.week_end_date).toLocaleDateString()}
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 500, color: "text.primary" }}
+                  >
+                    {new Date(report.week_start_date).toLocaleDateString()} -{" "}
+                    {new Date(report.week_end_date).toLocaleDateString()}
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  {report.start_mileage.toLocaleString()} KM
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 500, color: "info.main" }}
+                  >
+                    {report.start_mileage.toLocaleString()} KM
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  {report.end_mileage.toLocaleString()} KM
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 500, color: "info.main" }}
+                  >
+                    {report.end_mileage.toLocaleString()} KM
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  {new Intl.NumberFormat("fr-FR", {
-                    style: "currency",
-                    currency: "XAF",
-                  }).format(report.driver_earnings)}
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 600, color: "success.main" }}
+                  >
+                    {new Intl.NumberFormat("fr-FR", {
+                      style: "currency",
+                      currency: "XAF",
+                    }).format(report.driver_earnings)}
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  {new Intl.NumberFormat("fr-FR", {
-                    style: "currency",
-                    currency: "XAF",
-                  }).format(report.total_earnings)}
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 600, color: "primary.main" }}
+                  >
+                    {new Intl.NumberFormat("fr-FR", {
+                      style: "currency",
+                      currency: "XAF",
+                    }).format(report.total_earnings)}
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  {new Intl.NumberFormat("fr-FR", {
-                    style: "currency",
-                    currency: "XAF",
-                  }).format(report.maintenance_expenses)}
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 500, color: "error.main" }}
+                  >
+                    {new Intl.NumberFormat("fr-FR", {
+                      style: "currency",
+                      currency: "XAF",
+                    }).format(report.maintenance_expenses)}
+                  </Typography>
                 </TableCell>
                 <TableCell>
                   <Box
@@ -162,12 +218,20 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                       display: "flex",
                       alignItems: "center",
                       gap: 1,
+                      flexWrap: "wrap",
                     }}
                   >
                     <Chip
                       label={report.status}
                       color={getReportStatusColor(report.status) as any}
                       size="small"
+                      sx={{
+                        fontWeight: 600,
+                        textTransform: "capitalize",
+                        "& .MuiChip-label": {
+                          fontSize: "0.75rem",
+                        },
+                      }}
                     />
                     {user &&
                       profile?.user_type === "owner" &&
@@ -178,6 +242,12 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                           variant="contained"
                           color="success"
                           onClick={() => onApproveReport(report.id)}
+                          sx={{
+                            fontWeight: 500,
+                            textTransform: "none",
+                            px: 2,
+                            py: 0.5,
+                          }}
                         >
                           {t("reports.approve")}
                         </Button>
@@ -197,6 +267,12 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                               ? "Add income sources before submitting"
                               : ""
                           }
+                          sx={{
+                            fontWeight: 500,
+                            textTransform: "none",
+                            px: 2,
+                            py: 0.5,
+                          }}
                         >
                           {t("reports.submit")}
                         </Button>

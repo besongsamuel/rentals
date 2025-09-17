@@ -8,11 +8,11 @@ const HowItWorksCards: React.FC = () => {
   return (
     <Box sx={{ mb: 4 }}>
       <Typography
-        variant="h5"
+        variant="h4"
         sx={{
           fontWeight: 600,
           textAlign: "center",
-          mb: 3,
+          mb: 4,
           color: "text.primary",
         }}
       >
@@ -26,45 +26,62 @@ const HowItWorksCards: React.FC = () => {
             xs: "1fr",
             md: "1fr 1fr",
           },
-          gap: 3,
-          mb: 3,
+          gap: 4,
+          mb: 4,
         }}
       >
         {/* Owner Steps Card */}
         <Card
           elevation={0}
           sx={{
-            border: "2px solid",
-            borderColor: "primary.main",
+            background: "#ffffff",
+            border: "1px solid #e2e8f0",
             borderRadius: 2,
             "&:hover": {
-              boxShadow: "0 4px 20px rgba(46, 125, 50, 0.1)",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             },
+            transition: "all 0.2s ease-in-out",
           }}
         >
-          <CardContent sx={{ p: 3 }}>
+          <CardContent sx={{ p: 4 }}>
             <Typography
-              variant="h6"
+              variant="h5"
               sx={{
                 fontWeight: 600,
-                mb: 2,
-                color: "primary.main",
+                mb: 3,
+                color: "text.primary",
                 textAlign: "center",
               }}
             >
               {t("auth.ownerSteps.title")}
             </Typography>
             <Box component="ol" sx={{ pl: 2, m: 0 }}>
-              <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 2, fontWeight: 500 }}
+              >
                 {t("auth.ownerSteps.step1")}
               </Typography>
-              <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 2, fontWeight: 500 }}
+              >
                 {t("auth.ownerSteps.step2")}
               </Typography>
-              <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 2, fontWeight: 500 }}
+              >
                 {t("auth.ownerSteps.step3")}
               </Typography>
-              <Typography component="li" variant="body2" sx={{ mb: 0 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 0, fontWeight: 500 }}
+              >
                 {t("auth.ownerSteps.step4")}
               </Typography>
             </Box>
@@ -75,34 +92,47 @@ const HowItWorksCards: React.FC = () => {
         <Card
           elevation={0}
           sx={{
-            border: "2px solid",
-            borderColor: "secondary.main",
+            background: "#ffffff",
+            border: "1px solid #e2e8f0",
             borderRadius: 2,
             "&:hover": {
-              boxShadow: "0 4px 20px rgba(255, 152, 0, 0.1)",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
             },
+            transition: "all 0.2s ease-in-out",
           }}
         >
-          <CardContent sx={{ p: 3 }}>
+          <CardContent sx={{ p: 4 }}>
             <Typography
-              variant="h6"
+              variant="h5"
               sx={{
                 fontWeight: 600,
-                mb: 2,
-                color: "secondary.main",
+                mb: 3,
+                color: "text.primary",
                 textAlign: "center",
               }}
             >
               {t("auth.driverSteps.title")}
             </Typography>
             <Box component="ol" sx={{ pl: 2, m: 0 }}>
-              <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 2, fontWeight: 500 }}
+              >
                 {t("auth.driverSteps.step1")}
               </Typography>
-              <Typography component="li" variant="body2" sx={{ mb: 1 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 2, fontWeight: 500 }}
+              >
                 {t("auth.driverSteps.step2")}
               </Typography>
-              <Typography component="li" variant="body2" sx={{ mb: 0 }}>
+              <Typography
+                component="li"
+                variant="body1"
+                sx={{ mb: 0, fontWeight: 500 }}
+              >
                 {t("auth.driverSteps.step3")}
               </Typography>
             </Box>
@@ -114,19 +144,32 @@ const HowItWorksCards: React.FC = () => {
       <Card
         elevation={0}
         sx={{
-          border: "1px solid",
-          borderColor: "divider",
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
           borderRadius: 2,
-          bgcolor: "background.paper",
+          "&:hover": {
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          },
+          transition: "all 0.2s ease-in-out",
         }}
       >
-        <CardContent sx={{ p: 3, textAlign: "center" }}>
+        <CardContent sx={{ p: 4, textAlign: "center" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: "text.primary",
+              mb: 2,
+            }}
+          >
+            {t("common.about")}
+          </Typography>
           <Typography
             variant="body1"
             sx={{
               fontWeight: 500,
               color: "text.primary",
-              fontStyle: "italic",
+              lineHeight: 1.7,
             }}
           >
             {t("auth.systemDescription")}
