@@ -8,6 +8,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import DriverDetailsGuard from "./components/DriverDetailsGuard";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
@@ -15,6 +16,7 @@ import { UserProvider, useUserContext } from "./contexts/UserContext";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
 import Dashboard from "./pages/Dashboard";
+import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
 import LoginForm from "./pages/LoginForm";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import SignUpForm from "./pages/SignUpForm";
@@ -113,20 +115,39 @@ function AppContent() {
                     element={<SkeletonLoader variant="dashboard" />}
                   />
                 ) : profile ? (
-                  // User is authenticated and has a complete profile
+                  // User is authenticated and has a profile
                   <>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/cars/new" element={<CarForm />} />
                     <Route
-                      path="/cars/:carId"
-                      element={<CarDetailManagement />}
+                      path="/complete-details"
+                      element={<DriverDetailsCompletion />}
                     />
-                    <Route path="/cars/:carId/edit" element={<CarForm />} />
                     <Route
-                      path="/login"
-                      element={<Navigate to="/" replace />}
+                      path="*"
+                      element={
+                        <DriverDetailsGuard profile={profile}>
+                          <Routes>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/cars/new" element={<CarForm />} />
+                            <Route
+                              path="/cars/:carId"
+                              element={<CarDetailManagement />}
+                            />
+                            <Route
+                              path="/cars/:carId/edit"
+                              element={<CarForm />}
+                            />
+                            <Route
+                              path="/login"
+                              element={<Navigate to="/" replace />}
+                            />
+                            <Route
+                              path="*"
+                              element={<Navigate to="/" replace />}
+                            />
+                          </Routes>
+                        </DriverDetailsGuard>
+                      }
                     />
-                    <Route path="*" element={<Navigate to="/" replace />} />
                   </>
                 ) : (
                   // User is authenticated but doesn't have a profile
