@@ -180,3 +180,95 @@ export interface CreateMessageData {
   content: string;
   parent_message_id?: string; // Optional for replies
 }
+
+// Driver Details interface matching database schema
+export interface DriverDetails {
+  id: string;
+  profile_id: string;
+  date_of_birth: string | null;
+  gender: "male" | "female" | "other" | "prefer_not_to_say" | null;
+  nationality: string | null;
+  languages: string[] | null;
+  emergency_contact_name: string | null;
+  emergency_contact_phone: string | null;
+  emergency_contact_relationship: string | null;
+  address: string | null;
+  city: string | null;
+  state_province: string | null;
+  postal_code: string | null;
+  country: string;
+  license_number: string | null;
+  license_issue_date: string | null;
+  license_expiry_date: string | null;
+  license_class: string | null;
+  license_issuing_authority: string | null;
+  years_of_experience: number;
+  preferred_transmission: "manual" | "automatic" | "both" | null;
+  availability_status: "available" | "busy" | "unavailable" | "on_break";
+  preferred_working_hours: any | null; // JSONB
+  communication_preference: "phone" | "email" | "sms" | "whatsapp";
+  created_at: string;
+  updated_at: string;
+  last_active_at: string;
+}
+
+// Driver Details with profile data (for joins)
+export interface DriverDetailsWithProfile extends DriverDetails {
+  profiles: Profile | null;
+}
+
+// Driver Rating interface matching database schema
+export interface DriverRating {
+  id: string;
+  driver_id: string;
+  rater_id: string;
+  car_id: string | null;
+  rating: number;
+  comment: string | null;
+  categories: any | null; // JSONB
+  created_at: string;
+  updated_at: string;
+}
+
+// Driver Rating with profile data (for joins)
+export interface DriverRatingWithProfiles extends DriverRating {
+  driver_profile: Profile | null;
+  rater_profile: Profile | null;
+  car: Car | null;
+}
+
+// Type for creating driver details
+export interface CreateDriverDetailsData {
+  profile_id: string;
+  date_of_birth?: string;
+  gender?: "male" | "female" | "other" | "prefer_not_to_say";
+  nationality?: string;
+  languages?: string[];
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  emergency_contact_relationship?: string;
+  address?: string;
+  city?: string;
+  state_province?: string;
+  postal_code?: string;
+  country?: string;
+  license_number?: string;
+  license_issue_date?: string;
+  license_expiry_date?: string;
+  license_class?: string;
+  license_issuing_authority?: string;
+  years_of_experience?: number;
+  preferred_transmission?: "manual" | "automatic" | "both";
+  availability_status?: "available" | "busy" | "unavailable" | "on_break";
+  preferred_working_hours?: any;
+  communication_preference?: "phone" | "email" | "sms" | "whatsapp";
+}
+
+// Type for creating driver rating
+export interface CreateDriverRatingData {
+  driver_id: string;
+  car_id?: string;
+  rating: number;
+  comment?: string;
+  categories?: any;
+}
