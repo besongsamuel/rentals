@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import EmailVerificationMessage from "../components/EmailVerificationMessage";
 import Header from "../components/Header";
+import HowItWorksCards from "../components/HowItWorksCards";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
@@ -60,171 +61,205 @@ const SignUpForm: React.FC = () => {
       <Header />
       <Container
         component="main"
-        maxWidth="sm"
+        maxWidth="lg"
         sx={{
           flexGrow: 1,
-          display: "flex",
-          alignItems: "center",
           py: 4,
         }}
       >
-        <Paper
-          elevation={0}
+        {/* How It Works Cards */}
+        <HowItWorksCards />
+
+        <Box
           sx={{
-            width: "100%",
-            p: { xs: 3, sm: 4 },
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            borderRadius: 3,
-            border: "1px solid",
-            borderColor: "divider",
-            position: "relative",
+            minHeight: "60vh",
           }}
         >
-          {/* Language Switcher */}
-          <Box
+          <Paper
+            elevation={0}
             sx={{
-              position: "absolute",
-              top: { xs: 16, sm: 20 },
-              right: { xs: 16, sm: 20 },
-            }}
-          >
-            <LanguageSwitcher />
-          </Box>
-          <Typography
-            component="h1"
-            variant="h4"
-            gutterBottom
-            sx={{
-              fontWeight: 700,
-              textAlign: "center",
-              mb: 1,
-            }}
-          >
-            {t("auth.signup")}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            align="center"
-            sx={{ mb: 3, fontWeight: 500 }}
-          >
-            {t("auth.signupWelcome")}
-          </Typography>
-
-          <Box
-            sx={{
-              mb: 4,
-              p: 2,
-              bgcolor: "background.paper",
-              borderRadius: 2,
+              width: "100%",
+              p: { xs: 3, sm: 4 },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              borderRadius: 3,
               border: "1px solid",
               borderColor: "divider",
+              position: "relative",
             }}
           >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="left"
-              sx={{ mb: 1, fontWeight: 600 }}
-            >
-              {t("auth.chooseRole")}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="left"
-              sx={{ mb: 1 }}
-            >
-              • <strong>{t("auth.driverSignup")}</strong>
-            </Typography>
-            <Typography variant="body2" color="text.secondary" align="left">
-              • <strong>{t("auth.ownerSignup")}</strong>
-            </Typography>
-          </Box>
-
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-
-            {success && <EmailVerificationMessage email={email} />}
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label={t("auth.email")}
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label={t("auth.password")}
-              type="password"
-              id="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              helperText={t("errors.password")}
-            />
-
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="confirmPassword"
-              label={t("auth.confirmPassword")}
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
+            {/* Language Switcher */}
+            <Box
               sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-                fontSize: "1rem",
-                fontWeight: 600,
+                position: "absolute",
+                top: { xs: 16, sm: 20 },
+                right: { xs: 16, sm: 20 },
               }}
-              disabled={loading}
             >
-              {loading ? t("common.loading") : t("auth.signUp")}
-            </Button>
+              <LanguageSwitcher />
+            </Box>
+            {/* Logo */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mb: 3,
+              }}
+            >
+              <Box
+                component="img"
+                src="/app_logo.png"
+                alt="Aftermath Car Management Logo"
+                sx={{
+                  height: "64px",
+                  width: "auto",
+                  display: "block",
+                }}
+              />
+            </Box>
 
-            <Box textAlign="center">
-              <Typography variant="body2">
-                {t("auth.hasAccount")}{" "}
-                <Button
-                  variant="text"
-                  onClick={() =>
-                    navigate("/login", { state: { mode: "login" } })
-                  }
-                  sx={{ textTransform: "none" }}
-                >
-                  {t("auth.signIn")}
-                </Button>
+            <Typography
+              component="h1"
+              variant="h4"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                textAlign: "center",
+                mb: 1,
+              }}
+            >
+              {t("auth.signup")}
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              align="center"
+              sx={{ mb: 3, fontWeight: 500 }}
+            >
+              {t("auth.signupWelcome")}
+            </Typography>
+
+            <Box
+              sx={{
+                mb: 4,
+                p: 2,
+                bgcolor: "background.paper",
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                align="left"
+                sx={{ mb: 1, fontWeight: 600 }}
+              >
+                {t("auth.chooseRole")}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                align="left"
+                sx={{ mb: 1 }}
+              >
+                • <strong>{t("auth.driverSignup")}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary" align="left">
+                • <strong>{t("auth.ownerSignup")}</strong>
               </Typography>
             </Box>
-          </Box>
-        </Paper>
+
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              sx={{ width: "100%" }}
+            >
+              {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {error}
+                </Alert>
+              )}
+
+              {success && <EmailVerificationMessage email={email} />}
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label={t("auth.email")}
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label={t("auth.password")}
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                helperText={t("errors.password")}
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label={t("auth.confirmPassword")}
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  py: 1.5,
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                }}
+                disabled={loading}
+              >
+                {loading ? t("common.loading") : t("auth.signUp")}
+              </Button>
+
+              <Box textAlign="center">
+                <Typography variant="body2">
+                  {t("auth.hasAccount")}{" "}
+                  <Button
+                    variant="text"
+                    onClick={() =>
+                      navigate("/login", { state: { mode: "login" } })
+                    }
+                    sx={{ textTransform: "none" }}
+                  >
+                    {t("auth.signIn")}
+                  </Button>
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
       </Container>
     </Box>
   );

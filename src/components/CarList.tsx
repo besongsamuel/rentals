@@ -82,7 +82,7 @@ const CarList: React.FC<CarListProps> = ({
 
       <Grid container spacing={3}>
         {cars.map((car) => (
-          <Grid key={car.id} size={{ xs: 12, sm: 6, lg: 4 }}>
+          <Grid key={car.id} size={12}>
             <Card
               elevation={0}
               sx={{

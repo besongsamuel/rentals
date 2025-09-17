@@ -16,9 +16,24 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "joinPlatform": "Join the rentals platform today",
-    "welcomeMessage": "Welcome to Aftermath Rentals - Your Complete Car Rental Management Platform",
-    "welcomeSubtitle": "Streamline your rental operations, track earnings, and manage your fleet with ease",
-    "signupWelcome": "Join Aftermath Rentals - Where Car Owners and Drivers Connect",
+    "welcomeMessage": "🌟 Welcome to Aftermath Car Management - Your Gateway to Smart Car Rental Success",
+    "welcomeSubtitle": "Transform your car into a money-making machine! Connect with drivers, track earnings, and grow your rental business effortlessly.",
+    "howItWorks": "🚀 Get Started in Minutes",
+    "ownerSteps": {
+      "title": "👑 For Car Owners",
+      "step1": "✨ Create your account and join our community",
+      "step2": "🚗 Add your car to start earning passive income",
+      "step3": "🤝 Connect with trusted drivers in your area",
+      "step4": "📊 Assign your car and watch your earnings grow"
+    },
+    "driverSteps": {
+      "title": "🚙 For Drivers",
+      "step1": "🎯 Sign up and create your driver profile",
+      "step2": "💬 Reach out to car owners to get assigned a vehicle",
+      "step3": "📈 Track your weekly earnings and maximize your income"
+    },
+    "systemDescription": "💡 Our smart platform provides real-time insights, detailed analytics, and seamless communication between car owners and drivers. Track performance, monitor earnings, and grow your rental business with confidence!",
+    "signupWelcome": "🎉 Join the Revolution! Connect, Earn, and Thrive with Aftermath Car Management",
     "chooseRole": "Choose your role:",
     "driverSignup": "Sign up as a Driver to start earning with rental cars assigned by owners",
     "ownerSignup": "Sign up as an Owner to manage your fleet and assign drivers to maximize your rental income",
