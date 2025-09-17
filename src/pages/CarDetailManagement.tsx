@@ -26,14 +26,14 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import CarOwners from "../components/CarOwners";
 import CarStatistics from "../components/CarStatistics";
+import DriverAssignment from "../components/DriverAssignment";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
-import { profileService } from "../services/profileService";
 import { weeklyReportService } from "../services/weeklyReportService";
-import { Car, Profile, WeeklyReport } from "../types";
+import { Car, WeeklyReport } from "../types";
 
 const CarDetailManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -41,16 +41,12 @@ const CarDetailManagement: React.FC = () => {
   const navigate = useNavigate();
   const { user, profile } = useUserContext();
   const [car, setCar] = useState<Car | null>(null);
-  const [drivers, setDrivers] = useState<Profile[]>([]);
   const [weeklyReports, setWeeklyReports] = useState<
     (WeeklyReport & { total_earnings: number })[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [loadingAssignments, setLoadingAssignments] = useState(false);
-  const [selectedDriverId, setSelectedDriverId] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
-  const [selectedDriverFilter, setSelectedDriverFilter] = useState<string>("");
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
@@ -71,10 +67,9 @@ const CarDetailManagement: React.FC = () => {
 
     setLoading(true);
     try {
-      // Load car details, drivers, and weekly reports in parallel
-      const [carData, driversData, reportsData] = await Promise.all([
+      // Load car details and weekly reports in parallel
+      const [carData, reportsData] = await Promise.all([
         carService.getCarById(carId),
-        profileService.getAllDrivers(profile?.organization_id),
         weeklyReportService.getReportsByCarWithTotalEarnings(
           carId,
           selectedYear || undefined,
@@ -83,15 +78,13 @@ const CarDetailManagement: React.FC = () => {
       ]);
 
       setCar(carData);
-      setDrivers(driversData);
       setWeeklyReports(reportsData || []);
-      setSelectedDriverId(carData?.driver_id || "");
     } catch (error) {
       console.error("Error loading car details:", error);
     } finally {
       setLoading(false);
     }
-  }, [carId, profile?.organization_id, selectedYear, selectedMonth]);
+  }, [carId, selectedYear, selectedMonth]);
 
   useEffect(() => {
     if (carId) {
@@ -122,30 +115,6 @@ const CarDetailManagement: React.FC = () => {
       checkIncomeSources();
     }
   }, [weeklyReports]);
-
-  const handleAssignDriver = async () => {
-    if (!car || !selectedDriverId) return;
-
-    setLoadingAssignments(true);
-    try {
-      await carService.assignCarToDriver(car.id, selectedDriverId, user!.id);
-      await loadData(); // Refresh the data
-      setSelectedDriverId(""); // Reset selection
-    } catch (error) {
-      console.error("Error assigning car to driver:", error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Failed to assign car to driver"
-      );
-    } finally {
-      setLoadingAssignments(false);
-    }
-  };
-
-  const handleDriverSelectionChange = (driverId: string) => {
-    setSelectedDriverId(driverId);
-  };
 
   const handleApproveReport = (reportId: string) => {
     setConfirmAction({ type: "approve", reportId });
@@ -198,10 +167,6 @@ const CarDetailManagement: React.FC = () => {
     setEarningsDialogOpen(true);
   };
 
-  const handleDriverFilterChange = (driverId: string) => {
-    setSelectedDriverFilter(driverId);
-  };
-
   const handleCloseEarningsDialog = () => {
     setEarningsDialogOpen(false);
     setSelectedReport(null);
@@ -240,20 +205,6 @@ const CarDetailManagement: React.FC = () => {
     setEditingReport(null);
   };
 
-  const handleUnassignDriver = async () => {
-    if (!car) return;
-
-    setLoadingAssignments(true);
-    try {
-      await carService.unassignCar(car.id);
-      await loadData(); // Refresh the data
-    } catch (error) {
-      console.error("Error unassigning car:", error);
-    } finally {
-      setLoadingAssignments(false);
-    }
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "available":
@@ -282,11 +233,6 @@ const CarDetailManagement: React.FC = () => {
       default:
         return "default";
     }
-  };
-
-  const getCurrentDriver = () => {
-    if (!car?.driver_id) return null;
-    return drivers.find((driver) => driver.id === car.driver_id);
   };
 
   const generateYearOptions = () => {
@@ -346,8 +292,6 @@ const CarDetailManagement: React.FC = () => {
       </Container>
     );
   }
-
-  const currentDriver = getCurrentDriver();
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -434,103 +378,10 @@ const CarDetailManagement: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Driver Assignment Section - Only for owners */}
-        {profile?.user_type === "owner" && (
-          <Grid size={12}>
-            <Card elevation={2}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {t("carManagement.driverAssignment")}
-                </Typography>
-
-                {currentDriver ? (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      {t("carManagement.currentlyAssignedDriver")}
-                    </Typography>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                      <Typography variant="body1">
-                        {currentDriver.full_name || currentDriver.email}
-                      </Typography>
-                      <Chip
-                        label={t("carManagement.assigned")}
-                        color="primary"
-                        size="small"
-                      />
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="error"
-                        onClick={handleUnassignDriver}
-                        disabled={loadingAssignments}
-                      >
-                        {t("carManagement.unassign")}
-                      </Button>
-                    </Box>
-                  </Box>
-                ) : (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      gutterBottom
-                    >
-                      {t("carManagement.noDriverAssigned")}
-                    </Typography>
-                  </Box>
-                )}
-
-                <FormControl fullWidth size="small">
-                  <Select
-                    value={selectedDriverId}
-                    onChange={(e) =>
-                      handleDriverSelectionChange(e.target.value)
-                    }
-                    disabled={loadingAssignments}
-                    displayEmpty
-                  >
-                    <MenuItem value="">
-                      <em>{t("carManagement.selectDriver")}</em>
-                    </MenuItem>
-                    {drivers
-                      .filter((driver) => driver.id !== car.driver_id)
-                      .map((driver) => (
-                        <MenuItem key={driver.id} value={driver.id}>
-                          {driver.full_name || driver.email}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-
-                {selectedDriverId && (
-                  <Box sx={{ mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={handleAssignDriver}
-                      disabled={loadingAssignments}
-                    >
-                      {t("carManagement.confirmAssignment")}
-                    </Button>
-                  </Box>
-                )}
-
-                {loadingAssignments && (
-                  <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                    <CircularProgress size={16} sx={{ mr: 1 }} />
-                    <Typography variant="caption">
-                      {t("carManagement.updatingDriverAssignment")}
-                    </Typography>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
+        {/* Driver Assignment Section */}
+        <Grid size={12}>
+          <DriverAssignment currentUser={profile!} carId={carId!} />
+        </Grid>
 
         {/* Car Owners Section */}
         <Grid size={12}>
@@ -652,7 +503,6 @@ const CarDetailManagement: React.FC = () => {
 
               <WeeklyReportsTable
                 weeklyReports={weeklyReports}
-                drivers={drivers}
                 reportsWithIncomeSources={reportsWithIncomeSources}
                 profile={profile}
                 user={user}
@@ -661,8 +511,6 @@ const CarDetailManagement: React.FC = () => {
                 onApproveReport={handleApproveReport}
                 onSubmitReport={handleSubmitReport}
                 getReportStatusColor={getReportStatusColor}
-                selectedDriverId={selectedDriverFilter}
-                onDriverFilterChange={handleDriverFilterChange}
               />
             </CardContent>
           </Card>

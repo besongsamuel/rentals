@@ -542,3 +542,105 @@ ORDER BY c.id, wr.week_start_date DESC;
 4. **Type Safety**: Proper data types for amounts and source types
 5. **Extensibility**: Easy to add new income source types
 6. **Reporting**: Simpler aggregation and analysis queries
+
+## Row Level Security (RLS) Policies
+
+### Weekly Reports Policies
+
+#### Drivers can view their own reports
+
+```sql
+CREATE POLICY "Drivers can view their own reports" ON weekly_reports
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'driver'
+      AND weekly_reports.driver_id = auth.uid()
+    )
+  );
+```
+
+#### Drivers can update their own reports (any status)
+
+```sql
+CREATE POLICY "Drivers can update their own reports" ON weekly_reports
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'driver'
+      AND weekly_reports.driver_id = auth.uid()
+    )
+  );
+```
+
+#### Owners can view reports for cars they own
+
+```sql
+CREATE POLICY "Owners can view weekly reports for cars they own" ON weekly_reports
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'owner'
+      AND (
+        -- Main owner of the car (cars.owner_id)
+        EXISTS (
+          SELECT 1 FROM cars c
+          WHERE c.id = weekly_reports.car_id
+          AND c.owner_id = auth.uid()
+        )
+        OR
+        -- Additional car owner (car_owners table)
+        EXISTS (
+          SELECT 1 FROM car_owners co
+          WHERE co.car_id = weekly_reports.car_id
+          AND co.owner_id = auth.uid()
+        )
+      )
+    )
+  );
+```
+
+### Car Owners Policies
+
+#### Authenticated users can view car ownership
+
+```sql
+CREATE POLICY "Authenticated users can view car ownership" ON car_owners
+  FOR SELECT TO authenticated
+  USING (auth.uid() IS NOT NULL);
+```
+
+#### Car owners can view ownership for their cars
+
+```sql
+CREATE POLICY "Car owners can view ownership for their cars" ON car_owners
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM profiles p
+      WHERE p.id = auth.uid()
+      AND p.user_type = 'owner'
+      AND car_owners.owner_id = auth.uid()
+    )
+  );
+```
+
+### Car Makes and Models Policies
+
+#### Anyone can view car makes
+
+```sql
+CREATE POLICY "Anyone can view car makes" ON car_makes
+  FOR SELECT TO authenticated
+  USING (true);
+```
+
+#### Anyone can view car models
+
+```sql
+CREATE POLICY "Anyone can view car models" ON car_models
+  FOR SELECT TO authenticated
+  USING (true);
+```

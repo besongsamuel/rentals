@@ -578,7 +578,6 @@ const CarReports: React.FC = () => {
                   <Box sx={{ display: { xs: "none", md: "block" } }}>
                     <WeeklyReportsTable
                       weeklyReports={weeklyReports}
-                      drivers={drivers}
                       reportsWithIncomeSources={reportsWithIncomeSources}
                       profile={profile}
                       user={user}
@@ -587,8 +586,6 @@ const CarReports: React.FC = () => {
                       onApproveReport={handleApproveReport}
                       onSubmitReport={handleSubmitReport}
                       getReportStatusColor={getReportStatusColor}
-                      selectedDriverId={selectedDriverFilter}
-                      onDriverFilterChange={handleDriverFilterChange}
                     />
                   </Box>
 
@@ -601,133 +598,154 @@ const CarReports: React.FC = () => {
                           : true
                       )
                       .map((report) => (
-                      <Card key={report.id} sx={{ mb: 2, p: 2 }}>
-                        <Stack spacing={2}>
-                          <Box>
-                            <Typography
-                              variant="subtitle2"
-                              color="text.secondary"
+                        <Card key={report.id} sx={{ mb: 2, p: 2 }}>
+                          <Stack spacing={2}>
+                            <Box>
+                              <Typography
+                                variant="subtitle2"
+                                color="text.secondary"
+                              >
+                                {t("reports.weekPeriod")}
+                              </Typography>
+                              <Typography variant="body2">
+                                {new Date(
+                                  report.week_start_date
+                                ).toLocaleDateString()}{" "}
+                                -{" "}
+                                {new Date(
+                                  report.week_end_date
+                                ).toLocaleDateString()}
+                              </Typography>
+                            </Box>
+
+                            <Grid container spacing={2}>
+                              <Grid size={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  {t("reports.startMileage")}
+                                </Typography>
+                                <Typography variant="body2">
+                                  {report.start_mileage.toLocaleString()}{" "}
+                                  {t("common.km")}
+                                </Typography>
+                              </Grid>
+                              <Grid size={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  {t("reports.endMileage")}
+                                </Typography>
+                                <Typography variant="body2">
+                                  {report.end_mileage.toLocaleString()}{" "}
+                                  {t("common.km")}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            <Grid container spacing={2}>
+                              <Grid size={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  {t("reports.driverEarnings")}
+                                </Typography>
+                                <Typography variant="body2">
+                                  {new Intl.NumberFormat("fr-FR", {
+                                    style: "currency",
+                                    currency: "XAF",
+                                  }).format(report.driver_earnings)}
+                                </Typography>
+                              </Grid>
+                              <Grid size={6}>
+                                <Typography
+                                  variant="subtitle2"
+                                  color="text.secondary"
+                                >
+                                  {t("reports.maintenance")}
+                                </Typography>
+                                <Typography variant="body2">
+                                  {new Intl.NumberFormat("fr-FR", {
+                                    style: "currency",
+                                    currency: "XAF",
+                                  }).format(report.maintenance_expenses)}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                flexWrap: "wrap",
+                              }}
                             >
-                              {t("reports.weekPeriod")}
-                            </Typography>
-                            <Typography variant="body2">
-                              {new Date(
-                                report.week_start_date
-                              ).toLocaleDateString()}{" "}
-                              -{" "}
-                              {new Date(
-                                report.week_end_date
-                              ).toLocaleDateString()}
-                            </Typography>
-                          </Box>
-
-
-                          <Grid container spacing={2}>
-                            <Grid size={6}>
-                              <Typography
-                                variant="subtitle2"
-                                color="text.secondary"
-                              >
-                                {t("reports.startMileage")}
-                              </Typography>
-                              <Typography variant="body2">
-                                {report.start_mileage.toLocaleString()}{" "}
-                                {t("common.km")}
-                              </Typography>
-                            </Grid>
-                            <Grid size={6}>
-                              <Typography
-                                variant="subtitle2"
-                                color="text.secondary"
-                              >
-                                {t("reports.endMileage")}
-                              </Typography>
-                              <Typography variant="body2">
-                                {report.end_mileage.toLocaleString()}{" "}
-                                {t("common.km")}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-
-                          <Grid container spacing={2}>
-                            <Grid size={6}>
-                              <Typography
-                                variant="subtitle2"
-                                color="text.secondary"
-                              >
-                                {t("reports.driverEarnings")}
-                              </Typography>
-                              <Typography variant="body2">
-                                {new Intl.NumberFormat("fr-FR", {
-                                  style: "currency",
-                                  currency: "XAF",
-                                }).format(report.driver_earnings)}
-                              </Typography>
-                            </Grid>
-                            <Grid size={6}>
-                              <Typography
-                                variant="subtitle2"
-                                color="text.secondary"
-                              >
-                                {t("reports.maintenance")}
-                              </Typography>
-                              <Typography variant="body2">
-                                {new Intl.NumberFormat("fr-FR", {
-                                  style: "currency",
-                                  currency: "XAF",
-                                }).format(report.maintenance_expenses)}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 1,
-                              flexWrap: "wrap",
-                            }}
-                          >
-                            <Chip
-                              label={report.status}
-                              color={getReportStatusColor(report.status) as any}
-                              size="small"
-                            />
-                            {profile?.user_type === "owner" &&
-                              report.status === "submitted" && (
-                                <Button
-                                  size="small"
-                                  variant="contained"
-                                  color="success"
-                                  onClick={() => handleApproveReport(report.id)}
-                                >
-                                  {t("reports.approve")}
-                                </Button>
+                              <Chip
+                                label={report.status}
+                                color={
+                                  getReportStatusColor(report.status) as any
+                                }
+                                size="small"
+                              />
+                              {profile?.user_type === "owner" &&
+                                report.status === "submitted" && (
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    color="success"
+                                    onClick={() =>
+                                      handleApproveReport(report.id)
+                                    }
+                                  >
+                                    {t("reports.approve")}
+                                  </Button>
+                                )}
+                              {profile?.user_type === "driver" &&
+                                report.status === "draft" && (
+                                  <Button
+                                    size="small"
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() =>
+                                      handleSubmitReport(report.id)
+                                    }
+                                    disabled={
+                                      !reportsWithIncomeSources.has(report.id)
+                                    }
+                                    title={
+                                      !reportsWithIncomeSources.has(report.id)
+                                        ? "Add income sources before submitting"
+                                        : ""
+                                    }
+                                  >
+                                    {t("reports.submit")}
+                                  </Button>
+                                )}
+                              {report.status === "draft" && (
+                                <Tooltip title="Edit report">
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleEditReport(report)}
+                                    sx={{
+                                      border: "1px solid",
+                                      borderColor: "divider",
+                                      "&:hover": {
+                                        bgcolor: "action.hover",
+                                        borderColor: "primary.main",
+                                      },
+                                    }}
+                                  >
+                                    <Edit />
+                                  </IconButton>
+                                </Tooltip>
                               )}
-                            {profile?.user_type === "driver" &&
-                              report.status === "draft" && (
-                                <Button
-                                  size="small"
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={() => handleSubmitReport(report.id)}
-                                  disabled={
-                                    !reportsWithIncomeSources.has(report.id)
-                                  }
-                                  title={
-                                    !reportsWithIncomeSources.has(report.id)
-                                      ? "Add income sources before submitting"
-                                      : ""
-                                  }
-                                >
-                                  {t("reports.submit")}
-                                </Button>
-                              )}
-                            {report.status === "draft" && (
-                              <Tooltip title="Edit report">
+                              <Tooltip title="View earnings details">
                                 <IconButton
                                   size="small"
-                                  onClick={() => handleEditReport(report)}
                                   sx={{
                                     border: "1px solid",
                                     borderColor: "divider",
@@ -737,29 +755,13 @@ const CarReports: React.FC = () => {
                                     },
                                   }}
                                 >
-                                  <Edit />
+                                  <AttachMoney />
                                 </IconButton>
                               </Tooltip>
-                            )}
-                            <Tooltip title="View earnings details">
-                              <IconButton
-                                size="small"
-                                sx={{
-                                  border: "1px solid",
-                                  borderColor: "divider",
-                                  "&:hover": {
-                                    bgcolor: "action.hover",
-                                    borderColor: "primary.main",
-                                  },
-                                }}
-                              >
-                                <AttachMoney />
-                              </IconButton>
-                            </Tooltip>
-                          </Box>
-                        </Stack>
-                      </Card>
-                    ))}
+                            </Box>
+                          </Stack>
+                        </Card>
+                      ))}
                   </Box>
                 </>
               )}
