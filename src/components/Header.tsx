@@ -146,24 +146,32 @@ const Header: React.FC = () => {
             </IconButton>
           )}
 
-          <Typography
-            variant="h6"
-            component="div"
-            onClick={handleTitleClick}
+          <Box
             sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
               flexGrow: 1,
-              fontWeight: 700,
-              fontSize: { xs: "1rem", sm: "1.25rem", md: "1.375rem" },
-              color: "inherit",
               cursor: "pointer",
-              lineHeight: 1.2,
               "&:hover": {
                 opacity: 0.8,
               },
             }}
+            onClick={handleTitleClick}
           >
-            {t("app.name")}
-          </Typography>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{
+                fontWeight: 700,
+                fontSize: { xs: "1rem", sm: "1.25rem", md: "1.375rem" },
+                color: "inherit",
+                lineHeight: 1.2,
+              }}
+            >
+              {t("app.name")}
+            </Typography>
+          </Box>
 
           <Box
             sx={{
@@ -371,12 +379,21 @@ const Header: React.FC = () => {
         }}
       >
         <Box sx={{ p: 2, borderBottom: "1px solid", borderColor: "divider" }}>
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 700, color: "primary.main" }}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 1,
+            }}
           >
-            {t("app.name")}
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: 700, color: "primary.main" }}
+            >
+              {t("app.name")}
+            </Typography>
+          </Box>
           {profile && (
             <Box sx={{ mt: 2 }}>
               <Typography variant="body1" sx={{ fontWeight: 600 }}>

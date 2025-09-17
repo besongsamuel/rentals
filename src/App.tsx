@@ -1,5 +1,6 @@
 import { Box, CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
+import { useEffect } from "react";
 import {
   Navigate,
   Route,
@@ -18,6 +19,53 @@ import LoginForm from "./pages/LoginForm";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import SignUpForm from "./pages/SignUpForm";
 import theme from "./theme";
+
+// Component to handle dynamic title updates
+function DocumentTitle() {
+  const location = useLocation();
+  const { profile } = useUserContext();
+
+  useEffect(() => {
+    const baseTitle = "Aftermath Car Management";
+    let pageTitle = baseTitle;
+
+    // Update title based on current route
+    switch (location.pathname) {
+      case "/":
+        pageTitle = `${baseTitle} - Dashboard`;
+        break;
+      case "/login":
+        pageTitle = `${baseTitle} - Login`;
+        break;
+      case "/complete-profile":
+        pageTitle = `${baseTitle} - Complete Profile`;
+        break;
+      case "/cars/new":
+        pageTitle = `${baseTitle} - Add New Car`;
+        break;
+      default:
+        if (location.pathname.startsWith("/cars/")) {
+          if (location.pathname.includes("/edit")) {
+            pageTitle = `${baseTitle} - Edit Car`;
+          } else {
+            pageTitle = `${baseTitle} - Car Details`;
+          }
+        }
+        break;
+    }
+
+    // Add user type context if available
+    if (profile?.user_type) {
+      pageTitle += ` (${
+        profile.user_type.charAt(0).toUpperCase() + profile.user_type.slice(1)
+      })`;
+    }
+
+    document.title = pageTitle;
+  }, [location.pathname, profile?.user_type]);
+
+  return null;
+}
 
 function AuthRoutes() {
   const location = useLocation();
@@ -45,6 +93,7 @@ function AppContent() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
+        <DocumentTitle />
         {user ? (
           // User is authenticated
           <Box

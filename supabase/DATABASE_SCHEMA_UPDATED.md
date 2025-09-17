@@ -17,7 +17,7 @@ CREATE TABLE organizations (
 ```
 
 **Purpose**: Multi-tenant support for different rental companies
-**Seed Data**: "3 Brother Rentals" organization is automatically created with ID `550e8400-e29b-41d4-a716-446655440000`
+**Seed Data**: "Aftermath Car Management" organization is automatically created with ID `550e8400-e29b-41d4-a716-446655440000`
 
 ## Updated Tables
 

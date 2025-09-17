@@ -27,9 +27,9 @@ CREATE POLICY "Authenticated users can delete organizations" ON organizations
   FOR DELETE TO authenticated
   USING (auth.uid() IS NOT NULL);
 
--- Insert the default organization "3 Brother Rentals"
-INSERT INTO organizations (id, name, description) VALUES 
-  ('550e8400-e29b-41d4-a716-446655440000', '3 Brother Rentals', 'Car rental and ride-sharing service company');
+-- Insert the default organization "Aftermath Car Management"
+INSERT INTO organizations (id, name, description) VALUES
+  ('550e8400-e29b-41d4-a716-446655440000', 'Aftermath Car Management', 'Professional car fleet management and rental service company');
 
 -- Add organization_id column to profiles table with default value
 ALTER TABLE profiles 

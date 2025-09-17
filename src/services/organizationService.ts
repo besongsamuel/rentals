@@ -16,7 +16,9 @@ export const organizationService = {
     return data || [];
   },
 
-  async getOrganizationById(organizationId: string): Promise<Organization | null> {
+  async getOrganizationById(
+    organizationId: string
+  ): Promise<Organization | null> {
     const { data, error } = await supabase
       .from("organizations")
       .select("*")
@@ -32,11 +34,11 @@ export const organizationService = {
   },
 
   async getDefaultOrganization(): Promise<Organization | null> {
-    // Get the default "3 Brother Rentals" organization
+    // Get the default "Aftermath Car Management" organization
     const { data, error } = await supabase
       .from("organizations")
       .select("*")
-      .eq("name", "3 Brother Rentals")
+      .eq("name", "Aftermath Car Management")
       .single();
 
     if (error) {
