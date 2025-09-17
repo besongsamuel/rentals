@@ -1,4 +1,4 @@
-import { AttachMoney, Edit, Comment } from "@mui/icons-material";
+import { AttachMoney, Comment, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -41,7 +41,8 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
     null
   );
   const [messagesDialogOpen, setMessagesDialogOpen] = useState(false);
-  const [selectedReportForMessages, setSelectedReportForMessages] = useState<WeeklyReport | null>(null);
+  const [selectedReportForMessages, setSelectedReportForMessages] =
+    useState<WeeklyReport | null>(null);
 
   const handleViewEarnings = (report: WeeklyReport) => {
     if (onViewDetails) {
