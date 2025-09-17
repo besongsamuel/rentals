@@ -125,12 +125,21 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static" elevation={0}>
+      <AppBar
+        position="static"
+        elevation={0}
+        sx={{
+          borderRadius: 0,
+          "& .MuiAppBar-root": {
+            borderRadius: 0,
+          },
+        }}
+      >
         <Toolbar
           sx={{
             px: { xs: 1.5, sm: 3 },
-            py: { xs: 0.5, sm: 1 },
-            minHeight: { xs: 56, sm: 64 },
+            py: { xs: 1, sm: 1.5 },
+            minHeight: { xs: 72, sm: 80 },
           }}
         >
           {/* Mobile Menu Button */}
@@ -150,7 +159,7 @@ const Header: React.FC = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1,
+              justifyContent: "flex-start",
               flexGrow: 1,
               cursor: "pointer",
               "&:hover": {
@@ -159,18 +168,16 @@ const Header: React.FC = () => {
             }}
             onClick={handleTitleClick}
           >
-            <Typography
-              variant="h6"
-              component="div"
+            <Box
+              component="img"
+              src="/app_logo.png"
+              alt="Aftermath Car Management Logo"
               sx={{
-                fontWeight: 700,
-                fontSize: { xs: "1rem", sm: "1.25rem", md: "1.375rem" },
-                color: "inherit",
-                lineHeight: 1.2,
+                height: "96px",
+                width: "auto",
+                display: "block",
               }}
-            >
-              {t("app.name")}
-            </Typography>
+            />
           </Box>
 
           <Box
@@ -383,16 +390,20 @@ const Header: React.FC = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1,
+              justifyContent: "center",
               mb: 1,
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: 700, color: "primary.main" }}
-            >
-              {t("app.name")}
-            </Typography>
+            <Box
+              component="img"
+              src="/app_logo.png"
+              alt="Aftermath Car Management Logo"
+              sx={{
+                height: "40px",
+                width: "auto",
+                display: "block",
+              }}
+            />
           </Box>
           {profile && (
             <Box sx={{ mt: 2 }}>
