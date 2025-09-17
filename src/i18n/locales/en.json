@@ -325,8 +325,9 @@
   "messages": {
     "title": "Comments & Messages",
     "addComment": "Add Comment",
-    "commentPlaceholder": "Write your comment here...",
-    "replyPlaceholder": "Write your reply here...",
+    "commentPlaceholder": "Write your comment here... (Supports **bold**, *italic*, links, lists, and more!)",
+    "replyPlaceholder": "Write your reply here... (Supports **bold**, *italic*, links, lists, and more!)",
+    "editPlaceholder": "Edit your message... (Supports **bold**, *italic*, links, lists, and more!)",
     "comments": "Comments",
     "noComments": "No comments yet. Be the first to comment!",
     "replyToComment": "Reply to Comment",

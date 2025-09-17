@@ -321,8 +321,9 @@
   "messages": {
     "title": "Commentaires et Messages",
     "addComment": "Ajouter un Commentaire",
-    "commentPlaceholder": "Écrivez votre commentaire ici...",
-    "replyPlaceholder": "Écrivez votre réponse ici...",
+    "commentPlaceholder": "Écrivez votre commentaire ici... (Supporte **gras**, *italique*, liens, listes et plus !)",
+    "replyPlaceholder": "Écrivez votre réponse ici... (Supporte **gras**, *italique*, liens, listes et plus !)",
+    "editPlaceholder": "Modifiez votre message... (Supporte **gras**, *italique*, liens, listes et plus !)",
     "comments": "Commentaires",
     "noComments": "Aucun commentaire pour le moment. Soyez le premier à commenter !",
     "replyToComment": "Répondre au Commentaire",

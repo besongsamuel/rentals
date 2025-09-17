@@ -1,4 +1,4 @@
-import { Add, Close, Delete, Edit, MoreVert, Reply } from "@mui/icons-material";
+import { Close, Delete, Edit, MoreVert, Reply } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -13,13 +13,13 @@ import {
   Divider,
   IconButton,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { messageService } from "../services/messageService";
 import { CreateMessageData, MessageWithReplies, Profile } from "../types";
+import RichTextEditor from "./RichTextEditor";
 
 interface MessagesManagerProps {
   weeklyReportId: string;
@@ -220,44 +220,24 @@ const MessageItem: React.FC<MessageItemProps> = ({
 
               {isEditing ? (
                 <Box sx={{ mt: 1 }}>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={3}
+                  <RichTextEditor
                     value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    sx={{ mb: 1 }}
+                    onChange={setEditContent}
+                    placeholder={t("messages.editPlaceholder")}
+                    minHeight={120}
+                    showPreview={true}
+                    onSave={handleSaveEdit}
+                    onCancel={handleCancelEdit}
+                    showActions={true}
                   />
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={handleSaveEdit}
-                    >
-                      {t("common.save")}
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={handleCancelEdit}
-                    >
-                      {t("common.cancel")}
-                    </Button>
-                  </Stack>
                 </Box>
               ) : (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: "text.primary",
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {message.content}
-                </Typography>
+                <RichTextEditor
+                  value={message.content}
+                  onChange={() => {}} // Read-only
+                  readOnly={true}
+                  showPreview={true}
+                />
               )}
 
               <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
@@ -431,24 +411,15 @@ const MessagesManager: React.FC<MessagesManagerProps> = ({
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
             {t("messages.addComment")}
           </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
+          <RichTextEditor
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={setNewMessage}
             placeholder={t("messages.commentPlaceholder")}
-            variant="outlined"
-            sx={{ mb: 2 }}
+            minHeight={120}
+            showPreview={true}
+            onSave={handleAddMessage}
+            showActions={true}
           />
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={handleAddMessage}
-            disabled={!newMessage.trim()}
-          >
-            {t("messages.addComment")}
-          </Button>
         </Box>
 
         <Divider sx={{ mb: 3 }} />
@@ -489,28 +460,16 @@ const MessagesManager: React.FC<MessagesManagerProps> = ({
             <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
               {t("messages.replyToComment")}
             </Typography>
-            <TextField
-              fullWidth
-              multiline
-              rows={3}
+            <RichTextEditor
               value={replyContent}
-              onChange={(e) => setReplyContent(e.target.value)}
+              onChange={setReplyContent}
               placeholder={t("messages.replyPlaceholder")}
-              variant="outlined"
-              sx={{ mb: 2 }}
+              minHeight={120}
+              showPreview={true}
+              onSave={handleReply}
+              onCancel={handleCancelReply}
+              showActions={true}
             />
-            <Stack direction="row" spacing={1}>
-              <Button
-                variant="contained"
-                onClick={handleReply}
-                disabled={!replyContent.trim()}
-              >
-                {t("messages.reply")}
-              </Button>
-              <Button variant="outlined" onClick={handleCancelReply}>
-                {t("common.cancel")}
-              </Button>
-            </Stack>
           </Box>
         )}
       </DialogContent>
