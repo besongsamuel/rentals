@@ -585,7 +585,6 @@ const CarReports: React.FC = () => {
                       onEditReport={handleEditReport}
                       onApproveReport={handleApproveReport}
                       onSubmitReport={handleSubmitReport}
-                      getReportStatusColor={getReportStatusColor}
                     />
                   </Box>
 

@@ -220,21 +220,6 @@ const CarDetailManagement: React.FC = () => {
     }
   };
 
-  const getReportStatusColor = (status: string) => {
-    switch (status) {
-      case "draft":
-        return "warning";
-      case "submitted":
-        return "info";
-      case "approved":
-        return "success";
-      case "rejected":
-        return "error";
-      default:
-        return "default";
-    }
-  };
-
   const generateYearOptions = () => {
     const currentYear = new Date().getFullYear();
     const years = [];
@@ -510,7 +495,6 @@ const CarDetailManagement: React.FC = () => {
                 onEditReport={handleEditReport}
                 onApproveReport={handleApproveReport}
                 onSubmitReport={handleSubmitReport}
-                getReportStatusColor={getReportStatusColor}
               />
             </CardContent>
           </Card>
