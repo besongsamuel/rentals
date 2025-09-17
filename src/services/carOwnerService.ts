@@ -35,8 +35,6 @@ export const carOwnerService = {
       .insert({
         car_id: carOwnerData.car_id,
         owner_id: carOwnerData.owner_id,
-        ownership_percentage: carOwnerData.ownership_percentage || 0,
-        is_primary_owner: carOwnerData.is_primary_owner || false,
       })
       .select(
         `

@@ -265,6 +265,39 @@
 - **List Projects**: `supabase projects list` - Lists available remote projects
 - **Link Project**: `supabase link` - Links to remote project for deployment
 
+## Database Management Rules
+
+- **CRITICAL: NEVER reset the local database unless explicitly requested by the user**
+- **Database Reset Prohibition**: Do not run `supabase db reset` unless the user specifically asks for it
+- **Data Preservation**: Always preserve existing local database data and only apply new migrations
+- **Migration Strategy**: Use `supabase migration up` to apply pending migrations without losing data
+- **User Confirmation Required**: If database reset is needed, ask the user for explicit confirmation first
+- **Alternative Approaches**: Consider alternative solutions before suggesting database reset:
+  - Apply specific migrations individually
+  - Use `supabase db diff` to identify schema differences
+  - Check for migration conflicts before applying
+  - Suggest manual data backup if reset is unavoidable
+
+## RLS Policy Design Rules
+
+- **CRITICAL: NEVER create circular dependencies in RLS policies**
+- **Infinite Recursion Prevention**: Avoid policies that reference each other in circular patterns
+- **Policy Isolation**: Design policies to be self-contained and not depend on other table policies
+- **Simple References**: Use direct field references instead of complex subqueries when possible
+- **Avoid Cross-Table Dependencies**: Don't create policies that reference multiple tables in complex ways
+- **Common Recursion Patterns to Avoid**:
+  - Table A policy references Table B, Table B policy references Table A
+  - Policies that use EXISTS with subqueries to other tables with their own complex policies
+  - Nested policy dependencies that create circular chains
+- **Best Practices for RLS Policies**:
+  - Use direct field comparisons: `owner_id = auth.uid()`
+  - Avoid complex EXISTS subqueries when possible
+  - Keep policies simple and focused on single table access
+  - Test policies for circular dependencies before deployment
+  - Use separate policies for different user types instead of complex conditional logic
+- **Policy Testing**: Always test RLS policies to ensure they don't cause infinite recursion
+- **Migration Safety**: When updating policies, drop existing policies first to avoid conflicts
+
 ## Authentication & Supabase
 
 - Always use the useAuth hook for authentication state

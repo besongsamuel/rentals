@@ -21,20 +21,19 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import CarOwnerForm from "../components/CarOwnerForm";
+import CarOwners from "../components/CarOwners";
 import CarStatistics from "../components/CarStatistics";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
-import { carOwnerService } from "../services/carOwnerService";
 import { carService } from "../services/carService";
 import { profileService } from "../services/profileService";
 import { weeklyReportService } from "../services/weeklyReportService";
-import { Car, CarOwnerWithProfile, Profile, WeeklyReport } from "../types";
+import { Car, Profile, WeeklyReport } from "../types";
 
 const CarDetailManagement: React.FC = () => {
   const { t } = useTranslation();
@@ -46,14 +45,12 @@ const CarDetailManagement: React.FC = () => {
   const [weeklyReports, setWeeklyReports] = useState<
     (WeeklyReport & { total_earnings: number })[]
   >([]);
-  const [carOwners, setCarOwners] = useState<CarOwnerWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
   const [selectedDriverFilter, setSelectedDriverFilter] = useState<string>("");
-  const [showCarOwnerForm, setShowCarOwnerForm] = useState(false);
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
@@ -69,11 +66,38 @@ const CarDetailManagement: React.FC = () => {
     null
   );
 
+  const loadData = useCallback(async () => {
+    if (!carId) return;
+
+    setLoading(true);
+    try {
+      // Load car details, drivers, and weekly reports in parallel
+      const [carData, driversData, reportsData] = await Promise.all([
+        carService.getCarById(carId),
+        profileService.getAllDrivers(profile?.organization_id),
+        weeklyReportService.getReportsByCarWithTotalEarnings(
+          carId,
+          selectedYear || undefined,
+          selectedMonth || undefined
+        ),
+      ]);
+
+      setCar(carData);
+      setDrivers(driversData);
+      setWeeklyReports(reportsData || []);
+      setSelectedDriverId(carData?.driver_id || "");
+    } catch (error) {
+      console.error("Error loading car details:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [carId, profile?.organization_id, selectedYear, selectedMonth]);
+
   useEffect(() => {
     if (carId) {
       loadData();
     }
-  }, [carId, selectedYear, selectedMonth]);
+  }, [carId, selectedYear, selectedMonth, loadData]);
 
   // Check which reports have income sources
   useEffect(() => {
@@ -98,37 +122,6 @@ const CarDetailManagement: React.FC = () => {
       checkIncomeSources();
     }
   }, [weeklyReports]);
-
-  const loadData = async () => {
-    if (!carId) return;
-
-    setLoading(true);
-    try {
-      // Load car details, drivers, weekly reports, and car owners in parallel
-      const [carData, driversData, reportsData, ownersData] = await Promise.all(
-        [
-          carService.getCarById(carId),
-          profileService.getAllDrivers(profile?.organization_id),
-          weeklyReportService.getReportsByCarWithTotalEarnings(
-            carId,
-            selectedYear || undefined,
-            selectedMonth || undefined
-          ),
-          carOwnerService.getCarOwnersByCar(carId),
-        ]
-      );
-
-      setCar(carData);
-      setDrivers(driversData);
-      setWeeklyReports(reportsData || []);
-      setCarOwners(ownersData || []);
-      setSelectedDriverId(carData?.driver_id || "");
-    } catch (error) {
-      console.error("Error loading car details:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAssignDriver = async () => {
     if (!car || !selectedDriverId) return;
@@ -258,30 +251,6 @@ const CarDetailManagement: React.FC = () => {
       console.error("Error unassigning car:", error);
     } finally {
       setLoadingAssignments(false);
-    }
-  };
-
-  const handleAddCarOwner = async (carOwnerData: any) => {
-    try {
-      await carOwnerService.addCarOwner(carOwnerData);
-      setShowCarOwnerForm(false);
-      loadData(); // Refresh the data
-    } catch (error) {
-      console.error("Error adding car owner:", error);
-      alert("Failed to add car owner");
-    }
-  };
-
-  const handleRemoveCarOwner = async (carOwnerId: string) => {
-    if (!window.confirm("Are you sure you want to remove this car owner?"))
-      return;
-
-    try {
-      await carOwnerService.removeCarOwner(carOwnerId);
-      loadData(); // Refresh the data
-    } catch (error) {
-      console.error("Error removing car owner:", error);
-      alert("Failed to remove car owner");
     }
   };
 
@@ -465,91 +434,6 @@ const CarDetailManagement: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Car Owner Management Section - Only for main car owner */}
-        {user && car && car.owner_id === user.id && (
-          <Grid size={12}>
-            <Card elevation={2}>
-              <CardContent>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
-                  }}
-                >
-                  <Typography variant="h6">
-                    {t("carManagement.carOwnersManagement")}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => setShowCarOwnerForm(true)}
-                  >
-                    Add Owner
-                  </Button>
-                </Box>
-
-                {carOwners.length === 0 ? (
-                  <Typography variant="body2" color="text.secondary">
-                    No additional owners assigned to this car.
-                  </Typography>
-                ) : (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" gutterBottom>
-                      Additional Owners:
-                    </Typography>
-                    {carOwners.map((carOwner) => (
-                      <Box
-                        key={carOwner.id}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          py: 1,
-                          borderBottom: "1px solid",
-                          borderColor: "divider",
-                        }}
-                      >
-                        <Box>
-                          <Typography variant="body2">
-                            {carOwner.profiles?.full_name ||
-                              carOwner.profiles?.email}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Ownership: {carOwner.ownership_percentage}%
-                            {carOwner.is_primary_owner && " (Primary)"}
-                          </Typography>
-                        </Box>
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                          onClick={() => handleRemoveCarOwner(carOwner.id)}
-                        >
-                          Remove
-                        </Button>
-                      </Box>
-                    ))}
-                  </Box>
-                )}
-
-                {showCarOwnerForm && (
-                  <Paper sx={{ p: 2, mt: 2 }}>
-                    <CarOwnerForm
-                      carId={carId!}
-                      onSubmit={handleAddCarOwner}
-                      onCancel={() => setShowCarOwnerForm(false)}
-                      existingOwners={carOwners.map((co) => co.owner_id)}
-                      organizationId={profile?.organization_id}
-                    />
-                  </Paper>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        )}
-
         {/* Driver Assignment Section - Only for owners */}
         {profile?.user_type === "owner" && (
           <Grid size={12}>
@@ -647,6 +531,11 @@ const CarDetailManagement: React.FC = () => {
             </Card>
           </Grid>
         )}
+
+        {/* Car Owners Section */}
+        <Grid size={12}>
+          <CarOwners currentUser={profile!} carId={carId!} />
+        </Grid>
 
         {/* Car Statistics Section */}
         <Grid size={12}>

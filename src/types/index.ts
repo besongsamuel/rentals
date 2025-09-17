@@ -75,8 +75,6 @@ export interface CarOwner {
   id: string;
   car_id: string;
   owner_id: string;
-  ownership_percentage: number;
-  is_primary_owner: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -134,8 +132,6 @@ export interface CreateProfileData {
 export interface CreateCarOwnerData {
   car_id: string;
   owner_id: string;
-  ownership_percentage?: number;
-  is_primary_owner?: boolean;
 }
 
 export interface CreateCarData {

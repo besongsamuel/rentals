@@ -6,7 +6,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -31,8 +30,6 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
   const [formData, setFormData] = useState<CreateCarOwnerData>({
     car_id: carId,
     owner_id: "",
-    ownership_percentage: 0,
-    is_primary_owner: false,
   });
   const [owners, setOwners] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,14 +58,9 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
   const handleInputChange =
     (field: keyof CreateCarOwnerData) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value =
-        field === "ownership_percentage"
-          ? parseFloat(event.target.value) || 0
-          : event.target.value;
-
       setFormData((prev) => ({
         ...prev,
-        [field]: value,
+        [field]: event.target.value,
       }));
     };
 
@@ -85,14 +77,6 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
 
     if (!formData.owner_id) {
       alert("Please select an owner");
-      return;
-    }
-
-    if (
-      (formData.ownership_percentage ?? 0) < 0 ||
-      (formData.ownership_percentage ?? 0) > 100
-    ) {
-      alert("Ownership percentage must be between 0 and 100");
       return;
     }
 
@@ -145,37 +129,6 @@ const CarOwnerForm: React.FC<CarOwnerFormProps> = ({
                   {owner.full_name || owner.email}
                 </MenuItem>
               ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            fullWidth
-            label="Ownership Percentage"
-            type="number"
-            value={formData.ownership_percentage}
-            onChange={handleInputChange("ownership_percentage")}
-            helperText="Percentage of ownership (0-100)"
-            inputProps={{ min: 0, max: 100, step: 0.01 }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <FormControl fullWidth>
-            <InputLabel>Primary Owner</InputLabel>
-            <Select
-              value={(formData.is_primary_owner ?? false).toString()}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  is_primary_owner: e.target.value === "true",
-                }))
-              }
-              label="Primary Owner"
-            >
-              <MenuItem value="false">No</MenuItem>
-              <MenuItem value="true">Yes</MenuItem>
             </Select>
           </FormControl>
         </Grid>

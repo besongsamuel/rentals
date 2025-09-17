@@ -98,22 +98,20 @@ CREATE TABLE cars (
 );
 ```
 
-### 5. `car_owners` (Additional owners and ownership percentages)
+### 5. `car_owners` (Additional car owners)
 
 ```sql
 CREATE TABLE car_owners (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   car_id UUID REFERENCES cars(id) ON DELETE CASCADE NOT NULL,
   owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  ownership_percentage DECIMAL(5,2) DEFAULT 100.00 CHECK (ownership_percentage > 0 AND ownership_percentage <= 100),
-  is_primary_owner BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(car_id, owner_id)
 );
 ```
 
-**Note**: The main owner is tracked in `cars.owner_id`. This table tracks additional owners and their ownership percentages.
+**Note**: The main owner is tracked in `cars.owner_id`. This table tracks additional owners for multi-owner cars. All owners have equal rights.
 
 ### 6. `weekly_reports` (Updated - removed income_sources JSONB)
 

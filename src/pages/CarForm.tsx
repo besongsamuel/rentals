@@ -55,14 +55,17 @@ const CarForm: React.FC = () => {
     const loadData = async () => {
       setLoading(true);
       try {
-        // Load owners and car makes in parallel
-        const [owners, makes] = await Promise.all([
-          profileService.getAllOwners(profile?.organization_id),
-          carMakeModelService.getCarMakes(),
-        ]);
-
-        setOwners(owners);
+        // Load car makes
+        const makes = await carMakeModelService.getCarMakes();
         setCarMakes(makes);
+
+        // Only load owners when editing
+        if (isEditMode) {
+          const owners = await profileService.getAllOwners(
+            profile?.organization_id
+          );
+          setOwners(owners);
+        }
 
         // Load car data if editing
         if (isEditMode) {
@@ -140,7 +143,7 @@ const CarForm: React.FC = () => {
       setSaving(false);
       return;
     }
-    if (!formData.owner_id) {
+    if (isEditMode && !formData.owner_id) {
       setError("Please select an owner");
       setSaving(false);
       return;
@@ -155,9 +158,15 @@ const CarForm: React.FC = () => {
         color: formData.color.trim() || undefined,
         license_plate: formData.license_plate.trim() || undefined,
         initial_mileage: formData.initial_mileage,
-        owner_id: formData.owner_id,
-        fuel_type: (formData.fuel_type as "gasoline" | "diesel" | "hybrid" | "electric") || undefined,
-        transmission_type: (formData.transmission_type as "manual" | "automatic") || undefined,
+        owner_id: isEditMode ? formData.owner_id : user!.id,
+        fuel_type:
+          (formData.fuel_type as
+            | "gasoline"
+            | "diesel"
+            | "hybrid"
+            | "electric") || undefined,
+        transmission_type:
+          (formData.transmission_type as "manual" | "automatic") || undefined,
       };
 
       if (isEditMode) {
@@ -291,30 +300,32 @@ const CarForm: React.FC = () => {
               />
             </Grid>
 
-            <Grid size={12}>
-              <FormControl fullWidth required>
-                <InputLabel>Owner</InputLabel>
-                <Select
-                  value={formData.owner_id}
-                  onChange={handleSelectChange("owner_id")}
-                  label="Owner"
-                  disabled={loadingOwners || saving}
-                >
-                  {loadingOwners ? (
-                    <MenuItem disabled>
-                      <CircularProgress size={20} sx={{ mr: 1 }} />
-                      Loading owners...
-                    </MenuItem>
-                  ) : (
-                    owners.map((owner) => (
-                      <MenuItem key={owner.id} value={owner.id}>
-                        {owner.full_name || owner.email}
+            {isEditMode && (
+              <Grid size={12}>
+                <FormControl fullWidth required>
+                  <InputLabel>Owner</InputLabel>
+                  <Select
+                    value={formData.owner_id}
+                    onChange={handleSelectChange("owner_id")}
+                    label="Owner"
+                    disabled={loadingOwners || saving}
+                  >
+                    {loadingOwners ? (
+                      <MenuItem disabled>
+                        <CircularProgress size={20} sx={{ mr: 1 }} />
+                        Loading owners...
                       </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </FormControl>
-            </Grid>
+                    ) : (
+                      owners.map((owner) => (
+                        <MenuItem key={owner.id} value={owner.id}>
+                          {owner.full_name || owner.email}
+                        </MenuItem>
+                      ))
+                    )}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
 
             <Grid size={6}>
               <Autocomplete

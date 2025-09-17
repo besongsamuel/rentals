@@ -13,22 +13,18 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 import { carMakeModelService } from "../services/carMakeModelService";
-import { profileService } from "../services/profileService";
-import { CarMake, CarModel, CreateCarData, Profile } from "../types";
+import { CarMake, CarModel, CreateCarData } from "../types";
 import ErrorAlert from "./ErrorAlert";
 
 interface AddCarFormProps {
   onSubmit: (carData: CreateCarData) => void;
   onCancel: () => void;
-  organizationId?: string; // Organization ID to filter owners by
 }
 
-const AddCarForm: React.FC<AddCarFormProps> = ({
-  onSubmit,
-  onCancel,
-  organizationId,
-}) => {
+const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     vin: "",
     make: "",
@@ -37,39 +33,34 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
     color: "",
     license_plate: "",
     initial_mileage: 0,
-    owner_id: "",
     fuel_type: "",
     transmission_type: "",
   });
-  const [owners, setOwners] = useState<Profile[]>([]);
   const [carMakes, setCarMakes] = useState<CarMake[]>([]);
   const [carModels, setCarModels] = useState<CarModel[]>([]);
-  const [loadingOwners, setLoadingOwners] = useState(true);
   const [loadingMakes, setLoadingMakes] = useState(true);
   const [loadingModels, setLoadingModels] = useState(false);
   const [error, setError] = useState("");
 
-  // Load owners and car makes on component mount
+  // Load car makes on component mount
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [ownersData, makesData] = await Promise.all([
-          profileService.getAllOwners(organizationId),
-          carMakeModelService.getCarMakes(),
-        ]);
-        setOwners(ownersData);
+        setLoadingMakes(true);
+
+        // Load car makes
+        const makesData = await carMakeModelService.getCarMakes();
         setCarMakes(makesData);
       } catch (error) {
         console.error("Error loading data:", error);
-        setError("Failed to load data. Please try again.");
+        setError("Failed to load form data");
       } finally {
-        setLoadingOwners(false);
         setLoadingMakes(false);
       }
     };
 
     loadData();
-  }, [organizationId]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,8 +79,8 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
       setError("Model is required");
       return;
     }
-    if (!formData.owner_id) {
-      setError("Please select an owner");
+    if (!user) {
+      setError("You must be logged in to add a car");
       return;
     }
 
@@ -102,7 +93,7 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
         color: formData.color.trim() || undefined,
         license_plate: formData.license_plate.trim() || undefined,
         initial_mileage: formData.initial_mileage,
-        owner_id: formData.owner_id,
+        owner_id: user.id,
         fuel_type:
           (formData.fuel_type as
             | "gasoline"
@@ -190,31 +181,6 @@ const AddCarForm: React.FC<AddCarFormProps> = ({
               onChange={handleInputChange("vin")}
               placeholder="Enter VIN number"
             />
-          </Grid>
-
-          <Grid size={12}>
-            <FormControl fullWidth required>
-              <InputLabel>Owner</InputLabel>
-              <Select
-                value={formData.owner_id}
-                onChange={handleSelectChange("owner_id")}
-                label="Owner"
-                disabled={loadingOwners}
-              >
-                {loadingOwners ? (
-                  <MenuItem disabled>
-                    <CircularProgress size={20} sx={{ mr: 1 }} />
-                    Loading owners...
-                  </MenuItem>
-                ) : (
-                  owners.map((owner) => (
-                    <MenuItem key={owner.id} value={owner.id}>
-                      {owner.full_name || owner.email}
-                    </MenuItem>
-                  ))
-                )}
-              </Select>
-            </FormControl>
           </Grid>
 
           <Grid size={6}>

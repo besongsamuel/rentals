@@ -254,7 +254,15 @@
     "approveReportConfirm": "Are you sure you want to approve this weekly report? This action cannot be undone.",
     "submitReportConfirm": "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it.",
     "backToDashboard": "Back to Dashboard",
-    "editCar": "Edit Car"
+    "editCar": "Edit Car",
+    "carOwners": "Car Owners",
+    "addOwner": "Add Owner",
+    "mainOwner": "Main Owner",
+    "additionalOwners": "Additional Owners",
+    "carOwner": "Car Owner",
+    "noAdditionalOwners": "No additional owners",
+    "noCarOwners": "No car owners",
+    "remove": "Remove"
   },
   "statistics": {
     "title": "Car Statistics",

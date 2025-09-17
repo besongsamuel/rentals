@@ -252,7 +252,15 @@
     "approveReportConfirm": "Êtes-vous sûr de vouloir approuver ce rapport hebdomadaire? Cette action ne peut pas être annulée.",
     "submitReportConfirm": "Êtes-vous sûr de vouloir soumettre ce rapport hebdomadaire? Une fois soumis, vous ne pourrez plus le modifier.",
     "backToDashboard": "Retour au tableau de bord",
-    "editCar": "Modifier le véhicule"
+    "editCar": "Modifier le véhicule",
+    "carOwners": "Propriétaires de véhicules",
+    "addOwner": "Ajouter un propriétaire",
+    "mainOwner": "Propriétaire principal",
+    "additionalOwners": "Propriétaires supplémentaires",
+    "carOwner": "Propriétaire de véhicule",
+    "noAdditionalOwners": "Aucun propriétaire supplémentaire",
+    "noCarOwners": "Aucun propriétaire de véhicule",
+    "remove": "Supprimer"
   },
   "statistics": {
     "title": "Statistiques du véhicule",

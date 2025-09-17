@@ -88,6 +88,7 @@ export const carService = {
   },
 
   async createCar(carData: CreateCarData): Promise<Car> {
+    // Create the car first
     const { data, error } = await supabase
       .from("cars")
       .insert({
@@ -100,6 +101,18 @@ export const carService = {
     if (error) {
       console.error("Error creating car:", error);
       throw error;
+    }
+
+    // Add the owner to the car_owners table
+    const { error: ownerError } = await supabase.from("car_owners").insert({
+      car_id: data.id,
+      owner_id: carData.owner_id,
+    });
+
+    if (ownerError) {
+      console.error("Error adding car owner:", ownerError);
+      // Don't throw here as the car was created successfully
+      // The car_owners entry is supplementary
     }
 
     return data;
