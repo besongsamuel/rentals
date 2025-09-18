@@ -82,7 +82,7 @@ const DriverDashboard: React.FC = () => {
             lineHeight: 1.1,
           }}
         >
-          Driver Dashboard
+          {t("dashboard.driverDashboard")}
         </Typography>
         <Typography
           variant="body1"
@@ -93,7 +93,7 @@ const DriverDashboard: React.FC = () => {
             letterSpacing: "-0.01em",
           }}
         >
-          View your assigned cars and access reports for each vehicle.
+          {t("dashboard.driverDashboardDescription")}
         </Typography>
       </Box>
 
@@ -118,7 +118,7 @@ const DriverDashboard: React.FC = () => {
                 letterSpacing: "-0.01em",
               }}
             >
-              Profile Summary
+              {t("dashboard.profileSummary")}
             </Typography>
 
             <Grid container spacing={3}>
@@ -146,7 +146,7 @@ const DriverDashboard: React.FC = () => {
                           letterSpacing: "-0.01em",
                         }}
                       >
-                        Basic Information
+                        {t("dashboard.basicInformation")}
                       </Typography>
                     </Box>
 
@@ -158,9 +158,9 @@ const DriverDashboard: React.FC = () => {
                           sx={{ mr: 1, fontSize: 16, color: "text.secondary" }}
                         />
                         <Typography variant="body2" color="text.secondary">
-                          Name:{" "}
+                          {t("dashboard.name")}:{" "}
                           <strong>
-                            {profile?.full_name || "Not provided"}
+                            {profile?.full_name || t("dashboard.notProvided")}
                           </strong>
                         </Typography>
                       </Box>
@@ -172,8 +172,10 @@ const DriverDashboard: React.FC = () => {
                           sx={{ mr: 1, fontSize: 16, color: "text.secondary" }}
                         />
                         <Typography variant="body2" color="text.secondary">
-                          Email:{" "}
-                          <strong>{profile?.email || "Not provided"}</strong>
+                          {t("dashboard.email")}:{" "}
+                          <strong>
+                            {profile?.email || t("dashboard.notProvided")}
+                          </strong>
                         </Typography>
                       </Box>
 
@@ -184,8 +186,10 @@ const DriverDashboard: React.FC = () => {
                           sx={{ mr: 1, fontSize: 16, color: "text.secondary" }}
                         />
                         <Typography variant="body2" color="text.secondary">
-                          Phone:{" "}
-                          <strong>{profile?.phone || "Not provided"}</strong>
+                          {t("dashboard.phone")}:{" "}
+                          <strong>
+                            {profile?.phone || t("dashboard.notProvided")}
+                          </strong>
                         </Typography>
                       </Box>
 
@@ -194,12 +198,12 @@ const DriverDashboard: React.FC = () => {
                           sx={{ mr: 1, fontSize: 16, color: "text.secondary" }}
                         />
                         <Typography variant="body2" color="text.secondary">
-                          Role:{" "}
+                          {t("dashboard.role")}:{" "}
                           <strong>
                             {profile?.user_type
                               ? profile.user_type.charAt(0).toUpperCase() +
                                 profile.user_type.slice(1)
-                              : "Driver"}
+                              : t("profile.driver")}
                           </strong>
                         </Typography>
                       </Box>
@@ -216,7 +220,9 @@ const DriverDashboard: React.FC = () => {
                       <Avatar sx={{ bgcolor: "secondary.main", mr: 2 }}>
                         <School />
                       </Avatar>
-                      <Typography variant="h6">Driver Details</Typography>
+                      <Typography variant="h6">
+                        {t("dashboard.driverDetails")}
+                      </Typography>
                     </Box>
 
                     <Box sx={{ pl: 7 }}>
@@ -237,9 +243,10 @@ const DriverDashboard: React.FC = () => {
                               }}
                             />
                             <Typography variant="body2" color="text.secondary">
-                              Experience:{" "}
+                              {t("dashboard.experience")}:{" "}
                               <strong>
-                                {driverDetails.years_of_experience || 0} years
+                                {driverDetails.years_of_experience || 0}{" "}
+                                {t("dashboard.years")}
                               </strong>
                             </Typography>
                           </Box>
@@ -259,9 +266,10 @@ const DriverDashboard: React.FC = () => {
                               }}
                             />
                             <Typography variant="body2" color="text.secondary">
-                              License:{" "}
+                              {t("dashboard.licenseNumber")}:{" "}
                               <strong>
-                                {driverDetails.license_number || "Not provided"}
+                                {driverDetails.license_number ||
+                                  t("dashboard.notProvided")}
                               </strong>
                             </Typography>
                           </Box>
@@ -334,10 +342,10 @@ const DriverDashboard: React.FC = () => {
                             color="text.secondary"
                             sx={{ mb: 2 }}
                           >
-                            Driver details not completed yet
+                            {t("dashboard.driverDetailsNotCompleted")}
                           </Typography>
                           <Chip
-                            label="Complete Profile"
+                            label={t("dashboard.completeProfile")}
                             color="primary"
                             component={Link}
                             to="/profile"
@@ -358,13 +366,12 @@ const DriverDashboard: React.FC = () => {
         <Grid size={12}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Typography variant="h5" gutterBottom>
-              Assigned Cars
+              {t("dashboard.assignedCars")}
             </Typography>
             {assignedCars.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 4 }}>
                 <Typography variant="body1" color="text.secondary">
-                  No cars assigned to you yet. Contact an owner to get assigned
-                  to a vehicle.
+                  {t("dashboard.noAssignedCarsMessage")}
                 </Typography>
               </Box>
             ) : (
@@ -396,14 +403,14 @@ const DriverDashboard: React.FC = () => {
                                 variant="body2"
                                 color="text.secondary"
                               >
-                                VIN: {car.vin}
+                                {t("dashboard.vin")}: {car.vin}
                               </Typography>
                               {car.license_plate && (
                                 <Typography
                                   variant="body2"
                                   color="text.secondary"
                                 >
-                                  License: {car.license_plate}
+                                  {t("dashboard.license")}: {car.license_plate}
                                 </Typography>
                               )}
                               {car.color && (
@@ -411,7 +418,7 @@ const DriverDashboard: React.FC = () => {
                                   variant="body2"
                                   color="text.secondary"
                                 >
-                                  Color: {car.color}
+                                  {t("dashboard.color")}: {car.color}
                                 </Typography>
                               )}
                             </Box>
@@ -420,8 +427,9 @@ const DriverDashboard: React.FC = () => {
                               color="text.secondary"
                               sx={{ mt: 1 }}
                             >
-                              Current Mileage:{" "}
-                              {car.current_mileage.toLocaleString()} KM
+                              {t("dashboard.currentMileage")}:{" "}
+                              {car.current_mileage.toLocaleString()}{" "}
+                              {t("dashboard.km")}
                             </Typography>
                           </Box>
                           <Chip
