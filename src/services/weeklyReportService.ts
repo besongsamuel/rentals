@@ -6,7 +6,7 @@ export const weeklyReportService = {
     try {
       const { data: report, error } = await supabase
         .from("weekly_reports")
-        .select("ride_share_income, rental_income")
+        .select("ride_share_income, rental_income, taxi_income")
         .eq("id", reportId)
         .single();
 
@@ -15,7 +15,11 @@ export const weeklyReportService = {
         return 0;
       }
 
-      return (report.ride_share_income || 0) + (report.rental_income || 0);
+      return (
+        (report.ride_share_income || 0) +
+        (report.rental_income || 0) +
+        (report.taxi_income || 0)
+      );
     } catch (error) {
       console.error("Error calculating total earnings:", error);
       return 0;
@@ -26,7 +30,7 @@ export const weeklyReportService = {
     try {
       const { data: report, error } = await supabase
         .from("weekly_reports")
-        .select("ride_share_income, rental_income")
+        .select("ride_share_income, rental_income, taxi_income")
         .eq("id", reportId)
         .single();
 
@@ -36,7 +40,9 @@ export const weeklyReportService = {
       }
 
       return (
-        (report.ride_share_income || 0) > 0 || (report.rental_income || 0) > 0
+        (report.ride_share_income || 0) > 0 ||
+        (report.rental_income || 0) > 0 ||
+        (report.taxi_income || 0) > 0
       );
     } catch (error) {
       console.error("Error checking income sources:", error);

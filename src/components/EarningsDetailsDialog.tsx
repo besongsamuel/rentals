@@ -40,7 +40,9 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
   };
 
   const totalIncome =
-    (weeklyReport.ride_share_income || 0) + (weeklyReport.rental_income || 0);
+    (weeklyReport.ride_share_income || 0) +
+    (weeklyReport.rental_income || 0) +
+    (weeklyReport.taxi_income || 0);
   const totalExpenses =
     (weeklyReport.maintenance_expenses || 0) + (weeklyReport.gas_expense || 0);
   const netEarnings = totalIncome - totalExpenses;
@@ -104,7 +106,7 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
                 </Typography>
 
                 <Grid container spacing={2}>
-                  <Grid size={6}>
+                  <Grid size={4}>
                     <Typography variant="body2" color="text.secondary">
                       Ride Share Income
                     </Typography>
@@ -116,7 +118,7 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
                       {formatCurrency(weeklyReport.ride_share_income || 0)}
                     </Typography>
                   </Grid>
-                  <Grid size={6}>
+                  <Grid size={4}>
                     <Typography variant="body2" color="text.secondary">
                       Rental Income
                     </Typography>
@@ -126,6 +128,18 @@ const EarningsDetailsDialog: React.FC<EarningsDetailsDialogProps> = ({
                       sx={{ fontWeight: 500 }}
                     >
                       {formatCurrency(weeklyReport.rental_income || 0)}
+                    </Typography>
+                  </Grid>
+                  <Grid size={4}>
+                    <Typography variant="body2" color="text.secondary">
+                      Taxi Income
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      color="success.main"
+                      sx={{ fontWeight: 500 }}
+                    >
+                      {formatCurrency(weeklyReport.taxi_income || 0)}
                     </Typography>
                   </Grid>
                 </Grid>

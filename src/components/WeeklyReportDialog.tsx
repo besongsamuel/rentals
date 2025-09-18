@@ -107,6 +107,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     gas_expense: 0,
     ride_share_income: 0,
     rental_income: 0,
+    taxi_income: 0,
     currency: "XAF",
   });
   const [error, setError] = useState("");
@@ -126,6 +127,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           gas_expense: editingReport.gas_expense || 0,
           ride_share_income: (editingReport as any).ride_share_income || 0,
           rental_income: (editingReport as any).rental_income || 0,
+          taxi_income: (editingReport as any).taxi_income || 0,
           currency: (editingReport as any).currency || "XAF",
         });
       } else {
@@ -142,6 +144,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           gas_expense: 0,
           ride_share_income: 0,
           rental_income: 0,
+          taxi_income: 0,
           currency: "XAF",
         });
       }
@@ -491,6 +494,25 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                   ),
                 }}
                 helperText={t("reports.rentalIncomeHelper")}
+                required
+              />
+            </Grid>
+            <Grid size={6}>
+              <TextField
+                fullWidth
+                label={t("reports.taxiIncome")}
+                type="number"
+                value={formData.taxi_income}
+                onChange={handleInputChange("taxi_income")}
+                inputProps={{ min: 0, step: 0.01 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {formData.currency}
+                    </InputAdornment>
+                  ),
+                }}
+                helperText={t("reports.taxiIncomeHelper")}
                 required
               />
             </Grid>

@@ -91,6 +91,7 @@ export interface WeeklyReport {
   gas_expense: number;
   ride_share_income: number;
   rental_income: number;
+  taxi_income: number;
   currency: string;
   status: "draft" | "submitted" | "approved" | "rejected";
   submitted_at: string | null;
@@ -150,6 +151,7 @@ export interface CreateWeeklyReportData {
   gas_expense?: number;
   ride_share_income?: number;
   rental_income?: number;
+  taxi_income?: number;
   currency?: string;
 }
 

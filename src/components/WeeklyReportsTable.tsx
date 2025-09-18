@@ -110,22 +110,24 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
       filterable: false,
       renderCell: (params: GridRenderCellParams) => (
         <Box sx={{ display: "flex", gap: 1 }}>
-          {onEditReport && params.row.status === "draft" && (
-            <Tooltip title="Edit report">
-              <IconButton
-                size="small"
-                onClick={() => onEditReport(params.row)}
-                sx={{
-                  color: "primary.main",
-                  "&:hover": {
-                    bgcolor: "rgba(37, 99, 235, 0.08)",
-                  },
-                }}
-              >
-                <Edit />
-              </IconButton>
-            </Tooltip>
-          )}
+          {onEditReport &&
+            params.row.status === "draft" &&
+            profile?.user_type === "driver" && (
+              <Tooltip title="Edit report">
+                <IconButton
+                  size="small"
+                  onClick={() => onEditReport(params.row)}
+                  sx={{
+                    color: "primary.main",
+                    "&:hover": {
+                      bgcolor: "rgba(37, 99, 235, 0.08)",
+                    },
+                  }}
+                >
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+            )}
           <Tooltip title="View earnings details">
             <IconButton
               size="small"
@@ -169,28 +171,116 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
       ),
     },
     {
-      field: "startMileage",
-      headerName: t("reports.startMileage"),
-      width: 120,
-      align: "right",
-      headerAlign: "right",
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant="body2" color="info.main" fontWeight={500}>
-          {params.row.start_mileage.toLocaleString()} {t("common.km")}
-        </Typography>
-      ),
+      field: "mileage",
+      headerName: t("reports.mileage"),
+      width: 180,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridRenderCellParams) => {
+        const totalMileage = params.row.end_mileage - params.row.start_mileage;
+        return (
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              variant="body2"
+              color="info.main"
+              fontWeight={600}
+              sx={{ mb: 0.5 }}
+            >
+              {params.row.start_mileage.toLocaleString()} →{" "}
+              {params.row.end_mileage.toLocaleString()}
+            </Typography>
+            <Typography variant="body2" color="info.main" fontWeight={500}>
+              {totalMileage.toLocaleString()} {t("common.km")} total
+            </Typography>
+          </Box>
+        );
+      },
     },
     {
-      field: "endMileage",
-      headerName: t("reports.endMileage"),
-      width: 120,
-      align: "right",
-      headerAlign: "right",
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant="body2" color="info.main" fontWeight={500}>
-          {params.row.end_mileage.toLocaleString()} {t("common.km")}
-        </Typography>
-      ),
+      field: "incomes",
+      headerName: t("reports.incomes"),
+      width: 200,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridRenderCellParams) => {
+        const rideShareIncome = (params.row as any).ride_share_income || 0;
+        const rentalIncome = (params.row as any).rental_income || 0;
+        const taxiIncome = (params.row as any).taxi_income || 0;
+        const totalIncome = rideShareIncome + rentalIncome + taxiIncome;
+
+        return (
+          <Box sx={{ textAlign: "center" }}>
+            <Typography variant="body2" color="success.main" fontWeight={600}>
+              {totalIncome.toLocaleString()} {t("common.currency")}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                justifyContent: "center",
+                flexWrap: "wrap",
+                mt: 0.5,
+              }}
+            >
+              {rideShareIncome > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  Ride: {rideShareIncome.toLocaleString()}
+                </Typography>
+              )}
+              {rentalIncome > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  Rental: {rentalIncome.toLocaleString()}
+                </Typography>
+              )}
+              {taxiIncome > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  Taxi: {taxiIncome.toLocaleString()}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      field: "expenses",
+      headerName: t("reports.expenses"),
+      width: 200,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridRenderCellParams) => {
+        const maintenanceExpenses = params.row.maintenance_expenses || 0;
+        const gasExpense = params.row.gas_expense || 0;
+        const totalExpenses = maintenanceExpenses + gasExpense;
+
+        return (
+          <Box sx={{ textAlign: "center" }}>
+            <Typography variant="body2" color="error.main" fontWeight={600}>
+              {totalExpenses.toLocaleString()} {t("common.currency")}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                justifyContent: "center",
+                flexWrap: "wrap",
+                mt: 0.5,
+              }}
+            >
+              {maintenanceExpenses > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  Maint: {maintenanceExpenses.toLocaleString()}
+                </Typography>
+              )}
+              {gasExpense > 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  Gas: {gasExpense.toLocaleString()}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+        );
+      },
     },
     {
       field: "driverEarnings",
@@ -201,36 +291,6 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant="body2" color="success.main" fontWeight={500}>
           {params.row.driver_earnings.toLocaleString()} {t("common.currency")}
-        </Typography>
-      ),
-    },
-    {
-      field: "totalEarnings",
-      headerName: t("reports.totalEarnings"),
-      width: 140,
-      align: "right",
-      headerAlign: "right",
-      renderCell: (params: GridRenderCellParams) => {
-        const totalEarnings =
-          (params.row as any).ride_share_income +
-          (params.row as any).rental_income;
-        return (
-          <Typography variant="body2" color="success.main" fontWeight={500}>
-            {totalEarnings.toLocaleString()} {t("common.currency")}
-          </Typography>
-        );
-      },
-    },
-    {
-      field: "maintenance",
-      headerName: t("reports.maintenance"),
-      width: 120,
-      align: "right",
-      headerAlign: "right",
-      renderCell: (params: GridRenderCellParams) => (
-        <Typography variant="body2" color="error.main" fontWeight={500}>
-          {params.row.maintenance_expenses.toLocaleString()}{" "}
-          {t("common.currency")}
         </Typography>
       ),
     },
@@ -316,7 +376,6 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
           width: "100%",
           "& .MuiDataGrid-root": {
             border: "1px solid #e2e8f0",
-            borderRadius: 2,
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           },
           "& .MuiDataGrid-columnHeaders": {
@@ -329,6 +388,7 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
             },
           },
           "& .MuiDataGrid-row": {
+            minHeight: "80px !important",
             "&:nth-of-type(even)": {
               backgroundColor: "#ffffff",
             },
@@ -341,6 +401,10 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "1px solid #e2e8f0",
+            padding: "12px 16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           },
         }}
       >
@@ -348,6 +412,7 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
           rows={weeklyReports}
           columns={columns}
           getRowId={(row) => row.id}
+          getRowHeight={() => 80}
           disableRowSelectionOnClick
           disableColumnMenu
           hideFooterSelectedRowCount
