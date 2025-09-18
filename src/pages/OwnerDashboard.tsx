@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  Container,
   Fab,
   Typography,
   useMediaQuery,
@@ -57,25 +56,31 @@ const OwnerDashboard: React.FC = () => {
   const totalCars = cars.length;
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-      <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 4 } }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "transparent" }}>
+      <Box sx={{ py: { xs: 3, sm: 4 } }}>
         {/* Header Section */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 6 }}>
           <Typography
-            variant="h4"
+            variant="h3"
             sx={{
-              fontWeight: 600,
-              mb: 1,
-              fontSize: { xs: "1.75rem", sm: "2rem" },
-              color: "text.primary",
+              fontWeight: 400,
+              mb: 2,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              color: "#1D1D1F",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
             }}
           >
             {t("dashboard.ownerDashboard")}
           </Typography>
           <Typography
             variant="body1"
-            color="text.secondary"
-            sx={{ fontWeight: 500 }}
+            sx={{
+              fontWeight: 400,
+              color: "#86868B",
+              fontSize: { xs: "1rem", sm: "1.125rem" },
+              letterSpacing: "-0.01em",
+            }}
           >
             {t("dashboard.manageCars")}
           </Typography>
@@ -91,30 +96,45 @@ const OwnerDashboard: React.FC = () => {
               md: "repeat(4, 1fr)",
             },
             gap: 3,
-            mb: 4,
+            mb: 6,
           }}
         >
           <Card
             elevation={0}
             sx={{
               background: "#ffffff",
-              border: "1px solid #e2e8f0",
+              border: "0.5px solid rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
+              transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              "&:hover": {
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                transform: "translateY(-2px)",
+              },
             }}
           >
-            <CardContent sx={{ textAlign: "center", p: 3 }}>
-              <DirectionsCar
-                sx={{ fontSize: 48, color: "primary.main", mb: 1 }}
-              />
+            <CardContent sx={{ textAlign: "center", p: 4 }}>
+              <DirectionsCar sx={{ fontSize: 40, color: "#007AFF", mb: 2 }} />
               <Typography
-                variant="h4"
-                sx={{ fontWeight: 700, mb: 0.5, color: "primary.main" }}
+                variant="h3"
+                sx={{
+                  fontWeight: 400,
+                  mb: 1,
+                  color: "#1D1D1F",
+                  fontSize: { xs: "2rem", sm: "2.5rem" },
+                  letterSpacing: "-0.02em",
+                }}
               >
                 {totalCars}
               </Typography>
               <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mb: 2, fontWeight: 500 }}
+                variant="body1"
+                sx={{
+                  mb: 3,
+                  fontWeight: 400,
+                  color: "#86868B",
+                  fontSize: "0.875rem",
+                  letterSpacing: "-0.01em",
+                }}
               >
                 {t("dashboard.totalCars")}
               </Typography>
@@ -123,8 +143,13 @@ const OwnerDashboard: React.FC = () => {
                 startIcon={<Add />}
                 component={Link}
                 to="/cars/new"
-                size="small"
-                sx={{ minWidth: "fit-content" }}
+                sx={{
+                  minWidth: "fit-content",
+                  backgroundColor: "#007AFF",
+                  "&:hover": {
+                    backgroundColor: "#0056CC",
+                  },
+                }}
               >
                 {t("cars.addCar")}
               </Button>
@@ -134,34 +159,38 @@ const OwnerDashboard: React.FC = () => {
           <Card
             elevation={0}
             sx={{
-              background: "linear-gradient(145deg, #ffffff 0%, #e8f5e8 100%)",
-              border: "2px solid",
-              borderColor: "success.main",
-              position: "relative",
-              overflow: "hidden",
-              "&::before": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "4px",
-                background: "linear-gradient(90deg, #4caf50 0%, #81c784 100%)",
+              background: "#ffffff",
+              border: "0.5px solid rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
+              transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              "&:hover": {
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                transform: "translateY(-2px)",
               },
             }}
           >
-            <CardContent sx={{ textAlign: "center", p: 3 }}>
-              <TrendingUp sx={{ fontSize: 48, color: "success.main", mb: 1 }} />
+            <CardContent sx={{ textAlign: "center", p: 4 }}>
+              <TrendingUp sx={{ fontSize: 40, color: "#34C759", mb: 2 }} />
               <Typography
-                variant="h4"
-                sx={{ fontWeight: 700, mb: 0.5, color: "success.main" }}
+                variant="h3"
+                sx={{
+                  fontWeight: 400,
+                  mb: 1,
+                  color: "#1D1D1F",
+                  fontSize: { xs: "2rem", sm: "2.5rem" },
+                  letterSpacing: "-0.02em",
+                }}
               >
                 {activeCars}
               </Typography>
               <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ fontWeight: 500 }}
+                variant="body1"
+                sx={{
+                  fontWeight: 400,
+                  color: "#86868B",
+                  fontSize: "0.875rem",
+                  letterSpacing: "-0.01em",
+                }}
               >
                 {t("dashboard.activeCars")}
               </Typography>
@@ -175,7 +204,6 @@ const OwnerDashboard: React.FC = () => {
         {/* Floating Action Button for Mobile */}
         {isMobile && (
           <Fab
-            color="primary"
             aria-label="add car"
             component={Link}
             to="/cars/new"
@@ -183,12 +211,16 @@ const OwnerDashboard: React.FC = () => {
               position: "fixed",
               bottom: 16,
               right: 16,
+              backgroundColor: "#007AFF",
+              "&:hover": {
+                backgroundColor: "#0056CC",
+              },
             }}
           >
             <Add />
           </Fab>
         )}
-      </Container>
+      </Box>
     </Box>
   );
 };

@@ -12,7 +12,6 @@ import DriverDetailsGuard from "./components/DriverDetailsGuard";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
-import WelcomeMessage from "./components/WelcomeMessage";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
@@ -107,11 +106,19 @@ function AppContent() {
               display: "flex",
               flexDirection: "column",
               minHeight: "100vh",
+              backgroundColor: "#F2F2F7",
             }}
           >
             <Header />
-            <WelcomeMessage />
-            <Box sx={{ flexGrow: 1 }}>
+            <Box
+              sx={{
+                flexGrow: 1,
+                maxWidth: "1200px",
+                mx: "auto",
+                width: "100%",
+                px: { xs: 2, sm: 3, md: 4 },
+              }}
+            >
               <Routes>
                 {/* Show loading while checking profile */}
                 {profileLoading ? (

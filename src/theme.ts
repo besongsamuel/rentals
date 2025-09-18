@@ -4,110 +4,128 @@ const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#2563eb", // Professional blue
-      light: "#3b82f6",
-      dark: "#1d4ed8",
+      main: "#007AFF", // Apple Blue
+      light: "#4DA6FF",
+      dark: "#0056CC",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#64748b", // Professional slate gray
-      light: "#94a3b8",
-      dark: "#475569",
+      main: "#86868B", // Apple Gray
+      light: "#A1A1A6",
+      dark: "#6D6D70",
       contrastText: "#ffffff",
     },
     success: {
-      main: "#059669", // Professional green
-      light: "#10b981",
-      dark: "#047857",
+      main: "#34C759", // Apple Green
+      light: "#5DD679",
+      dark: "#28A745",
       contrastText: "#ffffff",
     },
     error: {
-      main: "#dc2626", // Professional red
-      light: "#ef4444",
-      dark: "#b91c1c",
+      main: "#FF3B30", // Apple Red
+      light: "#FF6961",
+      dark: "#D70015",
       contrastText: "#ffffff",
     },
     warning: {
-      main: "#d97706", // Professional amber
-      light: "#f59e0b",
-      dark: "#b45309",
+      main: "#FF9500", // Apple Orange
+      light: "#FFB340",
+      dark: "#CC7700",
       contrastText: "#ffffff",
     },
     info: {
-      main: "#2563eb", // Same as primary for consistency
-      light: "#3b82f6",
-      dark: "#1d4ed8",
+      main: "#007AFF", // Same as primary for consistency
+      light: "#4DA6FF",
+      dark: "#0056CC",
       contrastText: "#ffffff",
     },
     background: {
-      default: "#f8fafc",
-      paper: "#ffffff",
+      default: "#F2F2F7", // Apple Light Gray
+      paper: "#FFFFFF",
     },
     text: {
-      primary: "#0f172a",
-      secondary: "#64748b",
+      primary: "#1D1D1F", // Apple Dark Gray
+      secondary: "#86868B", // Apple Medium Gray
     },
     grey: {
-      50: "#f8fafc",
-      100: "#f1f5f9",
-      200: "#e2e8f0",
-      300: "#cbd5e1",
-      400: "#94a3b8",
-      500: "#64748b",
-      600: "#475569",
-      700: "#334155",
-      800: "#1e293b",
-      900: "#0f172a",
+      50: "#F2F2F7",
+      100: "#E5E5EA",
+      200: "#D1D1D6",
+      300: "#C7C7CC",
+      400: "#AEAEB2",
+      500: "#8E8E93",
+      600: "#86868B",
+      700: "#6D6D70",
+      800: "#48484A",
+      900: "#1D1D1F",
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
     h1: {
-      fontSize: "2.5rem",
-      fontWeight: 700,
-      lineHeight: 1.2,
+      fontSize: "3rem",
+      fontWeight: 400,
+      lineHeight: 1.1,
+      letterSpacing: "-0.02em",
     },
     h2: {
-      fontSize: "2rem",
-      fontWeight: 600,
-      lineHeight: 1.3,
+      fontSize: "2.25rem",
+      fontWeight: 400,
+      lineHeight: 1.2,
+      letterSpacing: "-0.01em",
     },
     h3: {
-      fontSize: "1.75rem",
-      fontWeight: 600,
+      fontSize: "1.875rem",
+      fontWeight: 400,
       lineHeight: 1.3,
+      letterSpacing: "-0.01em",
     },
     h4: {
       fontSize: "1.5rem",
-      fontWeight: 600,
+      fontWeight: 400,
       lineHeight: 1.4,
+      letterSpacing: "-0.01em",
     },
     h5: {
       fontSize: "1.25rem",
-      fontWeight: 600,
+      fontWeight: 400,
       lineHeight: 1.4,
+      letterSpacing: "-0.01em",
     },
     h6: {
       fontSize: "1.125rem",
-      fontWeight: 600,
+      fontWeight: 400,
       lineHeight: 1.4,
+      letterSpacing: "-0.01em",
     },
     body1: {
       fontSize: "1rem",
-      lineHeight: 1.6,
+      fontWeight: 400,
+      lineHeight: 1.5,
+      letterSpacing: "-0.01em",
     },
     body2: {
       fontSize: "0.875rem",
-      lineHeight: 1.6,
+      fontWeight: 400,
+      lineHeight: 1.5,
+      letterSpacing: "-0.01em",
     },
     button: {
       fontSize: "0.875rem",
-      fontWeight: 600,
+      fontWeight: 400,
       textTransform: "none",
+      letterSpacing: "-0.01em",
+    },
+    caption: {
+      fontSize: "0.75rem",
+      fontWeight: 400,
+      lineHeight: 1.4,
+      letterSpacing: "-0.01em",
     },
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 8,
   },
   spacing: 8,
   breakpoints: {
@@ -123,28 +141,28 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          scrollbarColor: "#6b6b6b #2b2b2b",
+          scrollbarColor: "#C7C7CC #F2F2F7",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
             backgroundColor: "transparent",
             width: 8,
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
-            borderRadius: 8,
-            backgroundColor: "#6b6b6b",
+            borderRadius: 4,
+            backgroundColor: "#C7C7CC",
             minHeight: 24,
             border: "2px solid transparent",
           },
           "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus":
             {
-              backgroundColor: "#959595",
+              backgroundColor: "#AEAEB2",
             },
           "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
             {
-              backgroundColor: "#959595",
+              backgroundColor: "#AEAEB2",
             },
           "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
             {
-              backgroundColor: "#959595",
+              backgroundColor: "#AEAEB2",
             },
           "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
             backgroundColor: "transparent",
@@ -157,13 +175,14 @@ const theme = createTheme({
         root: {
           textTransform: "none",
           borderRadius: 8,
-          padding: "10px 24px",
+          padding: "12px 24px",
           fontSize: "0.875rem",
-          fontWeight: 500,
+          fontWeight: 400,
           boxShadow: "none",
-          transition: "all 0.2s ease-in-out",
+          transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          letterSpacing: "-0.01em",
           "&:hover": {
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
           },
         },
         contained: {
@@ -172,10 +191,15 @@ const theme = createTheme({
           },
         },
         outlined: {
-          borderWidth: "1px",
+          borderWidth: "0.5px",
           "&:hover": {
-            borderWidth: "1px",
-            background: "rgba(37, 99, 235, 0.04)",
+            borderWidth: "0.5px",
+            background: "rgba(0, 122, 255, 0.04)",
+          },
+        },
+        text: {
+          "&:hover": {
+            background: "rgba(0, 0, 0, 0.04)",
           },
         },
       },
@@ -184,18 +208,18 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           background: "#ffffff",
-          border: "1px solid #e2e8f0",
+          border: "0.5px solid rgba(0,0,0,0.1)",
         },
         elevation1: {
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
         },
         elevation2: {
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         },
         elevation3: {
-          boxShadow: "0 10px 15px rgba(0,0,0,0.1)",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
         },
       },
     },
@@ -203,12 +227,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           background: "#ffffff",
-          border: "1px solid #e2e8f0",
-          transition: "all 0.2s ease-in-out",
+          border: "0.5px solid rgba(0,0,0,0.1)",
+          transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
           "&:hover": {
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           },
         },
       },
@@ -217,9 +241,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            borderRadius: 12,
+            borderRadius: 8,
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(25, 118, 210, 0.5)",
+              borderColor: "rgba(0, 122, 255, 0.5)",
             },
           },
         },
@@ -228,27 +252,29 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          background: "#ffffff",
-          color: "#0f172a",
-          borderBottom: "1px solid #e2e8f0",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          background: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(20px)",
+          color: "#1D1D1F",
+          borderBottom: "0.5px solid rgba(0,0,0,0.1)",
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          fontWeight: 500,
+          borderRadius: 6,
+          fontWeight: 400,
+          fontSize: "0.75rem",
         },
       },
     },
     MuiFab: {
       styleOverrides: {
         root: {
-          boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           "&:hover": {
-            boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
           },
         },
       },
@@ -256,7 +282,16 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          borderRight: "1px solid rgba(0,0,0,0.08)",
+          borderRight: "0.5px solid rgba(0,0,0,0.1)",
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.04)",
+          },
         },
       },
     },

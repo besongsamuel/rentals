@@ -13,7 +13,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Container,
   Grid,
   IconButton,
   Paper,
@@ -70,51 +69,85 @@ const DriverDashboard: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Grid container spacing={3}>
+    <Box sx={{ py: { xs: 3, sm: 4 } }}>
+      <Box sx={{ mb: 6 }}>
+        <Typography
+          variant="h3"
+          sx={{
+            fontWeight: 400,
+            mb: 2,
+            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+            color: "#1D1D1F",
+            letterSpacing: "-0.02em",
+            lineHeight: 1.1,
+          }}
+        >
+          Driver Dashboard
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight: 400,
+            color: "#86868B",
+            fontSize: { xs: "1rem", sm: "1.125rem" },
+            letterSpacing: "-0.01em",
+          }}
+        >
+          View your assigned cars and access reports for each vehicle.
+        </Typography>
+      </Box>
+
+      <Grid container spacing={4}>
+        {/* Profile Summary Section */}
         <Grid size={12}>
           <Paper
-            elevation={2}
+            elevation={0}
             sx={{
               p: 4,
-              backgroundColor: "background.paper",
-              border: "1px solid",
-              borderColor: "divider",
+              background: "#ffffff",
+              border: "0.5px solid rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
             }}
           >
             <Typography
-              variant="h4"
-              gutterBottom
+              variant="h5"
               sx={{
-                color: "primary.main",
-                fontWeight: 600,
+                mb: 4,
+                fontWeight: 400,
+                color: "#1D1D1F",
+                letterSpacing: "-0.01em",
               }}
             >
-              Driver Dashboard
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              View your assigned cars and access reports for each vehicle.
-            </Typography>
-          </Paper>
-        </Grid>
-
-        {/* Profile Summary Section */}
-        <Grid size={12}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
               Profile Summary
             </Typography>
 
             <Grid container spacing={3}>
               {/* Basic Profile Information */}
               <Grid size={{ xs: 12, md: 6 }}>
-                <Card elevation={1} sx={{ height: "100%" }}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    background: "#ffffff",
+                    border: "0.5px solid rgba(0, 0, 0, 0.1)",
+                    borderRadius: 2,
+                  }}
+                >
                   <CardContent>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                      <Avatar sx={{ bgcolor: "primary.main", mr: 2 }}>
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                      <Avatar sx={{ bgcolor: "#007AFF", mr: 2 }}>
                         <Person />
                       </Avatar>
-                      <Typography variant="h6">Basic Information</Typography>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 400,
+                          color: "#1D1D1F",
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        Basic Information
+                      </Typography>
                     </Box>
 
                     <Box sx={{ pl: 7 }}>
@@ -437,7 +470,7 @@ const DriverDashboard: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-    </Container>
+    </Box>
   );
 };
 
