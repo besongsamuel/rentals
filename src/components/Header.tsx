@@ -165,18 +165,32 @@ const Header: React.FC = () => {
                 mr: 1.5,
               }}
             />
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 400,
-                fontSize: { xs: "1.1rem", sm: "1.2rem" },
-                color: "#1d1d1f",
-                letterSpacing: "-0.01em",
-                lineHeight: 1.2,
-              }}
-            >
-              mo kumbi
-            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 400,
+                  fontSize: { xs: "1.1rem", sm: "1.2rem" },
+                  color: "#1d1d1f",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.2,
+                }}
+              >
+                mo kumbi
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: 400,
+                  fontSize: "0.6rem",
+                  color: "#86868b",
+                  letterSpacing: "-0.01em",
+                  textTransform: "lowercase",
+                  lineHeight: 1,
+                }}
+              >
+                {t("auth.driverSubtext")}
+              </Typography>
+            </Box>
           </Box>
 
           {/* Desktop Navigation */}
@@ -442,17 +456,31 @@ const Header: React.FC = () => {
                 mr: 1.5,
               }}
             />
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 400,
-                fontSize: "1.1rem",
-                color: "#1d1d1f",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              mo kumbi
-            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 400,
+                  fontSize: "1.1rem",
+                  color: "#1d1d1f",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                mo kumbi
+              </Typography>
+              <Typography
+                sx={{
+                  fontWeight: 400,
+                  fontSize: "0.6rem",
+                  color: "#86868b",
+                  letterSpacing: "-0.01em",
+                  textTransform: "lowercase",
+                  lineHeight: 1,
+                }}
+              >
+                {t("auth.driverSubtext")}
+              </Typography>
+            </Box>
           </Box>
           <IconButton
             onClick={handleMobileMenuClose}

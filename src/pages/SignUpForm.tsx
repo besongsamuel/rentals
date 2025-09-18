@@ -116,6 +116,20 @@ const SignUpForm: React.FC = () => {
             variant="body1"
             sx={{
               fontWeight: 400,
+              fontSize: "0.75rem",
+              color: "#86868b",
+              letterSpacing: "-0.01em",
+              textAlign: "center",
+              mt: 0.5,
+              textTransform: "lowercase",
+            }}
+          >
+            {t("auth.driverSubtext")}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 400,
               fontSize: "0.875rem",
               color: "#86868b",
               letterSpacing: "-0.01em",
