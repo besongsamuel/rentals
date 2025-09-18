@@ -79,14 +79,10 @@ const ProfileCompletion: React.FC = () => {
         console.log("Profile already exists, skipping profile creation");
       }
 
-      // Redirect based on user type
-      if (formData.user_type === "driver") {
-        console.log("Redirecting to driver details completion");
-        navigate("/complete-details");
-      } else {
-        console.log("User type is owner, profile complete");
-        navigate("/");
-      }
+      // Redirect all users to dashboard after profile creation
+      // Driver details can be completed later from the profile page
+      console.log("Profile created successfully, redirecting to dashboard");
+      navigate("/");
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     }

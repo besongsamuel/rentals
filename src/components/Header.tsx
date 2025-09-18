@@ -4,6 +4,7 @@ import {
   DirectionsCar,
   Menu as MenuIcon,
   MoreVert,
+  Person,
   Settings,
 } from "@mui/icons-material";
 import {
@@ -75,6 +76,7 @@ const Header: React.FC = () => {
 
     const baseItems = [
       { label: t("dashboard.title"), path: "/", icon: <Dashboard /> },
+      { label: "Profile", path: "/profile", icon: <Person /> },
     ];
 
     if (profile.user_type === "owner") {
@@ -166,6 +168,36 @@ const Header: React.FC = () => {
               gap: { xs: 0.5, sm: 1.5, md: 2 },
             }}
           >
+            {/* Desktop Navigation Menu */}
+            {profile && !isMobile && (
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mr: 2 }}
+              >
+                {getNavigationItems().map((item, index) => (
+                  <Button
+                    key={index}
+                    color="inherit"
+                    onClick={() => handleNavigation(item.path)}
+                    startIcon={item.icon}
+                    sx={{
+                      borderRadius: 2,
+                      px: 2,
+                      py: 1,
+                      backgroundColor:
+                        currentPath === item.path
+                          ? "rgba(255,255,255,0.2)"
+                          : "transparent",
+                      "&:hover": {
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                      },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </Box>
+            )}
+
             {profile && !isMobile && (
               <>
                 <Typography
@@ -287,6 +319,21 @@ const Header: React.FC = () => {
                         </Typography>
                       )}
                     </Box>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleNavigation("/profile");
+                      handleMenuClose();
+                    }}
+                    sx={{
+                      py: 1.5,
+                      "&:hover": {
+                        backgroundColor: "action.hover",
+                      },
+                    }}
+                  >
+                    <Person sx={{ mr: 1.5, fontSize: 20 }} />
+                    Profile
                   </MenuItem>
                   <MenuItem
                     onClick={handleSignOut}

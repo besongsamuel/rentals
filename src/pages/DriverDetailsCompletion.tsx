@@ -156,7 +156,7 @@ const DriverDetailsCompletion: React.FC = () => {
 
       // Create driver details
       await driverDetailsService.createDriverDetails(driverDetails);
-      
+
       // Redirect to dashboard after successful completion
       navigate("/");
     } catch (error) {
@@ -235,7 +235,8 @@ const DriverDetailsCompletion: React.FC = () => {
           align="center"
           sx={{ mb: 3 }}
         >
-          Please provide your driver information to start earning
+          Complete your driver details to get started, or skip for now and
+          complete them later from your profile page.
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
@@ -283,7 +284,9 @@ const DriverDetailsCompletion: React.FC = () => {
                   <MenuItem value="male">Male</MenuItem>
                   <MenuItem value="female">Female</MenuItem>
                   <MenuItem value="other">Other</MenuItem>
-                  <MenuItem value="prefer_not_to_say">Prefer not to say</MenuItem>
+                  <MenuItem value="prefer_not_to_say">
+                    Prefer not to say
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -416,7 +419,9 @@ const DriverDetailsCompletion: React.FC = () => {
                 <InputLabel>Communication Preference</InputLabel>
                 <Select
                   value={driverDetails.communication_preference}
-                  onChange={handleDriverDetailsChange("communication_preference")}
+                  onChange={handleDriverDetailsChange(
+                    "communication_preference"
+                  )}
                   label="Communication Preference"
                 >
                   <MenuItem value="phone">Phone</MenuItem>
@@ -528,7 +533,9 @@ const DriverDetailsCompletion: React.FC = () => {
                 fullWidth
                 label="Issuing Authority"
                 value={driverDetails.license_issuing_authority}
-                onChange={handleDriverDetailsChange("license_issuing_authority")}
+                onChange={handleDriverDetailsChange(
+                  "license_issuing_authority"
+                )}
                 placeholder="e.g., Ministry of Transport"
               />
             </Grid>

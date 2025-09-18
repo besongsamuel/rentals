@@ -18,6 +18,7 @@ import CarForm from "./pages/CarForm";
 import Dashboard from "./pages/Dashboard";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
 import LoginForm from "./pages/LoginForm";
+import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import SignUpForm from "./pages/SignUpForm";
 import theme from "./theme";
@@ -127,6 +128,7 @@ function AppContent() {
                         <DriverDetailsGuard profile={profile}>
                           <Routes>
                             <Route path="/" element={<Dashboard />} />
+                            <Route path="/profile" element={<ProfilePage />} />
                             <Route path="/cars/new" element={<CarForm />} />
                             <Route
                               path="/cars/:carId"

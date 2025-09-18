@@ -15,7 +15,7 @@ export const driverDetailsService = {
       .from("driver_details")
       .select("*")
       .eq("profile_id", profileId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error fetching driver details:", error);
@@ -37,7 +37,7 @@ export const driverDetailsService = {
       `
       )
       .eq("profile_id", profileId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error fetching driver details with profile:", error);
@@ -138,7 +138,7 @@ export const driverDetailsService = {
       .update(updates)
       .eq("profile_id", profileId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error updating driver details:", error);
@@ -160,7 +160,7 @@ export const driverDetailsService = {
       })
       .eq("profile_id", profileId)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error updating availability status:", error);
