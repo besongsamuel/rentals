@@ -165,7 +165,13 @@ const Header: React.FC = () => {
                 mr: 1.5,
               }}
             />
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
               <Typography
                 variant="h6"
                 sx={{
@@ -456,7 +462,13 @@ const Header: React.FC = () => {
                 mr: 1.5,
               }}
             />
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
               <Typography
                 variant="h6"
                 sx={{
