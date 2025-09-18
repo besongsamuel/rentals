@@ -19,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import DriverDetails from "./pages/DriverDetails";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
 import DriverSearch from "./pages/DriverSearch";
+import Home from "./pages/Home";
 import LoginForm from "./pages/LoginForm";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
@@ -38,7 +39,7 @@ function DocumentTitle() {
     // Update title based on current route
     switch (location.pathname) {
       case "/":
-        pageTitle = `${baseTitle} - Dashboard`;
+        pageTitle = baseTitle;
         break;
       case "/login":
         pageTitle = `${baseTitle} - Login`;
@@ -188,10 +189,11 @@ function AppContent() {
           // User is not authenticated, show login/signup pages
           <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/signup-complete" element={<SignupComplete />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Box>
         )}
