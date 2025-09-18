@@ -83,6 +83,7 @@ const Header: React.FC = () => {
       return [
         ...baseItems,
         { label: t("cars.addCar"), path: "/cars/new", icon: <DirectionsCar /> },
+        { label: "Find Drivers", path: "/drivers", icon: <Person /> },
         {
           label: t("dashboard.manageAssignments"),
           path: "/",
