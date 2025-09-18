@@ -91,11 +91,28 @@ const Home: React.FC = () => {
               letterSpacing: "-0.01em",
               textAlign: "center",
               textTransform: "lowercase",
-              mb: 4,
+              mb: 2,
             }}
           >
             {t("auth.homeSubtitle")}
           </Typography>
+          <Box
+            sx={{
+              display: "inline-block",
+              backgroundColor: "#34C759",
+              color: "#ffffff",
+              px: 2,
+              py: 0.5,
+              borderRadius: 1,
+              fontSize: "0.75rem",
+              fontWeight: 500,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              mb: 4,
+            }}
+          >
+            FREE
+          </Box>
         </Box>
 
         {/* Service Description */}
@@ -112,6 +129,70 @@ const Home: React.FC = () => {
             }}
           >
             {t("auth.homeDescription")}
+          </Typography>
+        </Box>
+
+        {/* Platform Goals Section */}
+        <Box sx={{ mb: 6, maxWidth: 700, textAlign: "center" }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              color: "#1d1d1f",
+              letterSpacing: "-0.01em",
+              mb: 3,
+            }}
+          >
+            {t("auth.platformGoals")}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1rem", sm: "1.125rem" },
+              color: "#86868b",
+              letterSpacing: "-0.01em",
+              lineHeight: 1.6,
+              p: 3,
+              backgroundColor: "rgba(0, 122, 255, 0.05)",
+              borderRadius: 2,
+              border: "0.5px solid rgba(0, 122, 255, 0.1)",
+            }}
+          >
+            {t("auth.platformGoalsDescription")}
+          </Typography>
+        </Box>
+
+        {/* Free Platform Section */}
+        <Box sx={{ mb: 6, maxWidth: 600, textAlign: "center" }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              color: "#1d1d1f",
+              letterSpacing: "-0.01em",
+              mb: 3,
+            }}
+          >
+            {t("auth.freePlatform")}
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1rem", sm: "1.125rem" },
+              color: "#86868b",
+              letterSpacing: "-0.01em",
+              lineHeight: 1.6,
+              p: 3,
+              backgroundColor: "rgba(52, 199, 89, 0.05)",
+              borderRadius: 2,
+              border: "0.5px solid rgba(52, 199, 89, 0.1)",
+            }}
+          >
+            {t("auth.freePlatformDescription")}
           </Typography>
         </Box>
 

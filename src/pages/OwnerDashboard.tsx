@@ -1,4 +1,9 @@
-import { Add, DirectionsCar, TrendingUp } from "@mui/icons-material";
+import {
+  Add,
+  Assignment,
+  DirectionsCar,
+  TrendingUp,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -53,6 +58,7 @@ const OwnerDashboard: React.FC = () => {
   const activeCars = cars.filter(
     (car) => car.status === "assigned" || car.status === "available"
   ).length;
+  const assignedCars = cars.filter((car) => car.status === "assigned").length;
   const totalCars = cars.length;
 
   return (
@@ -193,6 +199,47 @@ const OwnerDashboard: React.FC = () => {
                 }}
               >
                 {t("dashboard.activeCars")}
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <Card
+            elevation={0}
+            sx={{
+              background: "#ffffff",
+              border: "0.5px solid rgba(0, 0, 0, 0.1)",
+              borderRadius: 2,
+              transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              "&:hover": {
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                transform: "translateY(-2px)",
+              },
+            }}
+          >
+            <CardContent sx={{ textAlign: "center", p: 4 }}>
+              <Assignment sx={{ fontSize: 40, color: "#FF9500", mb: 2 }} />
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 400,
+                  mb: 1,
+                  color: "#1D1D1F",
+                  fontSize: { xs: "2rem", sm: "2.5rem" },
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {assignedCars}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 400,
+                  color: "#86868B",
+                  fontSize: "0.875rem",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {t("dashboard.assignedCars")}
               </Typography>
             </CardContent>
           </Card>
