@@ -91,11 +91,15 @@ const Footer: React.FC = () => {
                 sx={{
                   fontWeight: 400,
                   fontSize: { xs: "1rem", sm: "1.1rem" },
-                  color: "#1D1D1F",
                   letterSpacing: "-0.01em",
                 }}
               >
-                mo kumbi
+                <Box component="span" sx={{ color: "error.main" }}>
+                  mo
+                </Box>{" "}
+                <Box component="span" sx={{ color: "warning.main" }}>
+                  kumbi
+                </Box>
               </Typography>
             </Box>
 

@@ -177,12 +177,16 @@ const Header: React.FC = () => {
                 sx={{
                   fontWeight: 400,
                   fontSize: { xs: "1.1rem", sm: "1.2rem" },
-                  color: "#1d1d1f",
                   letterSpacing: "-0.01em",
                   lineHeight: 1.2,
                 }}
               >
-                mo kumbi
+                <Box component="span" sx={{ color: "error.main" }}>
+                  mo
+                </Box>{" "}
+                <Box component="span" sx={{ color: "warning.main" }}>
+                  kumbi
+                </Box>
               </Typography>
               <Typography
                 sx={{
@@ -474,11 +478,15 @@ const Header: React.FC = () => {
                 sx={{
                   fontWeight: 400,
                   fontSize: "1.1rem",
-                  color: "#1d1d1f",
                   letterSpacing: "-0.01em",
                 }}
               >
-                mo kumbi
+                <Box component="span" sx={{ color: "error.main" }}>
+                  mo
+                </Box>{" "}
+                <Box component="span" sx={{ color: "warning.main" }}>
+                  kumbi
+                </Box>
               </Typography>
               <Typography
                 sx={{

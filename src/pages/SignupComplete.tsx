@@ -67,13 +67,17 @@ const SignupComplete: React.FC = () => {
             sx={{
               fontWeight: 400,
               fontSize: { xs: "2rem", sm: "2.5rem" },
-              color: "#1d1d1f",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               textAlign: "center",
             }}
           >
-            mo kumbi
+            <Box component="span" sx={{ color: "error.main" }}>
+              mo
+            </Box>{" "}
+            <Box component="span" sx={{ color: "warning.main" }}>
+              kumbi
+            </Box>
           </Typography>
         </Box>
 
