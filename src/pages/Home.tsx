@@ -13,14 +13,32 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import { profileService } from "../services/profileService";
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [userCounts, setUserCounts] = useState({ drivers: 0, owners: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserCounts = async () => {
+      try {
+        const counts = await profileService.getUserCounts();
+        setUserCounts(counts);
+      } catch (error) {
+        console.error("Error fetching user counts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserCounts();
+  }, []);
 
   return (
     <Box
@@ -108,10 +126,61 @@ const Home: React.FC = () => {
               fontWeight: 500,
               letterSpacing: "0.05em",
               textTransform: "uppercase",
-              mb: 4,
+              mb: 2,
             }}
           >
             FREE
+          </Box>
+
+          {/* We dare to bring change section */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 4,
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 400,
+                fontSize: "0.875rem",
+                color: "#86868b",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {t("auth.dareWe")}
+            </Typography>
+            <Box
+              sx={{
+                display: "inline-block",
+                backgroundColor: "#6D6D70",
+                color: "#ffffff",
+                px: 1.5,
+                py: 0.25,
+                borderRadius: 1,
+                fontSize: "0.7rem",
+                fontWeight: 600,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+              }}
+            >
+              {t("auth.dareBadge")}
+            </Box>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 400,
+                fontSize: "0.875rem",
+                color: "#86868b",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              {t("auth.dareToBringChange")}
+            </Typography>
           </Box>
         </Box>
 
@@ -194,6 +263,104 @@ const Home: React.FC = () => {
           >
             {t("auth.freePlatformDescription")}
           </Typography>
+        </Box>
+
+        {/* User Statistics Section */}
+        <Box sx={{ mb: 6, maxWidth: 500, textAlign: "center" }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              color: "#1d1d1f",
+              letterSpacing: "-0.01em",
+              mb: 3,
+            }}
+          >
+            {t("auth.userStats")}
+          </Typography>
+          <Grid container spacing={3} sx={{ maxWidth: 400, mx: "auto" }}>
+            <Grid size={{ xs: 6 }}>
+              <Card
+                sx={{
+                  background: "#ffffff",
+                  border: "0.5px solid rgba(0, 0, 0, 0.1)",
+                  borderRadius: 2,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 3, textAlign: "center" }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: "2rem", sm: "2.5rem" },
+                      color: "#007AFF",
+                      letterSpacing: "-0.02em",
+                      mb: 1,
+                    }}
+                  >
+                    {loading ? "..." : userCounts.drivers}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#86868b",
+                      fontSize: "0.875rem",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {t("auth.driversCount")}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <Card
+                sx={{
+                  background: "#ffffff",
+                  border: "0.5px solid rgba(0, 0, 0, 0.1)",
+                  borderRadius: 2,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  transition: "all 0.2s ease-in-out",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 3, textAlign: "center" }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: "2rem", sm: "2.5rem" },
+                      color: "#34C759",
+                      letterSpacing: "-0.02em",
+                      mb: 1,
+                    }}
+                  >
+                    {loading ? "..." : userCounts.owners}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "#86868b",
+                      fontSize: "0.875rem",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {t("auth.ownersCount")}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </Box>
 
         {/* Benefits Section */}

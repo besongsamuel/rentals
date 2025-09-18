@@ -61,6 +61,35 @@ export const profileService = {
     return data || [];
   },
 
+  async getUserCounts(): Promise<{ drivers: number; owners: number }> {
+    // Fetch driver count
+    const { count: driverCount, error: driverError } = await supabase
+      .from("profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("user_type", "driver");
+
+    if (driverError) {
+      console.error("Error fetching driver count:", driverError);
+      throw driverError;
+    }
+
+    // Fetch owner count
+    const { count: ownerCount, error: ownerError } = await supabase
+      .from("profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("user_type", "owner");
+
+    if (ownerError) {
+      console.error("Error fetching owner count:", ownerError);
+      throw ownerError;
+    }
+
+    return {
+      drivers: driverCount || 0,
+      owners: ownerCount || 0,
+    };
+  },
+
   async createProfile(
     profileData: CreateProfileData & { id: string; email: string }
   ): Promise<Profile | null> {
