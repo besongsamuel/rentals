@@ -10,6 +10,7 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
@@ -93,10 +94,16 @@ const SignUpForm: React.FC = () => {
             component="img"
             src="/app_logo.png"
             alt="mo kumbi"
+            onClick={() => navigate("/")}
             sx={{
               height: 64,
               width: "auto",
               mb: 3,
+              cursor: "pointer",
+              transition: "opacity 0.2s ease-in-out",
+              "&:hover": {
+                opacity: 0.8,
+              },
             }}
           />
           <Typography
@@ -320,6 +327,9 @@ const SignUpForm: React.FC = () => {
           </Box>
         </Paper>
       </Container>
+
+      {/* Footer */}
+      <Footer />
     </Box>
   );
 };
