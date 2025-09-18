@@ -9,9 +9,8 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import HowItWorksCards from "../components/HowItWorksCards";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
@@ -23,7 +22,6 @@ const LoginForm: React.FC = () => {
   const { signIn } = useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +48,6 @@ const LoginForm: React.FC = () => {
           py: 4,
         }}
       >
-        {/* How It Works Cards */}
-        <HowItWorksCards />
-
         <Box
           sx={{
             display: "flex",
@@ -90,20 +85,39 @@ const LoginForm: React.FC = () => {
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
                 mb: 3,
               }}
             >
               <Box
                 component="img"
                 src="/app_logo.png"
-                alt="Aftermath Car Management Logo"
+                alt="ko kumba Logo"
                 sx={{
                   height: "64px",
                   width: "auto",
                   display: "block",
+                  mb: 2,
+                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
                 }}
               />
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 800,
+                  fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2rem" },
+                  background:
+                    "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textAlign: "center",
+                  mb: 1,
+                }}
+              >
+                ko kumba
+              </Typography>
             </Box>
 
             <Typography
