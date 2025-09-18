@@ -10,7 +10,6 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import EmailVerificationMessage from "../components/EmailVerificationMessage";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
@@ -48,7 +47,8 @@ const SignUpForm: React.FC = () => {
     if (error) {
       setError(error.message);
     } else {
-      setSuccess(t("auth.signupSuccess"));
+      // Navigate to signup complete screen
+      navigate("/signup-complete");
     }
 
     setLoading(false);
@@ -170,37 +170,6 @@ const SignUpForm: React.FC = () => {
             {t("auth.signupWelcome")}
           </Typography>
 
-          <Box
-            sx={{
-              mb: 4,
-              p: 2,
-              bgcolor: "background.paper",
-              borderRadius: 2,
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="left"
-              sx={{ mb: 1, fontWeight: 600 }}
-            >
-              {t("auth.chooseRole")}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="left"
-              sx={{ mb: 1 }}
-            >
-              • <strong>{t("auth.driverSignup")}</strong>
-            </Typography>
-            <Typography variant="body2" color="text.secondary" align="left">
-              • <strong>{t("auth.ownerSignup")}</strong>
-            </Typography>
-          </Box>
-
           <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
             {error && (
               <Alert
@@ -215,8 +184,6 @@ const SignUpForm: React.FC = () => {
                 {error}
               </Alert>
             )}
-
-            {success && <EmailVerificationMessage email={email} />}
 
             <TextField
               required

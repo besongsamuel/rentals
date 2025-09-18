@@ -103,9 +103,9 @@ const ProfileCompletion: React.FC = () => {
   const renderBasicProfileForm = () => (
     <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
       {error && (
-        <Alert 
-          severity="error" 
-          sx={{ 
+        <Alert
+          severity="error"
+          sx={{
             mb: 3,
             backgroundColor: "rgba(255, 59, 48, 0.1)",
             border: "0.5px solid rgba(255, 59, 48, 0.2)",
@@ -295,6 +295,31 @@ const ProfileCompletion: React.FC = () => {
             </CardContent>
           </Card>
         </Box>
+
+        {/* Role Description */}
+        {formData.user_type && (
+          <Box sx={{ mt: 3, mb: 4 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 400,
+                fontSize: "0.875rem",
+                color: "#86868b",
+                letterSpacing: "-0.01em",
+                lineHeight: 1.5,
+                textAlign: "center",
+                p: 2,
+                backgroundColor: "rgba(0, 122, 255, 0.05)",
+                borderRadius: 2,
+                border: "0.5px solid rgba(0, 122, 255, 0.1)",
+              }}
+            >
+              {formData.user_type === "driver"
+                ? t("profile.driverRoleDescription")
+                : t("profile.ownerRoleDescription")}
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       <Button
@@ -326,9 +351,9 @@ const ProfileCompletion: React.FC = () => {
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
-      <Container 
-        component="main" 
-        maxWidth="sm" 
+      <Container
+        component="main"
+        maxWidth="sm"
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -350,9 +375,9 @@ const ProfileCompletion: React.FC = () => {
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           }}
         >
-          <Typography 
-            component="h1" 
-            variant="h4" 
+          <Typography
+            component="h1"
+            variant="h4"
             sx={{
               fontWeight: 400,
               textAlign: "center",
@@ -367,8 +392,8 @@ const ProfileCompletion: React.FC = () => {
           <Typography
             variant="body1"
             align="center"
-            sx={{ 
-              mb: 4, 
+            sx={{
+              mb: 4,
               fontWeight: 400,
               color: "#86868b",
               fontSize: "0.875rem",

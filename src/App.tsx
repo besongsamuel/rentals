@@ -23,6 +23,7 @@ import LoginForm from "./pages/LoginForm";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import SignUpForm from "./pages/SignUpForm";
+import SignupComplete from "./pages/SignupComplete";
 import theme from "./theme";
 
 // Component to handle dynamic title updates
@@ -44,6 +45,9 @@ function DocumentTitle() {
         break;
       case "/signup":
         pageTitle = `${baseTitle} - Sign Up`;
+        break;
+      case "/signup-complete":
+        pageTitle = `${baseTitle} - Sign Up Complete`;
         break;
       case "/complete-profile":
         pageTitle = `${baseTitle} - Complete Profile`;
@@ -186,6 +190,7 @@ function AppContent() {
             <Routes>
               <Route path="/login" element={<LoginForm />} />
               <Route path="/signup" element={<SignUpForm />} />
+              <Route path="/signup-complete" element={<SignupComplete />} />
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </Box>

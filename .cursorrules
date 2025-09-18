@@ -311,3 +311,21 @@
 - Driver Dashboard: Weekly report creation and editing
 - Route users to appropriate dashboard based on profile.user_type
 - Implement role-based access control for different functionalities
+
+## User Guidance & Onboarding
+
+- **CRITICAL: Always guide users on what the next step is since this is a new service**
+- **Progressive Disclosure**: Break down complex processes into clear, manageable steps
+- **Contextual Help**: Provide helpful hints and explanations at each stage of the user journey
+- **Clear Call-to-Actions**: Make it obvious what users should do next with prominent, descriptive buttons
+- **Status Indicators**: Show users where they are in a process and what's coming next
+- **Empty States**: When there's no data, explain what the user should do to get started
+- **Success Messages**: After completing actions, clearly indicate what was accomplished and what to do next
+- **Error Prevention**: Anticipate user confusion and provide guidance before problems occur
+- **Onboarding Flow**: Guide new users through the essential features and setup process
+- **Tooltips & Help Text**: Provide contextual information without cluttering the interface
+- **Progress Indicators**: Show completion status for multi-step processes
+- **Next Steps Suggestions**: Always suggest logical next actions after completing tasks
+- **User Journey Mapping**: Consider the complete user flow from signup to regular usage
+- **Reduced Cognitive Load**: Present information in digestible chunks with clear hierarchy
+- **Accessibility**: Ensure guidance is accessible to all users with proper contrast and screen reader support
