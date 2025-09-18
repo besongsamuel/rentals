@@ -632,46 +632,6 @@ const Home: React.FC = () => {
             {t("auth.signIn")}
           </Button>
         </Box>
-
-        {/* DARE to be different section */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            mt: 6,
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              display: "inline-block",
-              backgroundColor: "#6D6D70",
-              color: "#ffffff",
-              px: 1.5,
-              py: 0.25,
-              borderRadius: 1,
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-            }}
-          >
-            {t("auth.dareBadge")}
-          </Box>
-          <Typography
-            variant="body1"
-            sx={{
-              fontWeight: 400,
-              fontSize: "0.875rem",
-              color: "#86868b",
-              letterSpacing: "-0.01em",
-            }}
-          >
-            {t("auth.dareToBeDifferent")}
-          </Typography>
-        </Box>
       </Container>
 
       {/* Footer */}
