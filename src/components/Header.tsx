@@ -111,16 +111,20 @@ const Header: React.FC = () => {
         elevation={0}
         sx={{
           borderRadius: 0,
-          background: "#ffffff",
+          background: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           color: "#0f172a",
-          borderBottom: "1px solid #e2e8f0",
+          borderBottom: "1px solid rgba(226, 232, 240, 0.3)",
+          boxShadow:
+            "0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Toolbar
           sx={{
-            px: { xs: 1, sm: 2 },
-            py: { xs: 0.5, sm: 0.75 },
-            minHeight: { xs: 56, sm: 64 },
+            px: { xs: 2, sm: 3, md: 4 },
+            py: { xs: 1, sm: 1.5 },
+            minHeight: { xs: 64, sm: 72 },
           }}
         >
           {/* Mobile Menu Button */}
@@ -130,7 +134,16 @@ const Header: React.FC = () => {
               color="inherit"
               aria-label="menu"
               onClick={handleMobileMenuToggle}
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2,
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  transform: "scale(1.05)",
+                },
+                transition: "all 0.2s ease-in-out",
+              }}
             >
               <MenuIcon />
             </IconButton>
@@ -146,7 +159,9 @@ const Header: React.FC = () => {
               cursor: "pointer",
               "&:hover": {
                 opacity: 0.8,
+                transform: "translateY(-1px)",
               },
+              transition: "all 0.2s ease-in-out",
             }}
             onClick={handleTitleClick}
           >
@@ -156,27 +171,29 @@ const Header: React.FC = () => {
                 src="/app_logo.png"
                 alt="ko kumba Logo"
                 sx={{
-                  height: "48px",
+                  height: "52px",
                   width: "auto",
                   display: "block",
                   mr: 2,
+                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
                 }}
               />
               <Typography
                 variant="h5"
                 sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: "0.8rem", sm: "1rem", md: "1.2rem" },
+                  fontWeight: 800,
+                  fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
                   display: { xs: "none", sm: "block" },
                   lineHeight: 1,
+                  background:
+                    "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                <Box component="span" sx={{ color: "primary.main" }}>
-                  ko
-                </Box>{" "}
-                <Box component="span" sx={{ color: "secondary.main" }}>
-                  kumba
-                </Box>
+                ko kumba
               </Typography>
             </Box>
           </Box>
@@ -200,16 +217,26 @@ const Header: React.FC = () => {
                     onClick={() => handleNavigation(item.path)}
                     startIcon={item.icon}
                     sx={{
-                      borderRadius: 2,
-                      px: 2,
-                      py: 1,
+                      borderRadius: 3,
+                      px: 3,
+                      py: 1.5,
                       backgroundColor:
                         currentPath === item.path
-                          ? "rgba(255,255,255,0.2)"
-                          : "transparent",
+                          ? "rgba(46, 125, 50, 0.1)"
+                          : "rgba(255, 255, 255, 0.05)",
+                      backdropFilter: "blur(10px)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      color:
+                        currentPath === item.path
+                          ? "primary.main"
+                          : "text.primary",
+                      fontWeight: currentPath === item.path ? 600 : 500,
                       "&:hover": {
-                        backgroundColor: "rgba(255,255,255,0.1)",
+                        backgroundColor: "rgba(46, 125, 50, 0.15)",
+                        transform: "translateY(-1px)",
+                        boxShadow: "0 4px 12px rgba(46, 125, 50, 0.2)",
                       },
+                      transition: "all 0.2s ease-in-out",
                     }}
                   >
                     {item.label}
@@ -236,11 +263,14 @@ const Header: React.FC = () => {
                   size="small"
                   sx={{
                     display: { xs: "none", sm: "flex" },
-                    backgroundColor: "rgba(255,255,255,0.2)",
-                    color: "inherit",
+                    backgroundColor: "rgba(46, 125, 50, 0.1)",
+                    color: "primary.main",
                     textTransform: "capitalize",
                     fontSize: "0.75rem",
-                    height: 24,
+                    height: 28,
+                    fontWeight: 600,
+                    border: "1px solid rgba(46, 125, 50, 0.2)",
+                    backdropFilter: "blur(10px)",
                   }}
                 />
               </>
@@ -375,12 +405,20 @@ const Header: React.FC = () => {
                 onClick={handleSignOut}
                 startIcon={<AccountCircle />}
                 sx={{
-                  borderRadius: 2,
-                  px: 2,
-                  py: 1,
+                  borderRadius: 3,
+                  px: 3,
+                  py: 1.5,
+                  backgroundColor: "rgba(211, 47, 47, 0.1)",
+                  border: "1px solid rgba(211, 47, 47, 0.2)",
+                  color: "secondary.main",
+                  fontWeight: 600,
+                  backdropFilter: "blur(10px)",
                   "&:hover": {
-                    backgroundColor: "rgba(255,255,255,0.1)",
+                    backgroundColor: "rgba(211, 47, 47, 0.15)",
+                    transform: "translateY(-1px)",
+                    boxShadow: "0 4px 12px rgba(211, 47, 47, 0.2)",
                   },
+                  transition: "all 0.2s ease-in-out",
                 }}
               >
                 {t("app.signOut")}
@@ -402,47 +440,52 @@ const Header: React.FC = () => {
           display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
-            width: 280,
-            backgroundColor: "background.paper",
+            width: 300,
+            backgroundColor: "rgba(255, 255, 255, 0.95)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            borderRight: "1px solid rgba(226, 232, 240, 0.3)",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
           },
         }}
       >
-        <Box sx={{ p: 2, borderBottom: "1px solid", borderColor: "divider" }}>
+        <Box sx={{ p: 3, borderBottom: "1px solid rgba(226, 232, 240, 0.3)" }}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              mb: 1,
+              mb: 2,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <Box
                 component="img"
                 src="/app_logo.png"
                 alt="ko kumba Logo"
                 sx={{
-                  height: "40px",
+                  height: "48px",
                   width: "auto",
                   display: "block",
-                  mr: 1,
+                  mr: 2,
+                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
                 }}
               />
               <Typography
                 variant="h6"
                 sx={{
-                  fontWeight: 700,
-                  fontSize: "0.9rem",
+                  fontWeight: 800,
+                  fontSize: "1.1rem",
                   lineHeight: 1,
+                  background:
+                    "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
                 }}
               >
-                <Box component="span" sx={{ color: "primary.main" }}>
-                  ko
-                </Box>{" "}
-                <Box component="span" sx={{ color: "secondary.main" }}>
-                  kumba
-                </Box>
+                ko kumba
               </Typography>
             </Box>
           </Box>
@@ -456,9 +499,12 @@ const Header: React.FC = () => {
                 size="small"
                 sx={{
                   mt: 1,
-                  backgroundColor: "primary.main",
-                  color: "white",
+                  backgroundColor: "rgba(46, 125, 50, 0.1)",
+                  color: "primary.main",
                   textTransform: "capitalize",
+                  fontWeight: 600,
+                  border: "1px solid rgba(46, 125, 50, 0.2)",
+                  backdropFilter: "blur(10px)",
                 }}
               />
             </Box>
@@ -477,17 +523,24 @@ const Header: React.FC = () => {
                   sx={{
                     backgroundColor:
                       currentPath === item.path
+                        ? "rgba(46, 125, 50, 0.15)"
+                        : "rgba(255, 255, 255, 0.05)",
+                    color:
+                      currentPath === item.path
                         ? "primary.main"
-                        : "transparent",
-                    color: currentPath === item.path ? "white" : "text.primary",
+                        : "text.primary",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backdropFilter: "blur(10px)",
                     "&:hover": {
                       backgroundColor:
                         currentPath === item.path
-                          ? "primary.dark"
-                          : "action.hover",
+                          ? "rgba(46, 125, 50, 0.2)"
+                          : "rgba(46, 125, 50, 0.1)",
+                      transform: "scale(1.05)",
                     },
-                    minWidth: 48,
-                    minHeight: 48,
+                    minWidth: 52,
+                    minHeight: 52,
+                    transition: "all 0.2s ease-in-out",
                   }}
                 >
                   {item.icon}
@@ -518,12 +571,20 @@ const Header: React.FC = () => {
             startIcon={<AccountCircle />}
             onClick={handleSignOut}
             sx={{
-              borderColor: "error.main",
-              color: "error.main",
+              borderColor: "rgba(211, 47, 47, 0.3)",
+              color: "secondary.main",
+              backgroundColor: "rgba(211, 47, 47, 0.05)",
+              backdropFilter: "blur(10px)",
+              fontWeight: 600,
+              py: 1.5,
+              borderRadius: 3,
               "&:hover": {
-                backgroundColor: "error.main",
-                color: "white",
+                backgroundColor: "rgba(211, 47, 47, 0.1)",
+                borderColor: "rgba(211, 47, 47, 0.5)",
+                transform: "translateY(-1px)",
+                boxShadow: "0 4px 12px rgba(211, 47, 47, 0.2)",
               },
+              transition: "all 0.2s ease-in-out",
             }}
           >
             {t("app.signOut")}
