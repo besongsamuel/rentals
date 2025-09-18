@@ -10,12 +10,14 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 
 const ProfileCompletion: React.FC = () => {
   const { createProfile, profile } = useUserContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Basic profile data
   const [formData, setFormData] = useState({
@@ -48,7 +50,7 @@ const ProfileCompletion: React.FC = () => {
     try {
       // Validate basic profile data
       if (!formData.full_name.trim()) {
-        setError("Full name is required");
+        setError(t("profile.fullNameRequired"));
         setLoading(false);
         return;
       }
@@ -101,34 +103,58 @@ const ProfileCompletion: React.FC = () => {
   const renderBasicProfileForm = () => (
     <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert 
+          severity="error" 
+          sx={{ 
+            mb: 3,
+            backgroundColor: "rgba(255, 59, 48, 0.1)",
+            border: "0.5px solid rgba(255, 59, 48, 0.2)",
+            borderRadius: 2,
+          }}
+        >
           {error}
         </Alert>
       )}
 
       <TextField
-        margin="normal"
         required
         fullWidth
         id="full_name"
-        label="Full Name"
+        label={t("profile.fullName")}
         name="full_name"
         autoComplete="name"
         autoFocus
         value={formData.full_name}
         onChange={handleInputChange("full_name")}
+        sx={{
+          mb: 3,
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 122, 255, 0.5)",
+            },
+          },
+        }}
       />
 
       <TextField
-        margin="normal"
         fullWidth
         id="phone"
-        label="Phone Number"
+        label={t("profile.phoneNumber")}
         name="phone"
         autoComplete="tel"
         value={formData.phone}
         onChange={handleInputChange("phone")}
-        helperText="Optional - for emergency contact"
+        helperText={t("profile.phoneNumberHelper")}
+        sx={{
+          mb: 4,
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 122, 255, 0.5)",
+            },
+          },
+        }}
       />
 
       <Box sx={{ mt: 3, mb: 2 }}>
@@ -141,7 +167,7 @@ const ProfileCompletion: React.FC = () => {
             color: "primary.main",
           }}
         >
-          Choose Your Role *
+          {t("profile.chooseRoleRequired")}
         </Typography>
         <Typography
           variant="body2"
@@ -152,7 +178,7 @@ const ProfileCompletion: React.FC = () => {
             fontStyle: "italic",
           }}
         >
-          This cannot be changed later
+          {t("profile.cannotBeChangedLater")}
         </Typography>
 
         <Box
@@ -275,40 +301,86 @@ const ProfileCompletion: React.FC = () => {
         type="submit"
         fullWidth
         variant="contained"
-        sx={{ mt: 3, mb: 2 }}
         disabled={loading}
+        sx={{
+          py: 2,
+          fontSize: "0.875rem",
+          fontWeight: 400,
+          backgroundColor: "#007AFF",
+          borderRadius: 2,
+          textTransform: "none",
+          letterSpacing: "-0.01em",
+          "&:hover": {
+            backgroundColor: "#0056CC",
+          },
+          "&:disabled": {
+            backgroundColor: "#C7C7CC",
+            color: "#8E8E93",
+          },
+        }}
       >
-        {loading ? "Loading..." : "Continue"}
+        {loading ? t("profile.loading") : t("profile.continue")}
       </Button>
     </Box>
   );
 
   return (
-    <Container component="main" maxWidth="md" sx={{ py: 4 }}>
-      <Paper
-        elevation={3}
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
+      <Container 
+        component="main" 
+        maxWidth="sm" 
         sx={{
-          p: 4,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          py: 4,
         }}
       >
-        <Typography component="h1" variant="h4" gutterBottom>
-          Complete Your Profile
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          align="center"
-          sx={{ mb: 2 }}
+        <Paper
+          elevation={0}
+          sx={{
+            width: "100%",
+            maxWidth: 500,
+            p: 4,
+            background: "#ffffff",
+            border: "0.5px solid rgba(0, 0, 0, 0.1)",
+            borderRadius: 2,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          }}
         >
-          Let's get started with your basic information
-        </Typography>
-        {renderBasicProfileForm()}
-      </Paper>
-    </Container>
+          <Typography 
+            component="h1" 
+            variant="h4" 
+            sx={{
+              fontWeight: 400,
+              textAlign: "center",
+              color: "#1d1d1f",
+              mb: 2,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("profile.completeProfile")}
+          </Typography>
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ 
+              mb: 4, 
+              fontWeight: 400,
+              color: "#86868b",
+              fontSize: "0.875rem",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("profile.completeProfileDescription")}
+          </Typography>
+          {renderBasicProfileForm()}
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

@@ -197,7 +197,7 @@ const ProfilePage: React.FC = () => {
       if (error) {
         setError(error.message);
       } else {
-        setSuccess("Profile updated successfully!");
+        setSuccess(t("profile.profileUpdatedSuccessfully"));
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -232,7 +232,7 @@ const ProfilePage: React.FC = () => {
 
     try {
       if (!profile?.id) {
-        setError("Profile not found");
+        setError(t("profile.profileNotFound"));
         return;
       }
 
@@ -256,13 +256,13 @@ const ProfilePage: React.FC = () => {
           profile.id,
           driverDetailsWithProfileId
         );
-        setSuccess("Driver details updated successfully!");
+        setSuccess(t("profile.driverDetailsUpdatedSuccessfully"));
       } else {
         // Create new driver details
         await driverDetailsService.createDriverDetails(
           driverDetailsWithProfileId
         );
-        setSuccess("Driver details created successfully!");
+        setSuccess(t("profile.driverDetailsCreatedSuccessfully"));
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
@@ -330,7 +330,7 @@ const ProfilePage: React.FC = () => {
   if (!profile) {
     return (
       <Container component="main" maxWidth="md" sx={{ py: 4 }}>
-        <Typography>Loading profile...</Typography>
+        <Typography>{t("profile.loadingProfile")}</Typography>
       </Container>
     );
   }
@@ -338,7 +338,7 @@ const ProfilePage: React.FC = () => {
   return (
     <Container component="main" maxWidth="md" sx={{ py: 4 }}>
       <Typography component="h1" variant="h4" gutterBottom>
-        My Profile
+        {t("profile.myProfile")}
       </Typography>
 
       {/* Profile Information */}
@@ -347,7 +347,7 @@ const ProfilePage: React.FC = () => {
           variant="h6"
           sx={{ mb: 3, fontWeight: 600, color: "primary.main" }}
         >
-          Profile Information
+          {t("profile.profileInformation")}
         </Typography>
 
         <Box
@@ -371,7 +371,7 @@ const ProfilePage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Full Name"
+                label={t("profile.fullName")}
                 value={profileData.full_name}
                 onChange={handleProfileChange("full_name")}
                 required
@@ -381,17 +381,17 @@ const ProfilePage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Email"
+                label={t("profile.email")}
                 value={profile.email || ""}
                 disabled
-                helperText="Email cannot be changed"
+                helperText={t("profile.emailCannotBeChanged")}
               />
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Phone Number"
+                label={t("profile.phoneNumber")}
                 value={profileData.phone}
                 onChange={handleProfileChange("phone")}
               />
@@ -400,10 +400,14 @@ const ProfilePage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="User Type"
-                value={profile.user_type === "driver" ? "Driver" : "Car Owner"}
+                label={t("profile.userType")}
+                value={
+                  profile.user_type === "driver"
+                    ? t("profile.driver")
+                    : t("profile.owner")
+                }
                 disabled
-                helperText="User type cannot be changed"
+                helperText={t("profile.userTypeCannotBeChanged")}
               />
             </Grid>
           </Grid>
@@ -414,7 +418,7 @@ const ProfilePage: React.FC = () => {
             sx={{ mt: 3 }}
             disabled={loading}
           >
-            {loading ? "Updating..." : "Update Profile"}
+            {loading ? t("profile.updating") : t("profile.updateProfile")}
           </Button>
         </Box>
       </Paper>
@@ -426,7 +430,7 @@ const ProfilePage: React.FC = () => {
             variant="h6"
             sx={{ mb: 3, fontWeight: 600, color: "primary.main" }}
           >
-            Driver Details
+            {t("profile.completeDriverDetails")}
           </Typography>
 
           {/* Driver Details Encouragement Message */}
@@ -450,7 +454,7 @@ const ProfilePage: React.FC = () => {
           </Alert>
 
           {driverDetailsLoading ? (
-            <Typography>Loading driver details...</Typography>
+            <Typography>{t("profile.loadingDriverDetails")}</Typography>
           ) : (
             <Box
               component="form"
@@ -476,7 +480,7 @@ const ProfilePage: React.FC = () => {
                     variant="subtitle1"
                     sx={{ mb: 2, fontWeight: 600 }}
                   >
-                    Personal Information
+                    {t("profile.personalInformation")}
                   </Typography>
                 </Grid>
 
@@ -484,7 +488,7 @@ const ProfilePage: React.FC = () => {
                   <TextField
                     fullWidth
                     type="date"
-                    label="Date of Birth"
+                    label={t("profile.dateOfBirth")}
                     value={driverDetails.date_of_birth}
                     onChange={handleDriverDetailsChange("date_of_birth")}
                     InputLabelProps={{ shrink: true }}
@@ -493,17 +497,17 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Gender</InputLabel>
+                    <InputLabel>{t("profile.gender")}</InputLabel>
                     <Select
                       value={driverDetails.gender}
                       onChange={handleDriverDetailsChange("gender")}
-                      label="Gender"
+                      label={t("profile.gender")}
                     >
-                      <MenuItem value="male">Male</MenuItem>
-                      <MenuItem value="female">Female</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
+                      <MenuItem value="male">{t("profile.male")}</MenuItem>
+                      <MenuItem value="female">{t("profile.female")}</MenuItem>
+                      <MenuItem value="other">{t("profile.other")}</MenuItem>
                       <MenuItem value="prefer_not_to_say">
-                        Prefer not to say
+                        {t("profile.preferNotToSay")}
                       </MenuItem>
                     </Select>
                   </FormControl>
@@ -511,11 +515,11 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Nationality</InputLabel>
+                    <InputLabel>{t("profile.nationality")}</InputLabel>
                     <Select
                       value={driverDetails.nationality}
                       onChange={handleDriverDetailsChange("nationality")}
-                      label="Nationality"
+                      label={t("profile.nationality")}
                     >
                       {Country.getAllCountries().map((country) => (
                         <MenuItem key={country.isoCode} value={country.isoCode}>
@@ -528,12 +532,14 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Languages Spoken</InputLabel>
+                    <InputLabel>{t("profile.languagesSpoken")}</InputLabel>
                     <Select
                       multiple
                       value={driverDetails.languages}
                       onChange={handleLanguageChange}
-                      input={<OutlinedInput label="Languages Spoken" />}
+                      input={
+                        <OutlinedInput label={t("profile.languagesSpoken")} />
+                      }
                       renderValue={(selected) => (
                         <Box
                           sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
@@ -560,14 +566,14 @@ const ProfilePage: React.FC = () => {
                     variant="subtitle1"
                     sx={{ mb: 2, fontWeight: 600 }}
                   >
-                    Contact Information
+                    {t("profile.contactInformation")}
                   </Typography>
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
-                    label="Address"
+                    label={t("profile.address")}
                     value={driverDetails.address}
                     onChange={handleDriverDetailsChange("address")}
                     multiline
@@ -577,11 +583,11 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Country</InputLabel>
+                    <InputLabel>{t("profile.country")}</InputLabel>
                     <Select
                       value={selectedCountry}
                       onChange={handleCountryChange}
-                      label="Country"
+                      label={t("profile.country")}
                     >
                       {Country.getAllCountries().map((country) => (
                         <MenuItem key={country.isoCode} value={country.isoCode}>
@@ -594,11 +600,11 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <FormControl fullWidth>
-                    <InputLabel>State/Province</InputLabel>
+                    <InputLabel>{t("profile.stateProvince")}</InputLabel>
                     <Select
                       value={selectedState}
                       onChange={handleStateChange}
-                      label="State/Province"
+                      label={t("profile.stateProvince")}
                       disabled={!selectedCountry}
                     >
                       {availableStates.map((state) => (
@@ -612,11 +618,11 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 4 }}>
                   <FormControl fullWidth>
-                    <InputLabel>City</InputLabel>
+                    <InputLabel>{t("profile.city")}</InputLabel>
                     <Select
                       value={driverDetails.city}
                       onChange={handleCityChange}
-                      label="City"
+                      label={t("profile.city")}
                       disabled={!selectedState}
                     >
                       {availableCities.map((city) => (
@@ -631,7 +637,7 @@ const ProfilePage: React.FC = () => {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="Postal Code"
+                    label={t("profile.postalCode")}
                     value={driverDetails.postal_code}
                     onChange={handleDriverDetailsChange("postal_code")}
                   />
@@ -639,18 +645,22 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Communication Preference</InputLabel>
+                    <InputLabel>
+                      {t("profile.communicationPreference")}
+                    </InputLabel>
                     <Select
                       value={driverDetails.communication_preference}
                       onChange={handleDriverDetailsChange(
                         "communication_preference"
                       )}
-                      label="Communication Preference"
+                      label={t("profile.communicationPreference")}
                     >
-                      <MenuItem value="phone">Phone</MenuItem>
-                      <MenuItem value="email">Email</MenuItem>
-                      <MenuItem value="sms">SMS</MenuItem>
-                      <MenuItem value="whatsapp">WhatsApp</MenuItem>
+                      <MenuItem value="phone">{t("profile.phone")}</MenuItem>
+                      <MenuItem value="email">{t("profile.email")}</MenuItem>
+                      <MenuItem value="sms">{t("profile.sms")}</MenuItem>
+                      <MenuItem value="whatsapp">
+                        {t("profile.whatsapp")}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -662,14 +672,14 @@ const ProfilePage: React.FC = () => {
                     variant="subtitle1"
                     sx={{ mb: 2, fontWeight: 600 }}
                   >
-                    Emergency Contact
+                    {t("profile.emergencyContact")}
                   </Typography>
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="Emergency Contact Name"
+                    label={t("profile.emergencyContactName")}
                     value={driverDetails.emergency_contact_name}
                     onChange={handleDriverDetailsChange(
                       "emergency_contact_name"
@@ -680,7 +690,7 @@ const ProfilePage: React.FC = () => {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="Emergency Contact Phone"
+                    label={t("profile.emergencyContactPhone")}
                     value={driverDetails.emergency_contact_phone}
                     onChange={handleDriverDetailsChange(
                       "emergency_contact_phone"
@@ -690,13 +700,13 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Relationship</InputLabel>
+                    <InputLabel>{t("profile.relationship")}</InputLabel>
                     <Select
                       value={driverDetails.emergency_contact_relationship}
                       onChange={handleDriverDetailsChange(
                         "emergency_contact_relationship"
                       )}
-                      label="Relationship"
+                      label={t("profile.relationship")}
                     >
                       {relationshipOptions.map((relationship) => (
                         <MenuItem key={relationship} value={relationship}>
@@ -714,14 +724,14 @@ const ProfilePage: React.FC = () => {
                     variant="subtitle1"
                     sx={{ mb: 2, fontWeight: 600 }}
                   >
-                    Driver License Information
+                    {t("profile.driverLicenseInformation")}
                   </Typography>
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="License Number"
+                    label={t("profile.licenseNumber")}
                     value={driverDetails.license_number}
                     onChange={handleDriverDetailsChange("license_number")}
                   />
@@ -730,10 +740,10 @@ const ProfilePage: React.FC = () => {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="License Class"
+                    label={t("profile.licenseClass")}
                     value={driverDetails.license_class}
                     onChange={handleDriverDetailsChange("license_class")}
-                    placeholder="e.g., A, B, C"
+                    placeholder={t("profile.licenseClassPlaceholder")}
                   />
                 </Grid>
 
@@ -741,7 +751,7 @@ const ProfilePage: React.FC = () => {
                   <TextField
                     fullWidth
                     type="date"
-                    label="License Issue Date"
+                    label={t("profile.licenseIssueDate")}
                     value={driverDetails.license_issue_date}
                     onChange={handleDriverDetailsChange("license_issue_date")}
                     InputLabelProps={{ shrink: true }}
@@ -752,7 +762,7 @@ const ProfilePage: React.FC = () => {
                   <TextField
                     fullWidth
                     type="date"
-                    label="License Expiry Date"
+                    label={t("profile.licenseExpiryDate")}
                     value={driverDetails.license_expiry_date}
                     onChange={handleDriverDetailsChange("license_expiry_date")}
                     InputLabelProps={{ shrink: true }}
@@ -762,12 +772,12 @@ const ProfilePage: React.FC = () => {
                 <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
-                    label="Issuing Authority"
+                    label={t("profile.issuingAuthority")}
                     value={driverDetails.license_issuing_authority}
                     onChange={handleDriverDetailsChange(
                       "license_issuing_authority"
                     )}
-                    placeholder="e.g., Ministry of Transport"
+                    placeholder={t("profile.issuingAuthorityPlaceholder")}
                   />
                 </Grid>
 
@@ -778,7 +788,7 @@ const ProfilePage: React.FC = () => {
                     variant="subtitle1"
                     sx={{ mb: 2, fontWeight: 600 }}
                   >
-                    Professional Information
+                    {t("profile.professionalInformation")}
                   </Typography>
                 </Grid>
 
@@ -786,7 +796,7 @@ const ProfilePage: React.FC = () => {
                   <TextField
                     fullWidth
                     type="number"
-                    label="Years of Experience"
+                    label={t("profile.yearsOfExperience")}
                     value={driverDetails.years_of_experience}
                     onChange={handleDriverDetailsChange("years_of_experience")}
                     inputProps={{ min: 0, max: 50 }}
@@ -795,17 +805,25 @@ const ProfilePage: React.FC = () => {
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
-                    <InputLabel>Preferred Transmission</InputLabel>
+                    <InputLabel>
+                      {t("profile.preferredTransmission")}
+                    </InputLabel>
                     <Select
                       value={driverDetails.preferred_transmission}
                       onChange={handleDriverDetailsChange(
                         "preferred_transmission"
                       )}
-                      label="Preferred Transmission"
+                      label={t("profile.preferredTransmission")}
                     >
-                      <MenuItem value="manual">Manual</MenuItem>
-                      <MenuItem value="automatic">Automatic</MenuItem>
-                      <MenuItem value="both">Both</MenuItem>
+                      <MenuItem value="manual">
+                        {t("profile.transmissions.manual")}
+                      </MenuItem>
+                      <MenuItem value="automatic">
+                        {t("profile.transmissions.automatic")}
+                      </MenuItem>
+                      <MenuItem value="both">
+                        {t("profile.transmissions.both")}
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -817,7 +835,7 @@ const ProfilePage: React.FC = () => {
                 sx={{ mt: 3 }}
                 disabled={loading}
               >
-                {loading ? "Saving..." : "Save Driver Details"}
+                {loading ? t("profile.saving") : t("profile.saveDriverDetails")}
               </Button>
             </Box>
           )}

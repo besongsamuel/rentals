@@ -56,109 +56,106 @@ const SignUpForm: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Header />
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
+      {/* Language Switcher */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 24,
+          right: 24,
+          zIndex: 1,
+        }}
+      >
+        <LanguageSwitcher />
+      </Box>
+
       <Container
         component="main"
-        maxWidth="lg"
+        maxWidth="sm"
         sx={{
-          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
           py: 4,
         }}
       >
+        {/* Logo and Brand */}
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
-            minHeight: "60vh",
+            mb: 6,
           }}
         >
-          <Paper
-            elevation={0}
+          <Box
+            component="img"
+            src="/app_logo.png"
+            alt="ko kumba"
             sx={{
-              width: "100%",
-              maxWidth: 500,
-              p: { xs: 4, sm: 5 },
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              borderRadius: 2,
-              background: "#ffffff",
-              border: "1px solid #e2e8f0",
-              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              height: 64,
+              width: "auto",
+              mb: 3,
+            }}
+          />
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "2rem", sm: "2.5rem" },
+              color: "#1d1d1f",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              textAlign: "center",
             }}
           >
-            {/* Language Switcher */}
-            <Box
-              sx={{
-                position: "absolute",
-                top: { xs: 16, sm: 20 },
-                right: { xs: 16, sm: 20 },
-              }}
-            >
-              <LanguageSwitcher />
-            </Box>
-            {/* Logo */}
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                mb: 3,
-              }}
-            >
-              <Box
-                component="img"
-                src="/app_logo.png"
-                alt="ko kumba Logo"
-                sx={{
-                  height: "64px",
-                  width: "auto",
-                  display: "block",
-                  mb: 2,
-                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
-                }}
-              />
-              <Typography
-                variant="h3"
-                sx={{
-                  fontWeight: 800,
-                  fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2rem" },
-                  background:
-                    "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  textAlign: "center",
-                  mb: 1,
-                }}
-              >
-                ko kumba
-              </Typography>
-            </Box>
+            ko kumba
+          </Typography>
+        </Box>
 
-            <Typography
-              component="h1"
-              variant="h4"
-              gutterBottom
-              sx={{
-                fontWeight: 600,
-                textAlign: "center",
-                color: "text.primary",
-                mb: 1,
-              }}
-            >
-              {t("auth.signup")}
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              align="center"
-              sx={{ mb: 3, fontWeight: 500 }}
-            >
-              {t("auth.signupWelcome")}
-            </Typography>
+        {/* Sign Up Form */}
+        <Paper
+          elevation={0}
+          sx={{
+            width: "100%",
+            maxWidth: 400,
+            p: 4,
+            background: "#ffffff",
+            border: "0.5px solid rgba(0, 0, 0, 0.1)",
+            borderRadius: 2,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          }}
+        >
+
+          <Typography
+            component="h1"
+            variant="h4"
+            sx={{
+              fontWeight: 400,
+              textAlign: "center",
+              color: "#1d1d1f",
+              mb: 2,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("auth.signup")}
+          </Typography>
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ 
+              mb: 4, 
+              fontWeight: 400,
+              color: "#86868b",
+              fontSize: "0.875rem",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("auth.signupWelcome")}
+          </Typography>
 
             <Box
               sx={{
@@ -191,92 +188,147 @@ const SignUpForm: React.FC = () => {
               </Typography>
             </Box>
 
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              sx={{ width: "100%" }}
-            >
-              {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {error}
-                </Alert>
-              )}
-
-              {success && <EmailVerificationMessage email={email} />}
-
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label={t("auth.email")}
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label={t("auth.password")}
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                helperText={t("errors.password")}
-              />
-
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label={t("auth.confirmPassword")}
-                type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  py: 1.5,
-                  fontSize: "1rem",
-                  fontWeight: 600,
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ width: "100%" }}
+          >
+            {error && (
+              <Alert 
+                severity="error" 
+                sx={{ 
+                  mb: 3,
+                  backgroundColor: "rgba(255, 59, 48, 0.1)",
+                  border: "0.5px solid rgba(255, 59, 48, 0.2)",
+                  borderRadius: 2,
                 }}
-                disabled={loading}
               >
-                {loading ? t("common.loading") : t("auth.signUp")}
-              </Button>
+                {error}
+              </Alert>
+            )}
 
-              <Box textAlign="center">
-                <Typography variant="body2">
-                  {t("auth.hasAccount")}{" "}
-                  <Button
-                    variant="text"
-                    onClick={() =>
-                      navigate("/login", { state: { mode: "login" } })
-                    }
-                    sx={{ textTransform: "none" }}
-                  >
-                    {t("auth.signIn")}
-                  </Button>
-                </Typography>
-              </Box>
+            {success && <EmailVerificationMessage email={email} />}
+
+            <TextField
+              required
+              fullWidth
+              id="email"
+              label={t("auth.email")}
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={{
+                mb: 3,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(0, 122, 255, 0.5)",
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              required
+              fullWidth
+              name="password"
+              label={t("auth.password")}
+              type="password"
+              id="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              helperText={t("errors.password")}
+              sx={{
+                mb: 3,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(0, 122, 255, 0.5)",
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              required
+              fullWidth
+              name="confirmPassword"
+              label={t("auth.confirmPassword")}
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              sx={{
+                mb: 4,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(0, 122, 255, 0.5)",
+                  },
+                },
+              }}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading}
+              sx={{
+                py: 2,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                backgroundColor: "#007AFF",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                "&:hover": {
+                  backgroundColor: "#0056CC",
+                },
+                "&:disabled": {
+                  backgroundColor: "#C7C7CC",
+                  color: "#8E8E93",
+                },
+              }}
+            >
+              {loading ? t("common.loading") : t("auth.signUp")}
+            </Button>
+
+            <Box textAlign="center" sx={{ mt: 3 }}>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: "#86868b",
+                  fontSize: "0.875rem",
+                  fontWeight: 400,
+                }}
+              >
+                {t("auth.hasAccount")}{" "}
+                <Button
+                  variant="text"
+                  onClick={() => navigate("/login")}
+                  sx={{ 
+                    textTransform: "none",
+                    color: "#007AFF",
+                    fontWeight: 400,
+                    fontSize: "0.875rem",
+                    p: 0,
+                    minWidth: "auto",
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                      color: "#0056CC",
+                    },
+                  }}
+                >
+                  {t("auth.signIn")}
+                </Button>
+              </Typography>
             </Box>
-          </Paper>
-        </Box>
+          </Box>
+        </Paper>
       </Container>
     </Box>
   );

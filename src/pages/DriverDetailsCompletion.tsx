@@ -157,19 +157,19 @@ const DriverDetailsCompletion: React.FC = () => {
     try {
       // Validate driver details
       if (!driverDetails.date_of_birth) {
-        setError("Date of birth is required");
+        setError(t("profile.dateOfBirthRequired"));
         setLoading(false);
         return;
       }
 
       if (!driverDetails.license_number) {
-        setError("License number is required");
+        setError(t("profile.licenseNumberRequired"));
         setLoading(false);
         return;
       }
 
       if (!driverDetails.license_expiry_date) {
-        setError("License expiry date is required");
+        setError(t("profile.licenseExpiryRequired"));
         setLoading(false);
         return;
       }
@@ -246,32 +246,52 @@ const DriverDetailsCompletion: React.FC = () => {
   };
 
   return (
-    <Container component="main" maxWidth="md" sx={{ py: 4 }}>
-      <Paper
-        elevation={3}
+    <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
+      <Container 
+        component="main" 
+        maxWidth="md" 
         sx={{
-          p: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          py: 4,
         }}
       >
-        <Typography component="h1" variant="h4" gutterBottom>
-          {t("profile.completeDriverDetails")}
-        </Typography>
-
-        {/* Driver Details Encouragement Message */}
-        <Alert
-          severity="info"
+        <Paper
+          elevation={0}
           sx={{
-            mb: 3,
-            backgroundColor: "rgba(33, 150, 243, 0.1)",
-            border: "1px solid rgba(33, 150, 243, 0.3)",
-            "& .MuiAlert-message": {
-              width: "100%",
-            },
+            p: 4,
+            background: "#ffffff",
+            border: "0.5px solid rgba(0, 0, 0, 0.1)",
+            borderRadius: 2,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           }}
         >
+          <Typography 
+            component="h1" 
+            variant="h4" 
+            sx={{
+              fontWeight: 400,
+              textAlign: "center",
+              color: "#1d1d1f",
+              mb: 4,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("profile.completeDriverDetails")}
+          </Typography>
+
+          {/* Driver Details Encouragement Message */}
+          <Alert
+            severity="info"
+            sx={{
+              mb: 4,
+              backgroundColor: "rgba(0, 122, 255, 0.1)",
+              border: "0.5px solid rgba(0, 122, 255, 0.2)",
+              borderRadius: 2,
+              "& .MuiAlert-message": {
+                width: "100%",
+              },
+            }}
+          >
           <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
             {t("profile.driverDetailsEncouragement")}
           </Typography>
@@ -626,26 +646,57 @@ const DriverDetailsCompletion: React.FC = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+          <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
             <Button
               variant="outlined"
               onClick={() => navigate("/")}
-              sx={{ flex: 1 }}
+              sx={{ 
+                flex: 1,
+                py: 2,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                borderColor: "rgba(0, 0, 0, 0.1)",
+                color: "#1d1d1f",
+                "&:hover": {
+                  borderColor: "rgba(0, 0, 0, 0.2)",
+                  backgroundColor: "rgba(0, 0, 0, 0.04)",
+                },
+              }}
             >
-              Skip for Now
+              {t("profile.skipForNow")}
             </Button>
             <Button
               type="submit"
               variant="contained"
-              sx={{ flex: 1 }}
               disabled={loading}
+              sx={{ 
+                flex: 1,
+                py: 2,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                backgroundColor: "#007AFF",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                "&:hover": {
+                  backgroundColor: "#0056CC",
+                },
+                "&:disabled": {
+                  backgroundColor: "#C7C7CC",
+                  color: "#8E8E93",
+                },
+              }}
             >
-              {loading ? "Saving..." : "Complete Profile"}
+              {loading ? t("profile.saving") : t("profile.completeProfile")}
             </Button>
           </Box>
         </Box>
-      </Paper>
-    </Container>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

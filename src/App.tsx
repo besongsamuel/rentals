@@ -42,6 +42,9 @@ function DocumentTitle() {
       case "/login":
         pageTitle = `${baseTitle} - Login`;
         break;
+      case "/signup":
+        pageTitle = `${baseTitle} - Sign Up`;
+        break;
       case "/complete-profile":
         pageTitle = `${baseTitle} - Complete Profile`;
         break;
@@ -70,13 +73,6 @@ function DocumentTitle() {
   }, [location.pathname, profile?.user_type]);
 
   return null;
-}
-
-function AuthRoutes() {
-  const location = useLocation();
-  const isSignupMode = location.state?.mode === "signup";
-
-  return isSignupMode ? <SignUpForm /> : <LoginForm />;
 }
 
 function AppContent() {
@@ -188,7 +184,8 @@ function AppContent() {
           // User is not authenticated, show login/signup pages
           <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
             <Routes>
-              <Route path="/login" element={<AuthRoutes />} />
+              <Route path="/login" element={<LoginForm />} />
+              <Route path="/signup" element={<SignUpForm />} />
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </Box>
