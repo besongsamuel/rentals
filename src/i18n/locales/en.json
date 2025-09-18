@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Aftermath Car Management",
+    "name": "ko kumba",
     "welcome": "Welcome",
     "signOut": "Sign Out"
   },
@@ -61,7 +61,10 @@
     "chooseRoleCarefully": "Choose your role carefully - this cannot be changed later",
     "driverAdditionalInfo": "Track earnings and mileage for assigned vehicles",
     "ownerAdditionalInfo": "Manage fleet, assign drivers, and monitor performance",
-    "complete": "Complete Profile"
+    "complete": "Complete Profile",
+    "completeDriverDetails": "Complete Your Driver Details",
+    "driverDetailsEncouragement": "🌟 Complete your driver details to increase your visibility and make it easier for car owners to find you!",
+    "driverDetailsEncouragementSubtitle": "Adding your driver information helps car owners make informed decisions and increases your chances of getting assigned to vehicles."
   },
   "cars": {
     "title": "Cars",

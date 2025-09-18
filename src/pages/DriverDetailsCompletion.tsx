@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { City, Country, State } from "country-state-city";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
@@ -26,6 +27,7 @@ import { CreateDriverDetailsData } from "../types";
 const DriverDetailsCompletion: React.FC = () => {
   const { user, profile } = useUserContext();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Driver details data
   const [driverDetails, setDriverDetails] = useState<CreateDriverDetailsData>({
@@ -129,6 +131,24 @@ const DriverDetailsCompletion: React.FC = () => {
     }
   }, [profile, navigate]);
 
+  // Utility function to filter out empty values
+  const filterEmptyValues = (data: any) => {
+    const filtered: any = {};
+    Object.keys(data).forEach((key) => {
+      const value = data[key];
+      // Keep the value if it's not empty, null, undefined, or an empty array
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== "" &&
+        !(Array.isArray(value) && value.length === 0)
+      ) {
+        filtered[key] = value;
+      }
+    });
+    return filtered;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -154,8 +174,19 @@ const DriverDetailsCompletion: React.FC = () => {
         return;
       }
 
+      // Filter out empty values before submitting
+      const filteredDriverDetails = filterEmptyValues(driverDetails);
+
+      // Ensure profile_id is always included
+      const driverDetailsWithProfileId = {
+        ...filteredDriverDetails,
+        profile_id: profile!.id,
+      };
+
       // Create driver details
-      await driverDetailsService.createDriverDetails(driverDetails);
+      await driverDetailsService.createDriverDetails(
+        driverDetailsWithProfileId
+      );
 
       // Redirect to dashboard after successful completion
       navigate("/");
@@ -226,8 +257,28 @@ const DriverDetailsCompletion: React.FC = () => {
         }}
       >
         <Typography component="h1" variant="h4" gutterBottom>
-          Complete Your Driver Details
+          {t("profile.completeDriverDetails")}
         </Typography>
+
+        {/* Driver Details Encouragement Message */}
+        <Alert
+          severity="info"
+          sx={{
+            mb: 3,
+            backgroundColor: "rgba(33, 150, 243, 0.1)",
+            border: "1px solid rgba(33, 150, 243, 0.3)",
+            "& .MuiAlert-message": {
+              width: "100%",
+            },
+          }}
+        >
+          <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+            {t("profile.driverDetailsEncouragement")}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t("profile.driverDetailsEncouragementSubtitle")}
+          </Typography>
+        </Alert>
 
         <Typography
           variant="body2"

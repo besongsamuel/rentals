@@ -139,8 +139,9 @@ const Header: React.FC = () => {
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-start",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "center",
               flexGrow: 1,
               cursor: "pointer",
               "&:hover": {
@@ -149,16 +150,35 @@ const Header: React.FC = () => {
             }}
             onClick={handleTitleClick}
           >
-            <Box
-              component="img"
-              src="/app_logo.png"
-              alt="Aftermath Car Management Logo"
-              sx={{
-                height: "48px",
-                width: "auto",
-                display: "block",
-              }}
-            />
+            <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+              <Box
+                component="img"
+                src="/app_logo.png"
+                alt="ko kumba Logo"
+                sx={{
+                  height: "48px",
+                  width: "auto",
+                  display: "block",
+                  mr: 2,
+                }}
+              />
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: "0.8rem", sm: "1rem", md: "1.2rem" },
+                  display: { xs: "none", sm: "block" },
+                  lineHeight: 1,
+                }}
+              >
+                <Box component="span" sx={{ color: "primary.main" }}>
+                  ko
+                </Box>{" "}
+                <Box component="span" sx={{ color: "secondary.main" }}>
+                  kumba
+                </Box>
+              </Typography>
+            </Box>
           </Box>
 
           <Box
@@ -391,21 +411,40 @@ const Header: React.FC = () => {
           <Box
             sx={{
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               mb: 1,
             }}
           >
-            <Box
-              component="img"
-              src="/app_logo.png"
-              alt="Aftermath Car Management Logo"
-              sx={{
-                height: "40px",
-                width: "auto",
-                display: "block",
-              }}
-            />
+            <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+              <Box
+                component="img"
+                src="/app_logo.png"
+                alt="ko kumba Logo"
+                sx={{
+                  height: "40px",
+                  width: "auto",
+                  display: "block",
+                  mr: 1,
+                }}
+              />
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.9rem",
+                  lineHeight: 1,
+                }}
+              >
+                <Box component="span" sx={{ color: "primary.main" }}>
+                  ko
+                </Box>{" "}
+                <Box component="span" sx={{ color: "secondary.main" }}>
+                  kumba
+                </Box>
+              </Typography>
+            </Box>
           </Box>
           {profile && (
             <Box sx={{ mt: 2 }}>

@@ -18,12 +18,14 @@ import {
 } from "@mui/material";
 import { City, Country, State } from "country-state-city";
 import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
 import { CreateDriverDetailsData } from "../types";
 
 const ProfilePage: React.FC = () => {
   const { profile, updateProfile } = useUserContext();
+  const { t } = useTranslation();
 
   // Profile data
   const [profileData, setProfileData] = useState({
@@ -204,6 +206,24 @@ const ProfilePage: React.FC = () => {
     setLoading(false);
   };
 
+  // Utility function to filter out empty values
+  const filterEmptyValues = (data: any) => {
+    const filtered: any = {};
+    Object.keys(data).forEach((key) => {
+      const value = data[key];
+      // Keep the value if it's not empty, null, undefined, or an empty array
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== "" &&
+        !(Array.isArray(value) && value.length === 0)
+      ) {
+        filtered[key] = value;
+      }
+    });
+    return filtered;
+  };
+
   const handleDriverDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -216,6 +236,15 @@ const ProfilePage: React.FC = () => {
         return;
       }
 
+      // Filter out empty values before submitting
+      const filteredDriverDetails = filterEmptyValues(driverDetails);
+
+      // Ensure profile_id is always included
+      const driverDetailsWithProfileId = {
+        ...filteredDriverDetails,
+        profile_id: profile.id,
+      };
+
       // Check if driver details already exist
       const existingDetails = await driverDetailsService.getDriverDetails(
         profile.id
@@ -225,12 +254,14 @@ const ProfilePage: React.FC = () => {
         // Update existing driver details
         await driverDetailsService.updateDriverDetails(
           profile.id,
-          driverDetails
+          driverDetailsWithProfileId
         );
         setSuccess("Driver details updated successfully!");
       } else {
         // Create new driver details
-        await driverDetailsService.createDriverDetails(driverDetails);
+        await driverDetailsService.createDriverDetails(
+          driverDetailsWithProfileId
+        );
         setSuccess("Driver details created successfully!");
       }
     } catch (error) {
@@ -397,6 +428,26 @@ const ProfilePage: React.FC = () => {
           >
             Driver Details
           </Typography>
+
+          {/* Driver Details Encouragement Message */}
+          <Alert
+            severity="info"
+            sx={{
+              mb: 3,
+              backgroundColor: "rgba(33, 150, 243, 0.1)",
+              border: "1px solid rgba(33, 150, 243, 0.3)",
+              "& .MuiAlert-message": {
+                width: "100%",
+              },
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+              {t("profile.driverDetailsEncouragement")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t("profile.driverDetailsEncouragementSubtitle")}
+            </Typography>
+          </Alert>
 
           {driverDetailsLoading ? (
             <Typography>Loading driver details...</Typography>
