@@ -158,7 +158,7 @@ const Header: React.FC = () => {
             <Box
               component="img"
               src="/app_logo.png"
-              alt="ko kumba"
+              alt="mo kumbi"
               sx={{
                 height: { xs: 24, sm: 28 },
                 width: "auto",
@@ -175,7 +175,7 @@ const Header: React.FC = () => {
                 lineHeight: 1.2,
               }}
             >
-              ko kumba
+              mo kumbi
             </Typography>
           </Box>
 
@@ -435,7 +435,7 @@ const Header: React.FC = () => {
             <Box
               component="img"
               src="/app_logo.png"
-              alt="ko kumba"
+              alt="mo kumbi"
               sx={{
                 height: 24,
                 width: "auto",
@@ -451,7 +451,7 @@ const Header: React.FC = () => {
                 letterSpacing: "-0.01em",
               }}
             >
-              ko kumba
+              mo kumbi
             </Typography>
           </Box>
           <IconButton

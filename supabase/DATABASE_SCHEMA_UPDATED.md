@@ -1,4 +1,4 @@
-# Updated Database Schema for ko kumba App
+# Updated Database Schema for mo kumbi App
 
 ## Overview
 

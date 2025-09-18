@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
             <Box
               component="img"
               src="/app_logo_small.png"
-              alt="ko kumba"
+              alt="mo kumbi"
               sx={{
                 height: "24px",
                 width: "auto",
@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
                 letterSpacing: "-0.01em",
               }}
             >
-              ko kumba
+              mo kumbi
             </Typography>
           </Box>
 
@@ -78,7 +78,7 @@ const Footer: React.FC = () => {
               letterSpacing: "-0.01em",
             }}
           >
-            © {new Date().getFullYear()} ko kumba. All rights reserved.
+            © {new Date().getFullYear()} mo kumbi. All rights reserved.
           </Typography>
 
           {/* Tagline */}

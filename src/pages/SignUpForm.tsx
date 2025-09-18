@@ -11,7 +11,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import EmailVerificationMessage from "../components/EmailVerificationMessage";
-import Header from "../components/Header";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
@@ -93,7 +92,7 @@ const SignUpForm: React.FC = () => {
           <Box
             component="img"
             src="/app_logo.png"
-            alt="ko kumba"
+            alt="mo kumbi"
             sx={{
               height: 64,
               width: "auto",
@@ -111,7 +110,22 @@ const SignUpForm: React.FC = () => {
               textAlign: "center",
             }}
           >
-            ko kumba
+            mo kumbi
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 400,
+              fontSize: "0.875rem",
+              color: "#86868b",
+              letterSpacing: "-0.01em",
+              textAlign: "center",
+              mt: 2,
+              maxWidth: 300,
+              lineHeight: 1.4,
+            }}
+          >
+            {t("auth.serviceDescription")}
           </Typography>
         </Box>
 
@@ -128,7 +142,6 @@ const SignUpForm: React.FC = () => {
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           }}
         >
-
           <Typography
             component="h1"
             variant="h4"
@@ -146,8 +159,8 @@ const SignUpForm: React.FC = () => {
           <Typography
             variant="body1"
             align="center"
-            sx={{ 
-              mb: 4, 
+            sx={{
+              mb: 4,
               fontWeight: 400,
               color: "#86868b",
               fontSize: "0.875rem",
@@ -157,46 +170,42 @@ const SignUpForm: React.FC = () => {
             {t("auth.signupWelcome")}
           </Typography>
 
-            <Box
-              sx={{
-                mb: 4,
-                p: 2,
-                bgcolor: "background.paper",
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-              }}
-            >
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                align="left"
-                sx={{ mb: 1, fontWeight: 600 }}
-              >
-                {t("auth.chooseRole")}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                align="left"
-                sx={{ mb: 1 }}
-              >
-                • <strong>{t("auth.driverSignup")}</strong>
-              </Typography>
-              <Typography variant="body2" color="text.secondary" align="left">
-                • <strong>{t("auth.ownerSignup")}</strong>
-              </Typography>
-            </Box>
-
           <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ width: "100%" }}
+            sx={{
+              mb: 4,
+              p: 2,
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              border: "1px solid",
+              borderColor: "divider",
+            }}
           >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              align="left"
+              sx={{ mb: 1, fontWeight: 600 }}
+            >
+              {t("auth.chooseRole")}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              align="left"
+              sx={{ mb: 1 }}
+            >
+              • <strong>{t("auth.driverSignup")}</strong>
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="left">
+              • <strong>{t("auth.ownerSignup")}</strong>
+            </Typography>
+          </Box>
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
             {error && (
-              <Alert 
-                severity="error" 
-                sx={{ 
+              <Alert
+                severity="error"
+                sx={{
                   mb: 3,
                   backgroundColor: "rgba(255, 59, 48, 0.1)",
                   border: "0.5px solid rgba(255, 59, 48, 0.2)",
@@ -298,9 +307,9 @@ const SignUpForm: React.FC = () => {
             </Button>
 
             <Box textAlign="center" sx={{ mt: 3 }}>
-              <Typography 
-                variant="body2" 
-                sx={{ 
+              <Typography
+                variant="body2"
+                sx={{
                   color: "#86868b",
                   fontSize: "0.875rem",
                   fontWeight: 400,
@@ -310,7 +319,7 @@ const SignUpForm: React.FC = () => {
                 <Button
                   variant="text"
                   onClick={() => navigate("/login")}
-                  sx={{ 
+                  sx={{
                     textTransform: "none",
                     color: "#007AFF",
                     fontWeight: 400,

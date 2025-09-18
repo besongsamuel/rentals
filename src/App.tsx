@@ -31,7 +31,7 @@ function DocumentTitle() {
   const { profile } = useUserContext();
 
   useEffect(() => {
-    const baseTitle = "ko kumba";
+    const baseTitle = "mo kumbi";
     let pageTitle = baseTitle;
 
     // Update title based on current route

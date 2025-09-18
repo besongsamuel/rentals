@@ -74,7 +74,7 @@ const LoginForm: React.FC = () => {
           <Box
             component="img"
             src="/app_logo.png"
-            alt="ko kumba"
+            alt="mo kumbi"
             sx={{
               height: 64,
               width: "auto",
@@ -92,7 +92,22 @@ const LoginForm: React.FC = () => {
               textAlign: "center",
             }}
           >
-            ko kumba
+            mo kumbi
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 400,
+              fontSize: "0.875rem",
+              color: "#86868b",
+              letterSpacing: "-0.01em",
+              textAlign: "center",
+              mt: 2,
+              maxWidth: 300,
+              lineHeight: 1.4,
+            }}
+          >
+            {t("auth.serviceDescription")}
           </Typography>
         </Box>
 
@@ -109,7 +124,6 @@ const LoginForm: React.FC = () => {
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
           }}
         >
-
           <Typography
             component="h1"
             variant="h4"
@@ -127,8 +141,8 @@ const LoginForm: React.FC = () => {
           <Typography
             variant="body1"
             align="center"
-            sx={{ 
-              mb: 4, 
+            sx={{
+              mb: 4,
               fontWeight: 400,
               color: "#86868b",
               fontSize: "0.875rem",
@@ -138,15 +152,11 @@ const LoginForm: React.FC = () => {
             {t("auth.signIn")} to your account
           </Typography>
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ width: "100%" }}
-          >
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
             {error && (
-              <Alert 
-                severity="error" 
-                sx={{ 
+              <Alert
+                severity="error"
+                sx={{
                   mb: 3,
                   backgroundColor: "rgba(255, 59, 48, 0.1)",
                   border: "0.5px solid rgba(255, 59, 48, 0.2)",
@@ -225,9 +235,9 @@ const LoginForm: React.FC = () => {
             </Button>
 
             <Box textAlign="center" sx={{ mt: 3 }}>
-              <Typography 
-                variant="body2" 
-                sx={{ 
+              <Typography
+                variant="body2"
+                sx={{
                   color: "#86868b",
                   fontSize: "0.875rem",
                   fontWeight: 400,
@@ -237,7 +247,7 @@ const LoginForm: React.FC = () => {
                 <Button
                   variant="text"
                   onClick={() => navigate("/signup")}
-                  sx={{ 
+                  sx={{
                     textTransform: "none",
                     color: "#007AFF",
                     fontWeight: 400,
