@@ -1,4 +1,4 @@
-# Updated Database Schema for Aftermath Car Management App
+# Updated Database Schema for ko kumba App
 
 ## Overview
 
@@ -652,12 +652,14 @@ CREATE TABLE messages (
 **Purpose**: Stores comments and replies for weekly reports, allowing drivers and owners to communicate about specific reports.
 
 **Key Features**:
+
 - **Hierarchical Structure**: Supports nested replies through `parent_message_id`
 - **Content Validation**: Ensures messages are between 1-2000 characters
 - **Automatic Timestamps**: Tracks creation and update times
 - **Cascade Deletion**: Messages are deleted when reports or users are deleted
 
 **Indexes**:
+
 ```sql
 CREATE INDEX idx_messages_weekly_report_id ON messages(weekly_report_id);
 CREATE INDEX idx_messages_user_id ON messages(user_id);
@@ -668,6 +670,7 @@ CREATE INDEX idx_messages_created_at ON messages(created_at);
 **RLS Policies**:
 
 #### Users can view messages for accessible weekly reports
+
 ```sql
 CREATE POLICY "Users can view messages for accessible weekly reports" ON messages
   FOR SELECT USING (
@@ -697,6 +700,7 @@ CREATE POLICY "Users can view messages for accessible weekly reports" ON message
 ```
 
 #### Users can insert messages for accessible weekly reports
+
 ```sql
 CREATE POLICY "Users can insert messages for accessible weekly reports" ON messages
   FOR INSERT WITH CHECK (
@@ -727,6 +731,7 @@ CREATE POLICY "Users can insert messages for accessible weekly reports" ON messa
 ```
 
 #### Users can update their own messages
+
 ```sql
 CREATE POLICY "Users can update their own messages" ON messages
   FOR UPDATE USING (user_id = auth.uid())
@@ -734,6 +739,7 @@ CREATE POLICY "Users can update their own messages" ON messages
 ```
 
 #### Users can delete their own messages
+
 ```sql
 CREATE POLICY "Users can delete their own messages" ON messages
   FOR DELETE USING (user_id = auth.uid());

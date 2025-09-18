@@ -1,5 +1,6 @@
 import {
   AccountCircle,
+  Close,
   Dashboard,
   Menu as MenuIcon,
   MoreVert,
@@ -10,7 +11,6 @@ import {
   Box,
   Button,
   Chip,
-  Divider,
   Drawer,
   IconButton,
   Menu,
@@ -99,25 +99,27 @@ const Header: React.FC = () => {
 
   return (
     <>
+      {/* Apple-inspired Header */}
       <AppBar
         position="static"
         elevation={0}
         sx={{
-          borderRadius: 0,
-          background: "rgba(255, 255, 255, 0.95)",
+          background: "rgba(255, 255, 255, 0.8)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          color: "#0f172a",
-          borderBottom: "1px solid rgba(226, 232, 240, 0.3)",
-          boxShadow:
-            "0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1)",
+          color: "#1d1d1f",
+          borderBottom: "0.5px solid rgba(0, 0, 0, 0.1)",
+          transition: "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         }}
       >
         <Toolbar
           sx={{
-            px: { xs: 3, sm: 4, md: 6 },
-            py: { xs: 2, sm: 2.5 },
-            minHeight: { xs: 72, sm: 80 },
+            px: { xs: 2, sm: 3, md: 4 },
+            py: 0,
+            minHeight: { xs: 60, sm: 64 },
+            maxWidth: "1200px",
+            mx: "auto",
+            width: "100%",
           }}
         >
           {/* Mobile Menu Button */}
@@ -128,265 +130,164 @@ const Header: React.FC = () => {
               aria-label="menu"
               onClick={handleMobileMenuToggle}
               sx={{
-                mr: 3,
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                backdropFilter: "blur(10px)",
+                mr: 2,
+                p: 1,
                 "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.2)",
-                  transform: "scale(1.05)",
+                  backgroundColor: "rgba(0, 0, 0, 0.04)",
                 },
-                transition: "all 0.2s ease-in-out",
+                transition: "background-color 0.2s ease",
               }}
             >
-              <MenuIcon />
+              <MenuIcon sx={{ fontSize: 20 }} />
             </IconButton>
           )}
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              justifyContent: "center",
-              flexGrow: 1,
-              cursor: "pointer",
-              "&:hover": {
-                opacity: 0.8,
-                transform: "translateY(-1px)",
-              },
-              transition: "all 0.2s ease-in-out",
-            }}
-            onClick={handleTitleClick}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <Box
-                component="img"
-                src="/app_logo.png"
-                alt="ko kumba Logo"
-                sx={{
-                  height: "56px",
-                  width: "auto",
-                  display: "block",
-                  mr: 3,
-                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
-                }}
-              />
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 800,
-                  fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem" },
-                  display: { xs: "none", sm: "block" },
-                  lineHeight: 1.2,
-                  background:
-                    "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  textShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                ko kumba
-              </Typography>
-            </Box>
-          </Box>
-
+          {/* Logo and Brand */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: { xs: 0.5, sm: 1.5, md: 2 },
+              cursor: "pointer",
+              "&:hover": {
+                opacity: 0.7,
+              },
+              transition: "opacity 0.2s ease",
+            }}
+            onClick={handleTitleClick}
+          >
+            <Box
+              component="img"
+              src="/app_logo.png"
+              alt="ko kumba"
+              sx={{
+                height: { xs: 24, sm: 28 },
+                width: "auto",
+                mr: 1.5,
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 400,
+                fontSize: { xs: "1.1rem", sm: "1.2rem" },
+                color: "#1d1d1f",
+                letterSpacing: "-0.01em",
+                lineHeight: 1.2,
+              }}
+            >
+              ko kumba
+            </Typography>
+          </Box>
+
+          {/* Desktop Navigation */}
+          {profile && !isMobile && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0,
+                ml: 6,
+                flexGrow: 1,
+              }}
+            >
+              {getNavigationItems().map((item, index) => (
+                <Button
+                  key={index}
+                  color="inherit"
+                  onClick={() => handleNavigation(item.path)}
+                  sx={{
+                    px: 2,
+                    py: 1,
+                    minWidth: "auto",
+                    fontSize: "0.9rem",
+                    fontWeight: 400,
+                    color: currentPath === item.path ? "#1d1d1f" : "#86868b",
+                    textTransform: "none",
+                    letterSpacing: "-0.01em",
+                    "&:hover": {
+                      color: "#1d1d1f",
+                      backgroundColor: "transparent",
+                    },
+                    transition: "color 0.2s ease",
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
+          )}
+
+          {/* Right Side Actions */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              ml: "auto",
             }}
           >
-            {/* Desktop Navigation Menu */}
-            {profile && !isMobile && (
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mr: 3 }}
-              >
-                {getNavigationItems().map((item, index) => (
-                  <Button
-                    key={index}
-                    color="inherit"
-                    onClick={() => handleNavigation(item.path)}
-                    startIcon={item.icon}
-                    sx={{
-                      borderRadius: 3,
-                      px: 4,
-                      py: 2,
-                      backgroundColor:
-                        currentPath === item.path
-                          ? "rgba(46, 125, 50, 0.1)"
-                          : "rgba(255, 255, 255, 0.05)",
-                      backdropFilter: "blur(10px)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      color:
-                        currentPath === item.path
-                          ? "primary.main"
-                          : "text.primary",
-                      fontWeight: currentPath === item.path ? 600 : 500,
-                      "&:hover": {
-                        backgroundColor: "rgba(46, 125, 50, 0.15)",
-                        transform: "translateY(-1px)",
-                        boxShadow: "0 4px 12px rgba(46, 125, 50, 0.2)",
-                      },
-                      transition: "all 0.2s ease-in-out",
-                    }}
-                  >
-                    {item.label}
-                  </Button>
-                ))}
-              </Box>
-            )}
-
+            {/* User Type Badge */}
             {profile && !isMobile && (
               <Chip
                 label={t(`profile.${profile.user_type}`)}
                 size="small"
                 sx={{
-                  display: { xs: "none", sm: "flex" },
-                  backgroundColor: "rgba(46, 125, 50, 0.1)",
-                  color: "primary.main",
+                  backgroundColor: "rgba(0, 0, 0, 0.05)",
+                  color: "#1d1d1f",
                   textTransform: "capitalize",
-                  fontSize: "0.8rem",
-                  height: 32,
-                  fontWeight: 600,
-                  border: "1px solid rgba(46, 125, 50, 0.2)",
-                  backdropFilter: "blur(10px)",
-                  px: 1,
+                  fontSize: "0.75rem",
+                  height: 24,
+                  fontWeight: 400,
+                  border: "none",
+                  "& .MuiChip-label": {
+                    px: 1.5,
+                  },
                 }}
               />
             )}
 
+            {/* Language Switcher */}
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
               <LanguageSwitcher />
             </Box>
 
+            {/* Account Menu */}
             {isMobile ? (
-              <>
-                <IconButton
-                  size="medium"
-                  aria-label="account menu"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenuOpen}
-                  color="inherit"
-                  sx={{
-                    p: 1,
-                    "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.1)",
-                    },
-                  }}
-                >
-                  <MoreVert />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                  PaperProps={{
-                    sx: {
-                      mt: 1,
-                      minWidth: 200,
-                      borderRadius: 2,
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                    },
-                  }}
-                >
-                  <MenuItem
-                    onClick={handleMenuClose}
-                    sx={{
-                      py: 2,
-                      borderBottom: "1px solid",
-                      borderColor: "divider",
-                      "&:hover": {
-                        backgroundColor: "transparent",
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        width: "100%",
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{ fontWeight: 600, mb: 0.5 }}
-                      >
-                        {profile?.full_name || user?.email}
-                      </Typography>
-                      {profile && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ textTransform: "capitalize" }}
-                        >
-                          {profile.user_type}
-                        </Typography>
-                      )}
-                    </Box>
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      handleNavigation("/profile");
-                      handleMenuClose();
-                    }}
-                    sx={{
-                      py: 1.5,
-                      "&:hover": {
-                        backgroundColor: "action.hover",
-                      },
-                    }}
-                  >
-                    <Person sx={{ mr: 1.5, fontSize: 20 }} />
-                    Profile
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleSignOut}
-                    sx={{
-                      py: 1.5,
-                      "&:hover": {
-                        backgroundColor: "action.hover",
-                      },
-                    }}
-                  >
-                    <AccountCircle sx={{ mr: 1.5, fontSize: 20 }} />
-                    {t("app.signOut")}
-                  </MenuItem>
-                </Menu>
-              </>
+              <IconButton
+                size="small"
+                aria-label="account menu"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenuOpen}
+                color="inherit"
+                sx={{
+                  p: 1,
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.04)",
+                  },
+                  transition: "background-color 0.2s ease",
+                }}
+              >
+                <MoreVert sx={{ fontSize: 20 }} />
+              </IconButton>
             ) : (
               <Button
                 color="inherit"
                 onClick={handleSignOut}
-                startIcon={<AccountCircle />}
                 sx={{
-                  borderRadius: 3,
-                  px: 4,
-                  py: 2,
-                  backgroundColor: "rgba(211, 47, 47, 0.1)",
-                  border: "1px solid rgba(211, 47, 47, 0.2)",
-                  color: "secondary.main",
-                  fontWeight: 600,
-                  backdropFilter: "blur(10px)",
+                  px: 2,
+                  py: 1,
+                  minWidth: "auto",
+                  fontSize: "0.9rem",
+                  fontWeight: 400,
+                  color: "#86868b",
+                  textTransform: "none",
+                  letterSpacing: "-0.01em",
                   "&:hover": {
-                    backgroundColor: "rgba(211, 47, 47, 0.15)",
-                    transform: "translateY(-1px)",
-                    boxShadow: "0 4px 12px rgba(211, 47, 47, 0.2)",
+                    color: "#1d1d1f",
+                    backgroundColor: "transparent",
                   },
-                  transition: "all 0.2s ease-in-out",
+                  transition: "color 0.2s ease",
                 }}
               >
                 {t("app.signOut")}
@@ -396,163 +297,265 @@ const Header: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile Account Menu */}
+      {isMobile && (
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: 200,
+              borderRadius: 3,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+              border: "0.5px solid rgba(0, 0, 0, 0.1)",
+            },
+          }}
+        >
+          <MenuItem
+            onClick={handleMenuClose}
+            sx={{
+              py: 2,
+              borderBottom: "0.5px solid rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                width: "100%",
+              }}
+            >
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 400,
+                  mb: 0.5,
+                  fontSize: "0.9rem",
+                  color: "#1d1d1f",
+                }}
+              >
+                {profile?.full_name || user?.email}
+              </Typography>
+              {profile && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    textTransform: "capitalize",
+                    fontSize: "0.8rem",
+                    color: "#86868b",
+                  }}
+                >
+                  {profile.user_type}
+                </Typography>
+              )}
+            </Box>
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleNavigation("/profile");
+              handleMenuClose();
+            }}
+            sx={{
+              py: 1.5,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            <Person sx={{ mr: 1.5, fontSize: 18 }} />
+            <Typography sx={{ fontSize: "0.9rem", fontWeight: 400 }}>
+              Profile
+            </Typography>
+          </MenuItem>
+          <MenuItem
+            onClick={handleSignOut}
+            sx={{
+              py: 1.5,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            <AccountCircle sx={{ mr: 1.5, fontSize: 18 }} />
+            <Typography sx={{ fontSize: "0.9rem", fontWeight: 400 }}>
+              {t("app.signOut")}
+            </Typography>
+          </MenuItem>
+        </Menu>
+      )}
+
+      {/* Apple-inspired Mobile Navigation Drawer */}
       <Drawer
         anchor="left"
         open={mobileMenuOpen}
         onClose={handleMobileMenuClose}
         ModalProps={{
-          keepMounted: true, // Better open performance on mobile
+          keepMounted: true,
         }}
         sx={{
           display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
-            width: 300,
+            width: 280,
             backgroundColor: "rgba(255, 255, 255, 0.95)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            borderRight: "1px solid rgba(226, 232, 240, 0.3)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+            borderRight: "0.5px solid rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
           },
         }}
       >
-        <Box sx={{ p: 4, borderBottom: "1px solid rgba(226, 232, 240, 0.3)" }}>
-          <Box
+        {/* Header with Close Button */}
+        <Box
+          sx={{
+            p: 3,
+            borderBottom: "0.5px solid rgba(0, 0, 0, 0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box
+              component="img"
+              src="/app_logo.png"
+              alt="ko kumba"
+              sx={{
+                height: 24,
+                width: "auto",
+                mr: 1.5,
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 400,
+                fontSize: "1.1rem",
+                color: "#1d1d1f",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              ko kumba
+            </Typography>
+          </Box>
+          <IconButton
+            onClick={handleMobileMenuClose}
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              mb: 3,
+              p: 1,
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+              transition: "background-color 0.2s ease",
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-              <Box
-                component="img"
-                src="/app_logo.png"
-                alt="ko kumba Logo"
-                sx={{
-                  height: "52px",
-                  width: "auto",
-                  display: "block",
-                  mr: 3,
-                  filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
-                }}
-              />
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 800,
-                  fontSize: "1.2rem",
-                  lineHeight: 1.2,
-                  background:
-                    "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                ko kumba
-              </Typography>
-            </Box>
-          </Box>
-          {profile && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                {profile.full_name || user?.email}
-              </Typography>
-              <Chip
-                label={t(`profile.${profile.user_type}`)}
-                size="small"
-                sx={{
-                  mt: 1,
-                  backgroundColor: "rgba(46, 125, 50, 0.1)",
-                  color: "primary.main",
-                  textTransform: "capitalize",
-                  fontWeight: 600,
-                  border: "1px solid rgba(46, 125, 50, 0.2)",
-                  backdropFilter: "blur(10px)",
-                }}
-              />
-            </Box>
-          )}
+            <Close sx={{ fontSize: 20 }} />
+          </IconButton>
         </Box>
 
-        <Box sx={{ flexGrow: 1, p: 3 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        {/* User Info */}
+        {profile && (
+          <Box sx={{ p: 3, borderBottom: "0.5px solid rgba(0, 0, 0, 0.1)" }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 400,
+                fontSize: "0.9rem",
+                color: "#1d1d1f",
+                mb: 1,
+              }}
+            >
+              {profile.full_name || user?.email}
+            </Typography>
+            <Chip
+              label={t(`profile.${profile.user_type}`)}
+              size="small"
+              sx={{
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+                color: "#1d1d1f",
+                textTransform: "capitalize",
+                fontSize: "0.75rem",
+                height: 24,
+                fontWeight: 400,
+                border: "none",
+                "& .MuiChip-label": {
+                  px: 1.5,
+                },
+              }}
+            />
+          </Box>
+        )}
+
+        {/* Navigation Items */}
+        <Box sx={{ flexGrow: 1, p: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
             {getNavigationItems().map((item, index) => (
-              <Box
+              <Button
                 key={index}
-                sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                onClick={() => handleNavigation(item.path)}
+                startIcon={item.icon}
+                sx={{
+                  justifyContent: "flex-start",
+                  px: 2,
+                  py: 1.5,
+                  minHeight: 48,
+                  fontSize: "0.9rem",
+                  fontWeight: 400,
+                  color: currentPath === item.path ? "#1d1d1f" : "#86868b",
+                  textTransform: "none",
+                  letterSpacing: "-0.01em",
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    color: "#1d1d1f",
+                  },
+                  transition: "all 0.2s ease",
+                }}
               >
-                <IconButton
-                  onClick={() => handleNavigation(item.path)}
-                  sx={{
-                    backgroundColor:
-                      currentPath === item.path
-                        ? "rgba(46, 125, 50, 0.15)"
-                        : "rgba(255, 255, 255, 0.05)",
-                    color:
-                      currentPath === item.path
-                        ? "primary.main"
-                        : "text.primary",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    backdropFilter: "blur(10px)",
-                    "&:hover": {
-                      backgroundColor:
-                        currentPath === item.path
-                          ? "rgba(46, 125, 50, 0.2)"
-                          : "rgba(46, 125, 50, 0.1)",
-                      transform: "scale(1.05)",
-                    },
-                    minWidth: 52,
-                    minHeight: 52,
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                >
-                  {item.icon}
-                </IconButton>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color:
-                      currentPath === item.path
-                        ? "primary.main"
-                        : "text.primary",
-                    fontWeight: currentPath === item.path ? 600 : 400,
-                  }}
-                >
-                  {item.label}
-                </Typography>
-              </Box>
+                {item.label}
+              </Button>
             ))}
           </Box>
         </Box>
 
-        <Box sx={{ p: 2, borderTop: "1px solid", borderColor: "divider" }}>
+        {/* Footer Actions */}
+        <Box sx={{ p: 2, borderTop: "0.5px solid rgba(0, 0, 0, 0.1)" }}>
           <LanguageSwitcher />
-          <Divider sx={{ my: 2 }} />
           <Button
             fullWidth
-            variant="outlined"
-            startIcon={<AccountCircle />}
             onClick={handleSignOut}
+            startIcon={<AccountCircle />}
             sx={{
-              borderColor: "rgba(211, 47, 47, 0.3)",
-              color: "secondary.main",
-              backgroundColor: "rgba(211, 47, 47, 0.05)",
-              backdropFilter: "blur(10px)",
-              fontWeight: 600,
+              mt: 2,
+              px: 2,
               py: 1.5,
-              borderRadius: 3,
+              minHeight: 48,
+              fontSize: "0.9rem",
+              fontWeight: 400,
+              color: "#86868b",
+              textTransform: "none",
+              letterSpacing: "-0.01em",
+              borderRadius: 2,
               "&:hover": {
-                backgroundColor: "rgba(211, 47, 47, 0.1)",
-                borderColor: "rgba(211, 47, 47, 0.5)",
-                transform: "translateY(-1px)",
-                boxShadow: "0 4px 12px rgba(211, 47, 47, 0.2)",
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+                color: "#1d1d1f",
               },
-              transition: "all 0.2s ease-in-out",
+              transition: "all 0.2s ease",
             }}
           >
             {t("app.signOut")}

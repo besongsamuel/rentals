@@ -145,8 +145,6 @@
     "nextWeek": "Next Week",
     "driverEarningsHelper": "Driver's earnings for the week",
     "maintenanceExpensesHelper": "Maintenance and repair costs",
-    "rideShareIncomeHelper": "How much was made from Yango ride share this week?",
-    "rentalIncomeHelper": "Income from car rental services",
     "totalDistance": "Total Distance"
   },
   "incomeSources": {
