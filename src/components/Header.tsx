@@ -1,11 +1,9 @@
 import {
   AccountCircle,
   Dashboard,
-  DirectionsCar,
   Menu as MenuIcon,
   MoreVert,
   Person,
-  Settings,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -82,13 +80,7 @@ const Header: React.FC = () => {
     if (profile.user_type === "owner") {
       return [
         ...baseItems,
-        { label: t("cars.addCar"), path: "/cars/new", icon: <DirectionsCar /> },
         { label: "Find Drivers", path: "/drivers", icon: <Person /> },
-        {
-          label: t("dashboard.manageAssignments"),
-          path: "/",
-          icon: <Settings />,
-        },
       ];
     }
 
@@ -123,9 +115,9 @@ const Header: React.FC = () => {
       >
         <Toolbar
           sx={{
-            px: { xs: 2, sm: 3, md: 4 },
-            py: { xs: 1, sm: 1.5 },
-            minHeight: { xs: 64, sm: 72 },
+            px: { xs: 3, sm: 4, md: 6 },
+            py: { xs: 2, sm: 2.5 },
+            minHeight: { xs: 72, sm: 80 },
           }}
         >
           {/* Mobile Menu Button */}
@@ -136,7 +128,7 @@ const Header: React.FC = () => {
               aria-label="menu"
               onClick={handleMobileMenuToggle}
               sx={{
-                mr: 2,
+                mr: 3,
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
                 backdropFilter: "blur(10px)",
                 "&:hover": {
@@ -166,16 +158,16 @@ const Header: React.FC = () => {
             }}
             onClick={handleTitleClick}
           >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <Box
                 component="img"
                 src="/app_logo.png"
                 alt="ko kumba Logo"
                 sx={{
-                  height: "52px",
+                  height: "56px",
                   width: "auto",
                   display: "block",
-                  mr: 2,
+                  mr: 3,
                   filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
                 }}
               />
@@ -183,9 +175,9 @@ const Header: React.FC = () => {
                 variant="h5"
                 sx={{
                   fontWeight: 800,
-                  fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
+                  fontSize: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem" },
                   display: { xs: "none", sm: "block" },
-                  lineHeight: 1,
+                  lineHeight: 1.2,
                   background:
                     "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
                   backgroundClip: "text",
@@ -209,7 +201,7 @@ const Header: React.FC = () => {
             {/* Desktop Navigation Menu */}
             {profile && !isMobile && (
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mr: 2 }}
+                sx={{ display: "flex", alignItems: "center", gap: 2, mr: 3 }}
               >
                 {getNavigationItems().map((item, index) => (
                   <Button
@@ -219,8 +211,8 @@ const Header: React.FC = () => {
                     startIcon={item.icon}
                     sx={{
                       borderRadius: 3,
-                      px: 3,
-                      py: 1.5,
+                      px: 4,
+                      py: 2,
                       backgroundColor:
                         currentPath === item.path
                           ? "rgba(46, 125, 50, 0.1)"
@@ -247,47 +239,22 @@ const Header: React.FC = () => {
             )}
 
             {profile && !isMobile && (
-              <>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    display: { xs: "none", sm: "block" },
-                    fontSize: { sm: "0.875rem", md: "0.9rem" },
-                    fontWeight: 500,
-                  }}
-                >
-                  {t("app.welcome")}, {profile.full_name || user?.email}
-                </Typography>
-
-                <Chip
-                  label={t(`profile.${profile.user_type}`)}
-                  size="small"
-                  sx={{
-                    display: { xs: "none", sm: "flex" },
-                    backgroundColor: "rgba(46, 125, 50, 0.1)",
-                    color: "primary.main",
-                    textTransform: "capitalize",
-                    fontSize: "0.75rem",
-                    height: 28,
-                    fontWeight: 600,
-                    border: "1px solid rgba(46, 125, 50, 0.2)",
-                    backdropFilter: "blur(10px)",
-                  }}
-                />
-              </>
-            )}
-
-            {!profile && !isMobile && (
-              <Typography
-                variant="body2"
+              <Chip
+                label={t(`profile.${profile.user_type}`)}
+                size="small"
                 sx={{
-                  display: { xs: "none", sm: "block" },
-                  fontSize: { sm: "0.875rem", md: "0.9rem" },
-                  fontWeight: 500,
+                  display: { xs: "none", sm: "flex" },
+                  backgroundColor: "rgba(46, 125, 50, 0.1)",
+                  color: "primary.main",
+                  textTransform: "capitalize",
+                  fontSize: "0.8rem",
+                  height: 32,
+                  fontWeight: 600,
+                  border: "1px solid rgba(46, 125, 50, 0.2)",
+                  backdropFilter: "blur(10px)",
+                  px: 1,
                 }}
-              >
-                {t("app.welcome")}, {user?.email}
-              </Typography>
+              />
             )}
 
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
@@ -407,8 +374,8 @@ const Header: React.FC = () => {
                 startIcon={<AccountCircle />}
                 sx={{
                   borderRadius: 3,
-                  px: 3,
-                  py: 1.5,
+                  px: 4,
+                  py: 2,
                   backgroundColor: "rgba(211, 47, 47, 0.1)",
                   border: "1px solid rgba(211, 47, 47, 0.2)",
                   color: "secondary.main",
@@ -450,26 +417,26 @@ const Header: React.FC = () => {
           },
         }}
       >
-        <Box sx={{ p: 3, borderBottom: "1px solid rgba(226, 232, 240, 0.3)" }}>
+        <Box sx={{ p: 4, borderBottom: "1px solid rgba(226, 232, 240, 0.3)" }}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              mb: 2,
+              mb: 3,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
               <Box
                 component="img"
                 src="/app_logo.png"
                 alt="ko kumba Logo"
                 sx={{
-                  height: "48px",
+                  height: "52px",
                   width: "auto",
                   display: "block",
-                  mr: 2,
+                  mr: 3,
                   filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
                 }}
               />
@@ -477,8 +444,8 @@ const Header: React.FC = () => {
                 variant="h6"
                 sx={{
                   fontWeight: 800,
-                  fontSize: "1.1rem",
-                  lineHeight: 1,
+                  fontSize: "1.2rem",
+                  lineHeight: 1.2,
                   background:
                     "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
                   backgroundClip: "text",
@@ -512,7 +479,7 @@ const Header: React.FC = () => {
           )}
         </Box>
 
-        <Box sx={{ flexGrow: 1, p: 2 }}>
+        <Box sx={{ flexGrow: 1, p: 3 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             {getNavigationItems().map((item, index) => (
               <Box

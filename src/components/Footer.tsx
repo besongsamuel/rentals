@@ -92,7 +92,7 @@ const Footer: React.FC = () => {
               opacity: 0.8,
             }}
           >
-            © {new Date().getFullYear()} Aftermath Technologies. All rights
+            © {new Date().getFullYear()} ko kumba. All rights
             reserved.
           </Typography>
 

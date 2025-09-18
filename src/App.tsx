@@ -12,11 +12,14 @@ import DriverDetailsGuard from "./components/DriverDetailsGuard";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
+import WelcomeMessage from "./components/WelcomeMessage";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
 import Dashboard from "./pages/Dashboard";
+import DriverDetails from "./pages/DriverDetails";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
+import DriverSearch from "./pages/DriverSearch";
 import LoginForm from "./pages/LoginForm";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
@@ -29,7 +32,7 @@ function DocumentTitle() {
   const { profile } = useUserContext();
 
   useEffect(() => {
-    const baseTitle = "Aftermath Car Management";
+    const baseTitle = "ko kumba";
     let pageTitle = baseTitle;
 
     // Update title based on current route
@@ -107,6 +110,7 @@ function AppContent() {
             }}
           >
             <Header />
+            <WelcomeMessage />
             <Box sx={{ flexGrow: 1 }}>
               <Routes>
                 {/* Show loading while checking profile */}
@@ -137,6 +141,11 @@ function AppContent() {
                             <Route
                               path="/cars/:carId/edit"
                               element={<CarForm />}
+                            />
+                            <Route path="/drivers" element={<DriverSearch />} />
+                            <Route
+                              path="/drivers/:driverId"
+                              element={<DriverDetails />}
                             />
                             <Route
                               path="/login"
