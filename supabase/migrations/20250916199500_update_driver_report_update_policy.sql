@@ -19,3 +19,4 @@ CREATE POLICY "Drivers can update their own reports" ON weekly_reports
 COMMENT ON POLICY "Drivers can update their own reports" ON weekly_reports IS 
 'Allows drivers to update their own weekly reports regardless of status (draft, submitted, approved, rejected)';
 
+
