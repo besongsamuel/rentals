@@ -92,14 +92,19 @@ const Home: React.FC = () => {
             sx={{
               fontWeight: 400,
               fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
-              color: "#1d1d1f",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               textAlign: "center",
               mb: 1,
             }}
           >
-            {t("auth.homeTitle")}
+            Welcome to{" "}
+            <Box component="span" sx={{ color: "error.main" }}>
+              mo
+            </Box>{" "}
+            <Box component="span" sx={{ color: "warning.main" }}>
+              kumbi
+            </Box>
           </Typography>
           <Typography
             variant="body1"
