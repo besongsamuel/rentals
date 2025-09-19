@@ -24,6 +24,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
+import {
+  getUserTypeBackgroundColor,
+  getUserTypeTextColor,
+} from "../utils/userTypeColors";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const Header: React.FC = () => {
@@ -454,8 +458,10 @@ const Header: React.FC = () => {
                 label={t(`profile.${profile.user_type}`)}
                 size="small"
                 sx={{
-                  backgroundColor: "rgba(0, 0, 0, 0.05)",
-                  color: "#1d1d1f",
+                  backgroundColor: getUserTypeBackgroundColor(
+                    profile.user_type
+                  ),
+                  color: getUserTypeTextColor(profile.user_type),
                   textTransform: "capitalize",
                   fontSize: "0.75rem",
                   height: 24,
@@ -732,8 +738,8 @@ const Header: React.FC = () => {
               label={t(`profile.${profile.user_type}`)}
               size="small"
               sx={{
-                backgroundColor: "rgba(0, 0, 0, 0.05)",
-                color: "#1d1d1f",
+                backgroundColor: getUserTypeBackgroundColor(profile.user_type),
+                color: getUserTypeTextColor(profile.user_type),
                 textTransform: "capitalize",
                 fontSize: "0.75rem",
                 height: 24,

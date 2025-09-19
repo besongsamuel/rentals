@@ -22,8 +22,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { carMakeModelService } from "../services/carMakeModelService";
 import { weeklyReportService } from "../services/weeklyReportService";
-import { Car } from "../types";
+import { Car, CarMake, CarModel } from "../types";
 
 interface AssignedOwnerCarProps {
   car: Car;
@@ -35,6 +36,9 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
     number | null
   >(null);
   const [loadingMileage, setLoadingMileage] = useState(true);
+  const [carMake, setCarMake] = useState<CarMake | null>(null);
+  const [carModel, setCarModel] = useState<CarModel | null>(null);
+  const [loadingCarInfo, setLoadingCarInfo] = useState(true);
 
   useEffect(() => {
     const calculateCurrentMileage = async () => {
@@ -55,6 +59,29 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
 
     calculateCurrentMileage();
   }, [car.id, car.initial_mileage, car.current_mileage]);
+
+  // Load car make/model information
+  useEffect(() => {
+    const loadCarInfo = async () => {
+      try {
+        setLoadingCarInfo(true);
+        const { make, model } = await carMakeModelService.getCarMakeModelByName(
+          car.make,
+          car.model
+        );
+        setCarMake(make);
+        setCarModel(model);
+      } catch (error) {
+        console.error("Error loading car make/model info:", error);
+        setCarMake(null);
+        setCarModel(null);
+      } finally {
+        setLoadingCarInfo(false);
+      }
+    };
+
+    loadCarInfo();
+  }, [car.make, car.model]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -123,6 +150,7 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
           }}
         >
           <Box sx={{ flex: 1 }}>
+            {/* Car Name */}
             <Typography
               variant="h4"
               component="div"
@@ -136,6 +164,39 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
             >
               {car.year} {car.make} {car.model}
             </Typography>
+
+            {/* Car Model Details */}
+            {!loadingCarInfo && carModel && (
+              <Box sx={{ display: "flex", gap: 1, mb: 2, flexWrap: "wrap" }}>
+                {carModel.body_type && (
+                  <Chip
+                    label={carModel.body_type}
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      fontSize: "0.8rem",
+                      height: 24,
+                      textTransform: "capitalize",
+                    }}
+                  />
+                )}
+                {carModel.fuel_type && (
+                  <Chip
+                    label={`${getFuelTypeIcon(carModel.fuel_type)} ${
+                      carModel.fuel_type
+                    }`}
+                    size="small"
+                    variant="outlined"
+                    sx={{
+                      fontSize: "0.8rem",
+                      height: 24,
+                      textTransform: "capitalize",
+                    }}
+                  />
+                )}
+              </Box>
+            )}
+
             <Chip
               label={car.status.charAt(0).toUpperCase() + car.status.slice(1)}
               color={getStatusColor(car.status) as any}

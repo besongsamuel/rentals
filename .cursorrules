@@ -45,6 +45,10 @@
 - Primary color: Green (#2e7d32 or similar green shade)
 - Secondary color: Red (#d32f2f or similar red shade)
 - Warning/Accent color: Yellow (#f57c00 or similar yellow shade)
+- **CRITICAL: User Type Colors**: Use consistent colors for user type differentiation:
+  - **Car Owners**: rgb(255, 59, 48) - Red color for owner-related UI elements
+  - **Drivers**: rgb(255, 149, 0) - Orange color for driver-related UI elements
+  - Apply these colors to badges, buttons, cards, and any UI elements that differentiate between owners and drivers
 - Ensure all Material-UI components use this color palette consistently
 
 ## Modern Design Principles

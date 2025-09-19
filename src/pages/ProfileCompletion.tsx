@@ -14,6 +14,11 @@ import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
+import {
+  getUserTypeBackgroundColor,
+  getUserTypeBorderColor,
+  getUserTypeTextColor,
+} from "../utils/userTypeColors";
 
 const ProfileCompletion: React.FC = () => {
   const { createProfile, profile } = useUserContext();
@@ -247,18 +252,20 @@ const ProfileCompletion: React.FC = () => {
               cursor: "pointer",
               border: formData.user_type === "driver" ? 3 : 1,
               borderColor:
-                formData.user_type === "driver" ? "primary.main" : "divider",
+                formData.user_type === "driver"
+                  ? getUserTypeBorderColor("driver")
+                  : "divider",
               backgroundColor:
                 formData.user_type === "driver"
-                  ? "primary.50"
+                  ? getUserTypeBackgroundColor("driver")
                   : "background.paper",
               transition: "all 0.2s ease-in-out",
               "&:hover": {
-                borderColor: "primary.main",
+                borderColor: getUserTypeBorderColor("driver"),
                 backgroundColor:
                   formData.user_type === "driver"
-                    ? "primary.100"
-                    : "primary.25",
+                    ? "rgba(255, 149, 0, 0.15)"
+                    : "rgba(255, 149, 0, 0.05)",
                 transform: "translateY(-2px)",
                 boxShadow: 3,
               },
@@ -278,7 +285,7 @@ const ProfileCompletion: React.FC = () => {
                   mb: 1,
                   color:
                     formData.user_type === "driver"
-                      ? "primary.main"
+                      ? getUserTypeTextColor("driver")
                       : "text.primary",
                 }}
               >
@@ -300,18 +307,20 @@ const ProfileCompletion: React.FC = () => {
               cursor: "pointer",
               border: formData.user_type === "owner" ? 3 : 1,
               borderColor:
-                formData.user_type === "owner" ? "secondary.main" : "divider",
+                formData.user_type === "owner"
+                  ? getUserTypeBorderColor("owner")
+                  : "divider",
               backgroundColor:
                 formData.user_type === "owner"
-                  ? "secondary.50"
+                  ? getUserTypeBackgroundColor("owner")
                   : "background.paper",
               transition: "all 0.2s ease-in-out",
               "&:hover": {
-                borderColor: "secondary.main",
+                borderColor: getUserTypeBorderColor("owner"),
                 backgroundColor:
                   formData.user_type === "owner"
-                    ? "secondary.100"
-                    : "secondary.25",
+                    ? "rgba(255, 59, 48, 0.15)"
+                    : "rgba(255, 59, 48, 0.05)",
                 transform: "translateY(-2px)",
                 boxShadow: 3,
               },
@@ -331,7 +340,7 @@ const ProfileCompletion: React.FC = () => {
                   mb: 1,
                   color:
                     formData.user_type === "owner"
-                      ? "secondary.main"
+                      ? getUserTypeTextColor("owner")
                       : "text.primary",
                 }}
               >

@@ -285,4 +285,47 @@ export const carMakeModelService = {
     );
     return uniqueCountries.sort();
   },
+
+  // Get car make and model data by matching names (for car display)
+  async getCarMakeModelByName(
+    makeName: string,
+    modelName: string
+  ): Promise<{
+    make: CarMake | null;
+    model: CarModel | null;
+  }> {
+    try {
+      // First, try to find the make by name
+      const { data: makeData, error: makeError } = await supabase
+        .from("car_makes")
+        .select("*")
+        .ilike("name", makeName)
+        .eq("is_active", true)
+        .single();
+
+      if (makeError || !makeData) {
+        console.warn(`Car make not found: ${makeName}`);
+        return { make: null, model: null };
+      }
+
+      // Then, try to find the model by name and make_id
+      const { data: modelData, error: modelError } = await supabase
+        .from("car_models")
+        .select("*")
+        .eq("make_id", makeData.id)
+        .ilike("name", modelName)
+        .eq("is_active", true)
+        .single();
+
+      if (modelError || !modelData) {
+        console.warn(`Car model not found: ${modelName} for make ${makeName}`);
+        return { make: makeData, model: null };
+      }
+
+      return { make: makeData, model: modelData };
+    } catch (error) {
+      console.error("Error fetching car make/model by name:", error);
+      return { make: null, model: null };
+    }
+  },
 };

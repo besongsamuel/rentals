@@ -2,7 +2,6 @@ import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const TermsOfUse: React.FC = () => {
   const { t } = useTranslation();
@@ -10,18 +9,6 @@ const TermsOfUse: React.FC = () => {
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
-      {/* Language Switcher */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 24,
-          right: 24,
-          zIndex: 1,
-        }}
-      >
-        <LanguageSwitcher />
-      </Box>
-
       <Container
         component="main"
         maxWidth="md"
