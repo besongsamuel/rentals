@@ -10,6 +10,7 @@ import {
   Card,
   CardContent,
   Fab,
+  Grid,
   Typography,
   useMediaQuery,
   useTheme,
@@ -17,7 +18,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import CarList from "../components/CarList";
+import AssignedOwnerCar from "../components/AssignedOwnerCar";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
@@ -246,7 +247,60 @@ const OwnerDashboard: React.FC = () => {
         </Box>
 
         {/* Cars List */}
-        <CarList cars={cars} onRefresh={loadCars} />
+        <Box sx={{ mb: 4 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              mb: 3,
+              fontWeight: 400,
+              color: "#1D1D1F",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("dashboard.myCars")}
+          </Typography>
+
+          {cars.length === 0 ? (
+            <Box sx={{ textAlign: "center", py: 8 }}>
+              <DirectionsCar sx={{ fontSize: 64, color: "#86868B", mb: 2 }} />
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  fontWeight: 400,
+                  color: "#1D1D1F",
+                }}
+              >
+                {t("cars.noCars")}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+                {t("dashboard.noCarsMessage")}
+              </Typography>
+              <Button
+                variant="contained"
+                startIcon={<Add />}
+                component={Link}
+                to="/cars/new"
+                sx={{
+                  backgroundColor: "#007AFF",
+                  "&:hover": {
+                    backgroundColor: "#0056CC",
+                  },
+                }}
+              >
+                {t("cars.addCar")}
+              </Button>
+            </Box>
+          ) : (
+            <Grid container spacing={3}>
+              {cars.map((car) => (
+                <Grid key={car.id} size={12}>
+                  <AssignedOwnerCar car={car} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
 
         {/* Floating Action Button for Mobile */}
         {isMobile && (

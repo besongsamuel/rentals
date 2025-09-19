@@ -132,7 +132,7 @@ const DriverDashboard: React.FC = () => {
             ) : (
               <Grid container spacing={3}>
                 {assignedCars.map((car) => (
-                  <Grid key={car.id} size={{ xs: 12, sm: 6, lg: 4 }}>
+                  <Grid key={car.id} size={12}>
                     <AssignedCar car={car} />
                   </Grid>
                 ))}

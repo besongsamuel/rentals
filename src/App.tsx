@@ -20,6 +20,7 @@ import DriverDetails from "./pages/DriverDetails";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
 import DriverSearch from "./pages/DriverSearch";
 import Home from "./pages/Home";
+import HowItWorks from "./pages/HowItWorks";
 import LoginForm from "./pages/LoginForm";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
@@ -52,6 +53,9 @@ function DocumentTitle() {
         break;
       case "/complete-profile":
         pageTitle = `${baseTitle} - Complete Profile`;
+        break;
+      case "/how-it-works":
+        pageTitle = `${baseTitle} - How It Works`;
         break;
       case "/cars/new":
         pageTitle = `${baseTitle} - Add New Car`;
@@ -141,6 +145,10 @@ function AppContent() {
                           <Routes>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/profile" element={<ProfilePage />} />
+                            <Route
+                              path="/how-it-works"
+                              element={<HowItWorks />}
+                            />
                             <Route path="/cars/new" element={<CarForm />} />
                             <Route
                               path="/cars/:carId"
@@ -193,6 +201,7 @@ function AppContent() {
               <Route path="/login" element={<LoginForm />} />
               <Route path="/signup" element={<SignUpForm />} />
               <Route path="/signup-complete" element={<SignupComplete />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Box>
