@@ -195,15 +195,26 @@ function AppContent() {
           </Box>
         ) : (
           // User is not authenticated, show login/signup pages
-          <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/signup" element={<SignUpForm />} />
-              <Route path="/signup-complete" element={<SignupComplete />} />
-              <Route path="/how-it-works" element={<HowItWorks />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: "100vh",
+              backgroundColor: "#F2F2F7",
+            }}
+          >
+            <Header />
+            <Box sx={{ flexGrow: 1 }}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/signup-complete" element={<SignupComplete />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Box>
+            <Footer />
           </Box>
         )}
       </Router>

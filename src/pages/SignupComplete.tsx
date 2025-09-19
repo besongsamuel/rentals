@@ -2,8 +2,6 @@ import { Box, Button, Container, Paper, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 
 const SignupComplete: React.FC = () => {
   const { t } = useTranslation();
@@ -21,11 +19,6 @@ const SignupComplete: React.FC = () => {
         py: 4,
       }}
     >
-      {/* Language Switcher */}
-      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
-        <LanguageSwitcher />
-      </Box>
-
       <Container
         maxWidth="sm"
         sx={{
@@ -217,9 +210,6 @@ const SignupComplete: React.FC = () => {
           </Button>
         </Paper>
       </Container>
-
-      {/* Footer */}
-      <Footer />
     </Box>
   );
 };

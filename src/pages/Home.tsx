@@ -16,8 +16,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 import { profileService } from "../services/profileService";
 
 const Home: React.FC = () => {
@@ -50,11 +48,6 @@ const Home: React.FC = () => {
         flexDirection: "column",
       }}
     >
-      {/* Language Switcher */}
-      <Box sx={{ position: "absolute", top: 16, right: 16, zIndex: 1 }}>
-        <LanguageSwitcher />
-      </Box>
-
       {/* Main Content */}
       <Container
         maxWidth="md"
@@ -638,9 +631,6 @@ const Home: React.FC = () => {
           </Button>
         </Box>
       </Container>
-
-      {/* Footer */}
-      <Footer />
     </Box>
   );
 };

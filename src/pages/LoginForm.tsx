@@ -10,8 +10,6 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
-import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
 const LoginForm: React.FC = () => {
@@ -62,18 +60,6 @@ const LoginForm: React.FC = () => {
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
-      {/* Language Switcher */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: 24,
-          right: 24,
-          zIndex: 1,
-        }}
-      >
-        <LanguageSwitcher />
-      </Box>
-
       <Container
         component="main"
         maxWidth="sm"
@@ -355,9 +341,6 @@ const LoginForm: React.FC = () => {
           </Box>
         </Paper>
       </Container>
-
-      {/* Footer */}
-      <Footer />
     </Box>
   );
 };

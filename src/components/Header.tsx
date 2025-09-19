@@ -94,9 +94,205 @@ const Header: React.FC = () => {
     setCurrentPath(window.location.pathname);
   }, []);
 
-  // Don't show header on login/signup pages
+  // Show simplified header for non-authenticated users
   if (!user) {
-    return null;
+    return (
+      <>
+        <AppBar
+          position="static"
+          elevation={0}
+          sx={{
+            background: "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            color: "#1d1d1f",
+            borderBottom: "0.5px solid rgba(0, 0, 0, 0.1)",
+            transition: "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          }}
+        >
+          <Toolbar
+            sx={{
+              px: { xs: 2, sm: 3, md: 4 },
+              py: 0,
+              minHeight: { xs: 60, sm: 64 },
+              maxWidth: "1200px",
+              mx: "auto",
+              width: "100%",
+            }}
+          >
+            {/* Logo and Brand */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                "&:hover": {
+                  opacity: 0.7,
+                },
+                transition: "opacity 0.2s ease",
+              }}
+              onClick={() => (window.location.href = "/")}
+            >
+              <Box
+                component="img"
+                src="/app_logo.png"
+                alt="mo kumbi"
+                sx={{
+                  height: { xs: 24, sm: 28 },
+                  width: "auto",
+                  mr: 1.5,
+                }}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: { xs: "1.1rem", sm: "1.2rem" },
+                    letterSpacing: "-0.01em",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  <Box component="span" sx={{ color: "error.main" }}>
+                    mo
+                  </Box>{" "}
+                  <Box component="span" sx={{ color: "warning.main" }}>
+                    kumbi
+                  </Box>
+                </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: "0.6rem",
+                    color: "#86868b",
+                    letterSpacing: "-0.01em",
+                    textTransform: "lowercase",
+                    lineHeight: 1,
+                  }}
+                >
+                  {t("auth.driverSubtext")}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Right Side Actions */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                ml: "auto",
+              }}
+            >
+              {/* Language Switcher */}
+              <Box sx={{ display: { xs: "none", sm: "block" } }}>
+                <LanguageSwitcher />
+              </Box>
+
+              {/* Navigation Links */}
+              <Box
+                sx={{
+                  display: { xs: "none", md: "flex" },
+                  alignItems: "center",
+                  gap: 0,
+                  ml: 2,
+                }}
+              >
+                <Button
+                  color="inherit"
+                  onClick={() => (window.location.href = "/how-it-works")}
+                  sx={{
+                    px: 2,
+                    py: 1,
+                    minWidth: "auto",
+                    fontSize: "0.9rem",
+                    fontWeight: 400,
+                    color: "#86868b",
+                    textTransform: "none",
+                    letterSpacing: "-0.01em",
+                    "&:hover": {
+                      color: "#1d1d1f",
+                      backgroundColor: "transparent",
+                    },
+                    transition: "color 0.2s ease",
+                  }}
+                >
+                  {t("howItWorks.faq")}
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => (window.location.href = "/login")}
+                  sx={{
+                    px: 2,
+                    py: 1,
+                    minWidth: "auto",
+                    fontSize: "0.9rem",
+                    fontWeight: 400,
+                    color: "#86868b",
+                    textTransform: "none",
+                    letterSpacing: "-0.01em",
+                    "&:hover": {
+                      color: "#1d1d1f",
+                      backgroundColor: "transparent",
+                    },
+                    transition: "color 0.2s ease",
+                  }}
+                >
+                  {t("auth.login")}
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={() => (window.location.href = "/signup")}
+                  sx={{
+                    px: 2,
+                    py: 1,
+                    minWidth: "auto",
+                    fontSize: "0.9rem",
+                    fontWeight: 400,
+                    color: "#007AFF",
+                    textTransform: "none",
+                    letterSpacing: "-0.01em",
+                    "&:hover": {
+                      color: "#0056CC",
+                      backgroundColor: "transparent",
+                    },
+                    transition: "color 0.2s ease",
+                  }}
+                >
+                  {t("auth.signUp")}
+                </Button>
+              </Box>
+
+              {/* Mobile Menu Button */}
+              {isMobile && (
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  onClick={handleMobileMenuToggle}
+                  sx={{
+                    mr: 2,
+                    p: 1,
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    },
+                    transition: "background-color 0.2s ease",
+                  }}
+                >
+                  <MenuIcon sx={{ fontSize: 20 }} />
+                </IconButton>
+              )}
+            </Box>
+          </Toolbar>
+        </AppBar>
+      </>
+    );
   }
 
   return (
