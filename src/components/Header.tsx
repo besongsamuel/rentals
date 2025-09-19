@@ -2,6 +2,7 @@ import {
   AccountCircle,
   Close,
   Dashboard,
+  Help,
   Menu as MenuIcon,
   MoreVert,
   Person,
@@ -75,6 +76,7 @@ const Header: React.FC = () => {
     const baseItems = [
       { label: t("dashboard.title"), path: "/", icon: <Dashboard /> },
       { label: "Profile", path: "/profile", icon: <Person /> },
+      { label: t("howItWorks.faq"), path: "/how-it-works", icon: <Help /> },
     ];
 
     if (profile.user_type === "owner") {

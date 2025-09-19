@@ -1,7 +1,9 @@
 import {
   DirectionsCar,
+  Email,
   LocationOn,
   Person,
+  Phone,
   Search,
   Star,
   Visibility,
@@ -212,7 +214,7 @@ const DriverSearch: React.FC = () => {
         {loading ? (
           <Grid container spacing={3}>
             {[...Array(6)].map((_, index) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+              <Grid size={12} key={index}>
                 <Card
                   elevation={0}
                   sx={{
@@ -296,7 +298,7 @@ const DriverSearch: React.FC = () => {
             {/* Drivers Grid */}
             <Grid container spacing={3}>
               {filteredDrivers.map((driver) => (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={driver.id}>
+                <Grid size={12} key={driver.id}>
                   <Card
                     elevation={0}
                     sx={{
@@ -426,6 +428,50 @@ const DriverSearch: React.FC = () => {
                             <Typography variant="body2" color="text.secondary">
                               Prefers {driver.preferred_transmission}{" "}
                               transmission
+                            </Typography>
+                          </Box>
+                        )}
+
+                        {/* Email */}
+                        {driver.profiles?.email && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              mb: 1,
+                            }}
+                          >
+                            <Email
+                              sx={{
+                                fontSize: 16,
+                                color: "text.secondary",
+                                mr: 1,
+                              }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                              {driver.profiles.email}
+                            </Typography>
+                          </Box>
+                        )}
+
+                        {/* Phone */}
+                        {driver.profiles?.phone && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              mb: 1,
+                            }}
+                          >
+                            <Phone
+                              sx={{
+                                fontSize: 16,
+                                color: "text.secondary",
+                                mr: 1,
+                              }}
+                            />
+                            <Typography variant="body2" color="text.secondary">
+                              {driver.profiles.phone}
                             </Typography>
                           </Box>
                         )}
