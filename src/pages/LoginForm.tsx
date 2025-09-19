@@ -1,8 +1,10 @@
+import GoogleIcon from "@mui/icons-material/Google";
 import {
   Alert,
   Box,
   Button,
   Container,
+  Divider,
   Paper,
   TextField,
   Typography,
@@ -19,7 +21,8 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
-  const { signIn, resetPassword } = useUserContext();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const { signIn, resetPassword, signInWithGoogle } = useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -56,6 +59,19 @@ const LoginForm: React.FC = () => {
     }
 
     setResetLoading(false);
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setError("");
+
+    const { error } = await signInWithGoogle();
+
+    if (error) {
+      setError(error.message);
+      setGoogleLoading(false);
+    }
+    // Note: If successful, user will be redirected to dashboard
   };
 
   return (
@@ -214,6 +230,59 @@ const LoginForm: React.FC = () => {
                 {resetMessage}
               </Alert>
             )}
+
+            {/* Google Sign In Button */}
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading || loading}
+              startIcon={<GoogleIcon />}
+              sx={{
+                py: 2,
+                mb: 3,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                borderColor: "#dadce0",
+                color: "#3c4043",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                backgroundColor: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#dadce0",
+                  boxShadow:
+                    "0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15)",
+                },
+                "&:disabled": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#dadce0",
+                  color: "#9aa0a6",
+                },
+              }}
+            >
+              {googleLoading
+                ? t("common.loading")
+                : t("auth.continueWithGoogle")}
+            </Button>
+
+            {/* Divider */}
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+              <Divider sx={{ flexGrow: 1 }} />
+              <Typography
+                variant="body2"
+                sx={{
+                  px: 2,
+                  color: "#86868b",
+                  fontSize: "0.75rem",
+                  fontWeight: 400,
+                }}
+              >
+                or
+              </Typography>
+              <Divider sx={{ flexGrow: 1 }} />
+            </Box>
 
             <TextField
               required

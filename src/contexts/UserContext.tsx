@@ -26,6 +26,7 @@ interface UserContextType {
   ) => Promise<{ data?: any; error: any }>;
   refreshProfile: () => void;
   resetPassword: (email: string) => Promise<{ data: any; error: any }>;
+  signInWithGoogle: () => Promise<{ data: any; error: any }>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

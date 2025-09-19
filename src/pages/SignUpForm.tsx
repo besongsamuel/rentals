@@ -1,8 +1,10 @@
+import GoogleIcon from "@mui/icons-material/Google";
 import {
   Alert,
   Box,
   Button,
   Container,
+  Divider,
   Paper,
   TextField,
   Typography,
@@ -10,6 +12,7 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useUserContext } from "../contexts/UserContext";
 
 const SignUpForm: React.FC = () => {
@@ -19,7 +22,8 @@ const SignUpForm: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signUp } = useUserContext();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const { signUp, signInWithGoogle } = useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -53,8 +57,33 @@ const SignUpForm: React.FC = () => {
     setLoading(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    setError("");
+
+    const { error } = await signInWithGoogle();
+
+    if (error) {
+      setError(error.message);
+      setGoogleLoading(false);
+    }
+    // Note: If successful, user will be redirected to dashboard
+  };
+
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
+      {/* Language Switcher */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 24,
+          right: 24,
+          zIndex: 1,
+        }}
+      >
+        <LanguageSwitcher />
+      </Box>
+
       <Container
         component="main"
         maxWidth="sm"
@@ -97,17 +126,13 @@ const SignUpForm: React.FC = () => {
             sx={{
               fontWeight: 400,
               fontSize: { xs: "2rem", sm: "2.5rem" },
+              color: "#1d1d1f",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               textAlign: "center",
             }}
           >
-            <Box component="span" sx={{ color: "error.main" }}>
-              mo
-            </Box>{" "}
-            <Box component="span" sx={{ color: "warning.main" }}>
-              kumbi
-            </Box>
+            mo kumbi
           </Typography>
           <Typography
             variant="body1"
@@ -195,6 +220,59 @@ const SignUpForm: React.FC = () => {
                 {error}
               </Alert>
             )}
+
+            {/* Google Sign In Button */}
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading || loading}
+              startIcon={<GoogleIcon />}
+              sx={{
+                py: 2,
+                mb: 3,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                borderColor: "#dadce0",
+                color: "#3c4043",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                backgroundColor: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#dadce0",
+                  boxShadow:
+                    "0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15)",
+                },
+                "&:disabled": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#dadce0",
+                  color: "#9aa0a6",
+                },
+              }}
+            >
+              {googleLoading
+                ? t("common.loading")
+                : t("auth.continueWithGoogle")}
+            </Button>
+
+            {/* Divider */}
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+              <Divider sx={{ flexGrow: 1 }} />
+              <Typography
+                variant="body2"
+                sx={{
+                  px: 2,
+                  color: "#86868b",
+                  fontSize: "0.75rem",
+                  fontWeight: 400,
+                }}
+              >
+                or
+              </Typography>
+              <Divider sx={{ flexGrow: 1 }} />
+            </Box>
 
             <TextField
               required

@@ -197,3 +197,4 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
 };
 
 export default DriverDetail;
+

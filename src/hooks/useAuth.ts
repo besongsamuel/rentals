@@ -129,6 +129,11 @@ export const useAuth = () => {
     return { data, error };
   };
 
+  const signInWithGoogle = async () => {
+    const { data, error } = await authService.signInWithGoogle();
+    return { data, error };
+  };
+
   return {
     user,
     session,
@@ -142,5 +147,6 @@ export const useAuth = () => {
     updateProfile,
     refreshProfile,
     resetPassword,
+    signInWithGoogle,
   };
 };

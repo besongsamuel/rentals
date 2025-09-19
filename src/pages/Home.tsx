@@ -16,6 +16,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { profileService } from "../services/profileService";
 
 const Home: React.FC = () => {
@@ -48,6 +50,11 @@ const Home: React.FC = () => {
         flexDirection: "column",
       }}
     >
+      {/* Language Switcher */}
+      <Box sx={{ position: "absolute", top: 16, right: 16, zIndex: 1 }}>
+        <LanguageSwitcher />
+      </Box>
+
       {/* Main Content */}
       <Container
         maxWidth="md"
@@ -85,19 +92,14 @@ const Home: React.FC = () => {
             sx={{
               fontWeight: 400,
               fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
+              color: "#1d1d1f",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               textAlign: "center",
               mb: 1,
             }}
           >
-            Welcome to{" "}
-            <Box component="span" sx={{ color: "error.main" }}>
-              mo
-            </Box>{" "}
-            <Box component="span" sx={{ color: "warning.main" }}>
-              kumbi
-            </Box>
+            {t("auth.homeTitle")}
           </Typography>
           <Typography
             variant="body1"
@@ -631,6 +633,9 @@ const Home: React.FC = () => {
           </Button>
         </Box>
       </Container>
+
+      {/* Footer */}
+      <Footer />
     </Box>
   );
 };

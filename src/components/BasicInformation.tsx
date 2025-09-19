@@ -84,3 +84,4 @@ const BasicInformation: React.FC<BasicInformationProps> = ({ profile }) => {
 };
 
 export default BasicInformation;
+

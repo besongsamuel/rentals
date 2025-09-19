@@ -32,6 +32,13 @@ export const authService = {
       redirectTo: `${window.location.origin}/reset-password`,
     });
   },
+
+  async signInWithGoogle() {
+    return await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+  },
 };
-
-
