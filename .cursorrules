@@ -122,6 +122,36 @@
 - Use composition over inheritance for component relationships
 - Prefer functional components with hooks over class components
 
+## Component Creation Strategy
+
+- **CRITICAL: Always prioritize creating components to minimize overall lines of code**
+- **Component Extraction Priority**: When you see repeated code patterns or large sections in a file, immediately extract them into separate components
+- **Self-Contained Components**: Each component should be as self-contained as possible:
+  - Include all necessary imports within the component file
+  - Handle their own state management and data fetching when appropriate
+  - Include their own styling and theming
+  - Have clear, minimal prop interfaces
+  - Be testable in isolation
+- **Code Reduction Strategy**:
+  - If a page/component has more than 200 lines, look for opportunities to extract smaller components
+  - Extract any section that could be reused elsewhere (even if currently only used once)
+  - Break down complex UI sections into logical, focused components
+  - Create components for repeated patterns (cards, forms, lists, etc.)
+- **Component Naming**: Use descriptive, specific names that clearly indicate the component's purpose
+- **File Organization**: Place components in `src/components/` with clear, descriptive filenames
+- **Import Optimization**: Keep component imports clean and organized, but prioritize component extraction over import optimization
+- **Example Patterns**:
+  - Extract form sections into separate components (e.g., `BasicInformation`, `DriverDetail`)
+  - Extract repeated card layouts into reusable card components
+  - Extract complex data display sections into dedicated components
+  - Extract navigation elements into separate components
+- **Benefits of This Approach**:
+  - Reduces overall codebase complexity
+  - Improves maintainability and readability
+  - Enables better testing and debugging
+  - Facilitates code reuse across the application
+  - Makes the codebase more modular and scalable
+
 ## Performance
 
 - Implement proper loading states to improve perceived performance

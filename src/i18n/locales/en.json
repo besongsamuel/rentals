@@ -369,7 +369,9 @@
     "initialMileage": "Initial Mileage",
     "fuelType": "Fuel Type",
     "transmission": "Transmission",
-    "manageReports": "Manage Reports"
+    "manageReports": "Manage Reports",
+    "driverDetailsTip": "Complete your driver details to increase your chances!",
+    "driverDetailsTipDescription": "Car owners prefer drivers with complete profiles. Adding your experience, license info, and location helps you get assigned to vehicles faster."
   },
   "common": {
     "loading": "Loading...",

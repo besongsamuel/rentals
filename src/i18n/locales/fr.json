@@ -300,7 +300,9 @@
     "initialMileage": "Kilométrage initial",
     "fuelType": "Type de carburant",
     "transmission": "Transmission",
-    "manageReports": "Gérer les rapports"
+    "manageReports": "Gérer les rapports",
+    "driverDetailsTip": "Complétez vos détails de conducteur pour augmenter vos chances !",
+    "driverDetailsTipDescription": "Les propriétaires de véhicules préfèrent les conducteurs avec des profils complets. Ajouter votre expérience, vos informations de permis et votre localisation vous aide à être assigné à des véhicules plus rapidement."
   },
   "common": {
     "loading": "Chargement...",
