@@ -295,6 +295,38 @@ export const weeklyReportService = {
     }
   },
 
+  async getTotalMileageForCar(carId: string): Promise<number> {
+    try {
+      const { data: reports, error } = await supabase
+        .from("weekly_reports")
+        .select("start_mileage, end_mileage")
+        .eq("car_id", carId);
+
+      if (error) {
+        console.error(
+          "Error fetching weekly reports for mileage calculation:",
+          error
+        );
+        return 0;
+      }
+
+      if (!reports || reports.length === 0) {
+        return 0;
+      }
+
+      // Calculate total mileage driven from all reports
+      const totalMileage = reports.reduce(
+        (sum, report) => sum + (report.end_mileage - report.start_mileage),
+        0
+      );
+
+      return totalMileage;
+    } catch (error) {
+      console.error("Error calculating total mileage for car:", error);
+      return 0;
+    }
+  },
+
   async getCarStatistics(
     carId: string,
     timeframe: "monthly" | "yearly" | "all" = "all",

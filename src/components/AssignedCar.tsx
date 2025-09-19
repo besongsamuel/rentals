@@ -17,9 +17,10 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { weeklyReportService } from "../services/weeklyReportService";
 import { Car } from "../types";
 
 interface AssignedCarProps {
@@ -28,6 +29,30 @@ interface AssignedCarProps {
 
 const AssignedCar: React.FC<AssignedCarProps> = ({ car }) => {
   const { t } = useTranslation();
+  const [calculatedCurrentMileage, setCalculatedCurrentMileage] = useState<
+    number | null
+  >(null);
+  const [loadingMileage, setLoadingMileage] = useState(true);
+
+  useEffect(() => {
+    const calculateCurrentMileage = async () => {
+      try {
+        setLoadingMileage(true);
+        const totalMileageFromReports =
+          await weeklyReportService.getTotalMileageForCar(car.id);
+        const currentMileage = car.initial_mileage + totalMileageFromReports;
+        setCalculatedCurrentMileage(currentMileage);
+      } catch (error) {
+        console.error("Error calculating current mileage:", error);
+        // Fallback to the stored current_mileage if calculation fails
+        setCalculatedCurrentMileage(car.current_mileage);
+      } finally {
+        setLoadingMileage(false);
+      }
+    };
+
+    calculateCurrentMileage();
+  }, [car.id, car.initial_mileage, car.current_mileage]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -255,7 +280,27 @@ const AssignedCar: React.FC<AssignedCarProps> = ({ car }) => {
                 fontSize: "0.875rem",
               }}
             >
-              {car.current_mileage.toLocaleString()} {t("dashboard.km")}
+              {loadingMileage
+                ? "..."
+                : (
+                    calculatedCurrentMileage || car.current_mileage
+                  ).toLocaleString()}{" "}
+              {t("dashboard.km")}
+              {calculatedCurrentMileage &&
+                calculatedCurrentMileage !== car.current_mileage && (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    sx={{
+                      ml: 1,
+                      color: "primary.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    (calculated)
+                  </Typography>
+                )}
             </Typography>
           </Grid>
 
