@@ -1,6 +1,7 @@
-import { Box, Container, Divider, Typography } from "@mui/material";
+import { Box, Container, Divider, Link, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link as RouterLink } from "react-router-dom";
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
@@ -110,6 +111,63 @@ const Footer: React.FC = () => {
                 borderColor: "rgba(0, 0, 0, 0.1)",
               }}
             />
+
+            {/* Legal Links */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: { xs: 1, sm: 3 },
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <Link
+                component={RouterLink}
+                to="/privacy-policy"
+                sx={{
+                  color: "#86868B",
+                  textDecoration: "none",
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  fontWeight: 400,
+                  letterSpacing: "-0.01em",
+                  transition: "color 0.2s ease-in-out",
+                  "&:hover": {
+                    color: "#007AFF",
+                    textDecoration: "none",
+                  },
+                }}
+              >
+                {t("legal.privacyPolicy")}
+              </Link>
+              <Box
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  width: "1px",
+                  height: "12px",
+                  backgroundColor: "#86868B",
+                  opacity: 0.3,
+                }}
+              />
+              <Link
+                component={RouterLink}
+                to="/terms-of-use"
+                sx={{
+                  color: "#86868B",
+                  textDecoration: "none",
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  fontWeight: 400,
+                  letterSpacing: "-0.01em",
+                  transition: "color 0.2s ease-in-out",
+                  "&:hover": {
+                    color: "#007AFF",
+                    textDecoration: "none",
+                  },
+                }}
+              >
+                {t("legal.termsOfUse")}
+              </Link>
+            </Box>
 
             {/* Copyright */}
             <Typography

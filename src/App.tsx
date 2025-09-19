@@ -22,10 +22,12 @@ import DriverSearch from "./pages/DriverSearch";
 import Home from "./pages/Home";
 import HowItWorks from "./pages/HowItWorks";
 import LoginForm from "./pages/LoginForm";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import SignUpForm from "./pages/SignUpForm";
 import SignupComplete from "./pages/SignupComplete";
+import TermsOfUse from "./pages/TermsOfUse";
 import theme from "./theme";
 
 // Component to handle dynamic title updates
@@ -56,6 +58,12 @@ function DocumentTitle() {
         break;
       case "/how-it-works":
         pageTitle = `${baseTitle} - How It Works`;
+        break;
+      case "/privacy-policy":
+        pageTitle = `${baseTitle} - Privacy Policy`;
+        break;
+      case "/terms-of-use":
+        pageTitle = `${baseTitle} - Terms of Use`;
         break;
       case "/cars/new":
         pageTitle = `${baseTitle} - Add New Car`;
@@ -211,6 +219,8 @@ function AppContent() {
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/signup-complete" element={<SignupComplete />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-use" element={<TermsOfUse />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Box>

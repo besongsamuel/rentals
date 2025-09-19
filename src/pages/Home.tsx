@@ -16,7 +16,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { profileService } from "../services/profileService";
 
@@ -633,9 +632,6 @@ const Home: React.FC = () => {
           </Button>
         </Box>
       </Container>
-
-      {/* Footer */}
-      <Footer />
     </Box>
   );
 };
