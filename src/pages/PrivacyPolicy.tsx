@@ -45,7 +45,7 @@ const PrivacyPolicy: React.FC = () => {
         >
           <Box
             component="img"
-            src="/app_logo.png"
+            src="/site-logo-800x800.png"
             alt="mo kumbi"
             onClick={() => navigate("/")}
             sx={{

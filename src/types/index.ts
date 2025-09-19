@@ -39,6 +39,7 @@ export interface Profile {
   full_name: string | null;
   user_type: "driver" | "owner";
   phone: string | null;
+  country: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -119,6 +120,7 @@ export interface CreateProfileData {
   full_name: string;
   user_type: UserType;
   phone?: string;
+  country?: string;
 }
 
 // Type for creating car ownership

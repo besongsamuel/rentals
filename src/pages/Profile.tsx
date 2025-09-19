@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { City, Country, State } from "country-state-city";
 import React, { useCallback, useEffect, useState } from "react";
+import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
@@ -31,6 +32,7 @@ const ProfilePage: React.FC = () => {
   const [profileData, setProfileData] = useState({
     full_name: "",
     phone: "",
+    country: "CM", // Default to Cameroon
   });
 
   // Driver details data
@@ -177,6 +179,7 @@ const ProfilePage: React.FC = () => {
       setProfileData({
         full_name: profile.full_name || "",
         phone: profile.phone || "",
+        country: profile.country || "CM",
       });
 
       // Load driver details if user is a driver
@@ -204,6 +207,13 @@ const ProfilePage: React.FC = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleProfileCountryChange = (countryCode: string) => {
+    setProfileData((prev) => ({
+      ...prev,
+      country: countryCode,
+    }));
   };
 
   // Utility function to filter out empty values
@@ -337,6 +347,48 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+      {/* Custom styles for react-flags-select */}
+      <style>{`
+        .country-selector-button {
+          width: 100% !important;
+          height: 56px !important;
+          border: 1px solid rgba(0, 0, 0, 0.23) !important;
+          border-radius: 8px !important;
+          background-color: #ffffff !important;
+          padding: 0 14px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          font-size: 16px !important;
+          color: #1d1d1f !important;
+          transition: border-color 0.2s ease-in-out !important;
+        }
+        .country-selector-button:hover {
+          border-color: rgba(0, 122, 255, 0.5) !important;
+        }
+        .country-selector-button:focus {
+          border-color: #007AFF !important;
+          outline: none !important;
+        }
+        .country-selector-options {
+          border: 1px solid rgba(0, 0, 0, 0.23) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+          max-height: 300px !important;
+          overflow-y: auto !important;
+        }
+        .country-selector-options .flag-select__option {
+          padding: 12px 14px !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+          font-size: 14px !important;
+        }
+        .country-selector-options .flag-select__option:hover {
+          background-color: rgba(0, 122, 255, 0.05) !important;
+        }
+        .country-selector-options .flag-select__option--selected {
+          background-color: rgba(0, 122, 255, 0.1) !important;
+        }
+      `}</style>
       <Typography component="h1" variant="h4" gutterBottom>
         {t("profile.myProfile")}
       </Typography>
@@ -395,6 +447,48 @@ const ProfilePage: React.FC = () => {
                 value={profileData.phone}
                 onChange={handleProfileChange("phone")}
               />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Box>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 1,
+                    color: "#1d1d1f",
+                    fontSize: "0.875rem",
+                    fontWeight: 400,
+                  }}
+                >
+                  {t("profile.country")}
+                </Typography>
+                <ReactFlagsSelect
+                  selected={profileData.country}
+                  onSelect={handleProfileCountryChange}
+                  placeholder={t("profile.countryHelper")}
+                  searchable
+                  searchPlaceholder="Search countries..."
+                  className="country-selector"
+                  selectButtonClassName="country-selector-button"
+                  selectedSize={20}
+                  optionsSize={16}
+                  showSelectedLabel={false}
+                  showOptionLabel={true}
+                  showSecondarySelectedLabel={true}
+                  fullWidth
+                />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "#86868b",
+                    fontSize: "0.75rem",
+                    mt: 0.5,
+                    display: "block",
+                  }}
+                >
+                  {t("profile.countryHelper")}
+                </Typography>
+              </Box>
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>

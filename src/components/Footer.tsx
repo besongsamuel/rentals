@@ -80,7 +80,7 @@ const Footer: React.FC = () => {
             >
               <Box
                 component="img"
-                src="/app_logo_small.png"
+                src="/site-logo-800x800.png"
                 alt="mo kumbi"
                 sx={{
                   height: "24px",

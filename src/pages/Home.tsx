@@ -78,7 +78,7 @@ const Home: React.FC = () => {
         >
           <Box
             component="img"
-            src="/app_logo.png"
+            src="/site-logo-1200x1200.png"
             alt="mo kumbi"
             sx={{
               height: 80,

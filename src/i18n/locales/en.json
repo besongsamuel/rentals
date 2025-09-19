@@ -110,6 +110,8 @@
     "completeProfileDescription": "Let's get started with your basic information",
     "phoneNumber": "Phone Number",
     "phoneNumberHelper": "Optional - for emergency contact",
+    "country": "Country",
+    "countryHelper": "Select your country of residence",
     "chooseRole": "Choose Your Role",
     "chooseRoleRequired": "Choose Your Role *",
     "cannotBeChangedLater": "This cannot be changed later",

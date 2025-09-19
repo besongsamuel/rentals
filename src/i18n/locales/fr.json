@@ -88,6 +88,8 @@
     "fullName": "Nom complet",
     "phone": "Numéro de téléphone",
     "phoneHelper": "Optionnel - à des fins de communication",
+    "country": "Pays",
+    "countryHelper": "Sélectionnez votre pays de résidence",
     "organization": "Organisation",
     "userType": "Type d'utilisateur",
     "driver": "Conducteur",

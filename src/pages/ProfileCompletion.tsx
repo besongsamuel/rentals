@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../contexts/UserContext";
@@ -24,6 +25,7 @@ const ProfileCompletion: React.FC = () => {
     full_name: "",
     user_type: "driver" as "driver" | "owner",
     phone: "",
+    country: "CM", // Default to Cameroon
   });
 
   const [error, setError] = useState("");
@@ -61,12 +63,14 @@ const ProfileCompletion: React.FC = () => {
           full_name: formData.full_name.trim(),
           user_type: formData.user_type,
           phone: formData.phone.trim() || undefined,
+          country: formData.country,
         });
 
         const { data, error } = await createProfile({
           full_name: formData.full_name.trim(),
           user_type: formData.user_type,
           phone: formData.phone.trim() || undefined,
+          country: formData.country,
         });
 
         if (error) {
@@ -99,6 +103,13 @@ const ProfileCompletion: React.FC = () => {
         [field]: e.target.value,
       }));
     };
+
+  const handleCountryChange = (countryCode: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      country: countryCode,
+    }));
+  };
 
   const renderBasicProfileForm = () => (
     <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
@@ -147,7 +158,7 @@ const ProfileCompletion: React.FC = () => {
         onChange={handleInputChange("phone")}
         helperText={t("profile.phoneNumberHelper")}
         sx={{
-          mb: 4,
+          mb: 3,
           "& .MuiOutlinedInput-root": {
             borderRadius: 2,
             "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -156,6 +167,47 @@ const ProfileCompletion: React.FC = () => {
           },
         }}
       />
+
+      {/* Country Selector */}
+      <Box sx={{ mb: 4 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            mb: 1,
+            color: "#1d1d1f",
+            fontSize: "0.875rem",
+            fontWeight: 400,
+          }}
+        >
+          {t("profile.country")}
+        </Typography>
+        <ReactFlagsSelect
+          selected={formData.country}
+          onSelect={handleCountryChange}
+          placeholder={t("profile.countryHelper")}
+          searchable
+          searchPlaceholder="Search countries..."
+          className="country-selector"
+          selectButtonClassName="country-selector-button"
+          selectedSize={20}
+          optionsSize={16}
+          showSelectedLabel={false}
+          showOptionLabel={true}
+          showSecondarySelectedLabel={true}
+          fullWidth
+        />
+        <Typography
+          variant="caption"
+          sx={{
+            color: "#86868b",
+            fontSize: "0.75rem",
+            mt: 0.5,
+            display: "block",
+          }}
+        >
+          {t("profile.countryHelper")}
+        </Typography>
+      </Box>
 
       <Box sx={{ mt: 3, mb: 2 }}>
         <Typography
@@ -351,6 +403,48 @@ const ProfileCompletion: React.FC = () => {
 
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f2f2f7" }}>
+      {/* Custom styles for react-flags-select */}
+      <style>{`
+        .country-selector-button {
+          width: 100% !important;
+          height: 56px !important;
+          border: 1px solid rgba(0, 0, 0, 0.23) !important;
+          border-radius: 8px !important;
+          background-color: #ffffff !important;
+          padding: 0 14px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          font-size: 16px !important;
+          color: #1d1d1f !important;
+          transition: border-color 0.2s ease-in-out !important;
+        }
+        .country-selector-button:hover {
+          border-color: rgba(0, 122, 255, 0.5) !important;
+        }
+        .country-selector-button:focus {
+          border-color: #007AFF !important;
+          outline: none !important;
+        }
+        .country-selector-options {
+          border: 1px solid rgba(0, 0, 0, 0.23) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+          max-height: 300px !important;
+          overflow-y: auto !important;
+        }
+        .country-selector-options .flag-select__option {
+          padding: 12px 14px !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+          font-size: 14px !important;
+        }
+        .country-selector-options .flag-select__option:hover {
+          background-color: rgba(0, 122, 255, 0.05) !important;
+        }
+        .country-selector-options .flag-select__option--selected {
+          background-color: rgba(0, 122, 255, 0.1) !important;
+        }
+      `}</style>
       <Container
         component="main"
         maxWidth="sm"

@@ -135,7 +135,7 @@ const Header: React.FC = () => {
             >
               <Box
                 component="img"
-                src="/app_logo.png"
+                src="/site-logo-800x800.png"
                 alt="mo kumbi"
                 sx={{
                   height: { xs: 24, sm: 28 },
@@ -355,7 +355,7 @@ const Header: React.FC = () => {
           >
             <Box
               component="img"
-              src="/app_logo.png"
+              src="/site-logo-800x800.png"
               alt="mo kumbi"
               sx={{
                 height: { xs: 24, sm: 28 },
@@ -656,7 +656,7 @@ const Header: React.FC = () => {
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box
               component="img"
-              src="/app_logo.png"
+              src="/site-logo-800x800.png"
               alt="mo kumbi"
               sx={{
                 height: 24,
