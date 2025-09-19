@@ -191,7 +191,7 @@ const ProfileCompletion: React.FC = () => {
           selectButtonClassName="country-selector-button"
           selectedSize={20}
           optionsSize={16}
-          showSelectedLabel={false}
+          showSelectedLabel={true}
           showOptionLabel={true}
           showSecondarySelectedLabel={true}
           fullWidth
@@ -409,7 +409,7 @@ const ProfileCompletion: React.FC = () => {
           width: 100% !important;
           height: 56px !important;
           border: 1px solid rgba(0, 0, 0, 0.23) !important;
-          border-radius: 8px !important;
+          border-radius: 4px !important;
           background-color: #ffffff !important;
           padding: 0 14px !important;
           display: flex !important;
@@ -418,6 +418,7 @@ const ProfileCompletion: React.FC = () => {
           font-size: 16px !important;
           color: #1d1d1f !important;
           transition: border-color 0.2s ease-in-out !important;
+          min-height: 56px !important;
         }
         .country-selector-button:hover {
           border-color: rgba(0, 122, 255, 0.5) !important;

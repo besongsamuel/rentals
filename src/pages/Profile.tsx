@@ -353,7 +353,7 @@ const ProfilePage: React.FC = () => {
           width: 100% !important;
           height: 56px !important;
           border: 1px solid rgba(0, 0, 0, 0.23) !important;
-          border-radius: 8px !important;
+          border-radius: 4px !important;
           background-color: #ffffff !important;
           padding: 0 14px !important;
           display: flex !important;
@@ -362,6 +362,7 @@ const ProfilePage: React.FC = () => {
           font-size: 16px !important;
           color: #1d1d1f !important;
           transition: border-color 0.2s ease-in-out !important;
+          min-height: 56px !important;
         }
         .country-selector-button:hover {
           border-color: rgba(0, 122, 255, 0.5) !important;
@@ -449,8 +450,14 @@ const ProfilePage: React.FC = () => {
               />
             </Grid>
 
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Box>
+            <Grid size={{ xs: 12 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                }}
+              >
                 <Typography
                   variant="body2"
                   sx={{
@@ -462,21 +469,23 @@ const ProfilePage: React.FC = () => {
                 >
                   {t("profile.country")}
                 </Typography>
-                <ReactFlagsSelect
-                  selected={profileData.country}
-                  onSelect={handleProfileCountryChange}
-                  placeholder={t("profile.countryHelper")}
-                  searchable
-                  searchPlaceholder="Search countries..."
-                  className="country-selector"
-                  selectButtonClassName="country-selector-button"
-                  selectedSize={20}
-                  optionsSize={16}
-                  showSelectedLabel={false}
-                  showOptionLabel={true}
-                  showSecondarySelectedLabel={true}
-                  fullWidth
-                />
+                <Box sx={{ flexGrow: 1 }}>
+                  <ReactFlagsSelect
+                    selected={profileData.country}
+                    onSelect={handleProfileCountryChange}
+                    placeholder={t("profile.countryHelper")}
+                    searchable
+                    searchPlaceholder="Search countries..."
+                    className="country-selector"
+                    selectButtonClassName="country-selector-button"
+                    selectedSize={20}
+                    optionsSize={16}
+                    showSelectedLabel={true}
+                    showOptionLabel={true}
+                    showSecondarySelectedLabel={true}
+                    fullWidth
+                  />
+                </Box>
                 <Typography
                   variant="caption"
                   sx={{
