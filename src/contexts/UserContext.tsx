@@ -25,6 +25,7 @@ interface UserContextType {
     updates: Partial<Profile>
   ) => Promise<{ data?: any; error: any }>;
   refreshProfile: () => void;
+  resetPassword: (email: string) => Promise<{ data: any; error: any }>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

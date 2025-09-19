@@ -19,7 +19,9 @@ const LoginForm: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn } = useUserContext();
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
+  const { signIn, resetPassword } = useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -35,6 +37,27 @@ const LoginForm: React.FC = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleResetPassword = async () => {
+    if (!email.trim()) {
+      setError("Please enter your email address first");
+      return;
+    }
+
+    setResetLoading(true);
+    setError("");
+    setResetMessage("");
+
+    const { error } = await resetPassword(email);
+
+    if (error) {
+      setError(t("auth.resetPasswordError"));
+    } else {
+      setResetMessage(t("auth.resetPasswordSent"));
+    }
+
+    setResetLoading(false);
   };
 
   return (
@@ -192,6 +215,20 @@ const LoginForm: React.FC = () => {
               </Alert>
             )}
 
+            {resetMessage && (
+              <Alert
+                severity="success"
+                sx={{
+                  mb: 3,
+                  backgroundColor: "rgba(52, 199, 89, 0.1)",
+                  border: "0.5px solid rgba(52, 199, 89, 0.2)",
+                  borderRadius: 2,
+                }}
+              >
+                {resetMessage}
+              </Alert>
+            )}
+
             <TextField
               required
               fullWidth
@@ -224,7 +261,7 @@ const LoginForm: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               sx={{
-                mb: 4,
+                mb: 2,
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -233,6 +270,32 @@ const LoginForm: React.FC = () => {
                 },
               }}
             />
+
+            {/* Forgot Password Link */}
+            <Box sx={{ textAlign: "right", mb: 3 }}>
+              <Button
+                variant="text"
+                onClick={handleResetPassword}
+                disabled={resetLoading}
+                sx={{
+                  textTransform: "none",
+                  color: "#007AFF",
+                  fontWeight: 400,
+                  fontSize: "0.875rem",
+                  p: 0,
+                  minWidth: "auto",
+                  "&:hover": {
+                    backgroundColor: "transparent",
+                    color: "#0056CC",
+                  },
+                  "&:disabled": {
+                    color: "#C7C7CC",
+                  },
+                }}
+              >
+                {resetLoading ? t("common.loading") : t("auth.forgotPassword")}
+              </Button>
+            </Box>
 
             <Button
               type="submit"

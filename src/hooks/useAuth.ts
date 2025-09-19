@@ -1,6 +1,7 @@
 import { Session, User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { authService } from "../services/authService";
 import { CreateProfileData, Profile } from "../types";
 
 export const useAuth = () => {
@@ -123,6 +124,11 @@ export const useAuth = () => {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    const { data, error } = await authService.resetPassword(email);
+    return { data, error };
+  };
+
   return {
     user,
     session,
@@ -135,5 +141,6 @@ export const useAuth = () => {
     createProfile,
     updateProfile,
     refreshProfile,
+    resetPassword,
   };
 };

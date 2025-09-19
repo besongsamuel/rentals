@@ -26,6 +26,12 @@ export const authService = {
   onAuthStateChange(callback: (event: string, session: any) => void) {
     return supabase.auth.onAuthStateChange(callback);
   },
+
+  async resetPassword(email: string) {
+    return await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+  },
 };
 
 
