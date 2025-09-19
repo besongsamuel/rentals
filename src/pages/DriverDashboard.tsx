@@ -1,5 +1,4 @@
 import {
-  Assessment,
   Email,
   LocationOn,
   Person,
@@ -14,14 +13,13 @@ import {
   CardContent,
   Chip,
   Grid,
-  IconButton,
   Paper,
-  Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import AssignedCar from "../components/AssignedCar";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
@@ -37,13 +35,7 @@ const DriverDashboard: React.FC = () => {
   );
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (profile?.id) {
-      loadData();
-    }
-  }, [profile?.id]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!profile?.id) return;
 
     setLoading(true);
@@ -62,7 +54,13 @@ const DriverDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [profile?.id]);
+
+  useEffect(() => {
+    if (profile?.id) {
+      loadData();
+    }
+  }, [profile?.id, loadData]);
 
   if (loading) {
     return <SkeletonLoader variant="dashboard" />;
@@ -375,102 +373,10 @@ const DriverDashboard: React.FC = () => {
                 </Typography>
               </Box>
             ) : (
-              <Grid container spacing={2}>
+              <Grid container spacing={3}>
                 {assignedCars.map((car) => (
-                  <Grid key={car.id} size={12}>
-                    <Card elevation={1}>
-                      <CardContent>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Box>
-                            <Typography variant="h6" component="div">
-                              {car.year} {car.make} {car.model}
-                            </Typography>
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 1,
-                                mt: 1,
-                              }}
-                            >
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                              >
-                                {t("dashboard.vin")}: {car.vin}
-                              </Typography>
-                              {car.license_plate && (
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {t("dashboard.license")}: {car.license_plate}
-                                </Typography>
-                              )}
-                              {car.color && (
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {t("dashboard.color")}: {car.color}
-                                </Typography>
-                              )}
-                            </Box>
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ mt: 1 }}
-                            >
-                              {t("dashboard.currentMileage")}:{" "}
-                              {car.current_mileage.toLocaleString()}{" "}
-                              {t("dashboard.km")}
-                            </Typography>
-                          </Box>
-                          <Chip
-                            label={car.status}
-                            color={
-                              car.status === "available"
-                                ? "success"
-                                : car.status === "assigned"
-                                ? "primary"
-                                : car.status === "maintenance"
-                                ? "warning"
-                                : "default"
-                            }
-                            size="small"
-                          />
-                        </Box>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            mt: 2,
-                          }}
-                        >
-                          <Tooltip title={t("reports.title")}>
-                            <IconButton
-                              component={Link}
-                              to={`/cars/${car.id}`}
-                              color="primary"
-                              sx={{
-                                bgcolor: "primary.main",
-                                color: "white",
-                                "&:hover": { bgcolor: "primary.dark" },
-                              }}
-                            >
-                              <Assessment />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </CardContent>
-                    </Card>
+                  <Grid key={car.id} size={{ xs: 12, sm: 6, lg: 4 }}>
+                    <AssignedCar car={car} />
                   </Grid>
                 ))}
               </Grid>

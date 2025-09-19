@@ -295,7 +295,12 @@
     "name": "Nom",
     "email": "Email",
     "phone": "Téléphone",
-    "role": "Rôle"
+    "role": "Rôle",
+    "year": "Année",
+    "initialMileage": "Kilométrage initial",
+    "fuelType": "Type de carburant",
+    "transmission": "Transmission",
+    "manageReports": "Gérer les rapports"
   },
   "common": {
     "loading": "Chargement...",

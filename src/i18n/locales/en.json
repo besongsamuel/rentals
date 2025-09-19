@@ -364,7 +364,12 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
-    "role": "Role"
+    "role": "Role",
+    "year": "Year",
+    "initialMileage": "Initial Mileage",
+    "fuelType": "Fuel Type",
+    "transmission": "Transmission",
+    "manageReports": "Manage Reports"
   },
   "common": {
     "loading": "Loading...",
