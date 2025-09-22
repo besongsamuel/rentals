@@ -1,3 +1,4 @@
+import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import {
   Alert,
@@ -22,7 +23,9 @@ const LoginForm: React.FC = () => {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
-  const { signIn, resetPassword, signInWithGoogle } = useUserContext();
+  const [facebookLoading, setFacebookLoading] = useState(false);
+  const { signIn, resetPassword, signInWithGoogle, signInWithFacebook } =
+    useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -70,6 +73,19 @@ const LoginForm: React.FC = () => {
     if (error) {
       setError(error.message);
       setGoogleLoading(false);
+    }
+    // Note: If successful, user will be redirected to dashboard
+  };
+
+  const handleFacebookSignIn = async () => {
+    setFacebookLoading(true);
+    setError("");
+
+    const { error } = await signInWithFacebook();
+
+    if (error) {
+      setError(error.message);
+      setFacebookLoading(false);
     }
     // Note: If successful, user will be redirected to dashboard
   };
@@ -236,11 +252,11 @@ const LoginForm: React.FC = () => {
               fullWidth
               variant="outlined"
               onClick={handleGoogleSignIn}
-              disabled={googleLoading || loading}
+              disabled={googleLoading || loading || facebookLoading}
               startIcon={<GoogleIcon />}
               sx={{
                 py: 2,
-                mb: 3,
+                mb: 2,
                 fontSize: "0.875rem",
                 fontWeight: 400,
                 borderColor: "#dadce0",
@@ -265,6 +281,42 @@ const LoginForm: React.FC = () => {
               {googleLoading
                 ? t("common.loading")
                 : t("auth.continueWithGoogle")}
+            </Button>
+
+            {/* Facebook Sign In Button */}
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleFacebookSignIn}
+              disabled={facebookLoading || loading || googleLoading}
+              startIcon={<FacebookIcon />}
+              sx={{
+                py: 2,
+                mb: 3,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                borderColor: "#1877f2",
+                color: "#1877f2",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                backgroundColor: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#f0f2f5",
+                  borderColor: "#1877f2",
+                  boxShadow:
+                    "0 1px 2px 0 rgba(24,119,242,.3), 0 1px 3px 1px rgba(24,119,242,.15)",
+                },
+                "&:disabled": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#dadce0",
+                  color: "#9aa0a6",
+                },
+              }}
+            >
+              {facebookLoading
+                ? t("common.loading")
+                : t("auth.continueWithFacebook")}
             </Button>
 
             {/* Divider */}

@@ -19,6 +19,7 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
     "joinPlatform": "Join the rentals platform today",
     "welcomeMessage": "🌟 Welcome to mo kumbi - Your Gateway to Smart Car Rental Success",
     "welcomeSubtitle": "Transform your car into a money-making machine! Connect with drivers, track earnings, and grow your rental business effortlessly.",
@@ -595,6 +596,7 @@
   "legal": {
     "privacyPolicy": "Privacy Policy",
     "termsOfUse": "Terms of Use",
+    "dataDeletion": "Data Deletion",
     "lastUpdated": "Last Updated",
     "introduction": "Introduction",
     "privacyIntroduction": "At mo kumbi, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our car rental platform.",
@@ -627,5 +629,22 @@
     "terminationDescription": "We reserve the right to terminate or suspend your account at any time for violation of these terms or for any other reason at our discretion.",
     "changesToTerms": "Changes to Terms",
     "changesToTermsDescription": "We may update these Terms of Use from time to time. We will notify users of any material changes, and continued use of the platform constitutes acceptance of the updated terms."
+  },
+  "dataDeletion": {
+    "title": "Data Deletion Request",
+    "description": "We respect your privacy and your right to have your personal data deleted. If you would like to request the deletion of your personal data from our platform, please follow the instructions below.",
+    "howToRequest": "How to Request Data Deletion",
+    "step1": "Send an email to our technical team",
+    "step2": "Include your full name and email address",
+    "step3": "Specify that you want your data deleted",
+    "step4": "We will process your request within 7 business days",
+    "whatToInclude": "What to Include in Your Request",
+    "include1": "Your full name as registered on the platform",
+    "include2": "The email address associated with your account",
+    "include3": "A clear statement requesting data deletion",
+    "timeline": "We will process your data deletion request within 7 business days of receiving your email. You will receive a confirmation email once your data has been successfully deleted.",
+    "contactInfo": "Email: cto@aftermathtechnologies.com",
+    "sendEmail": "Send Email Request",
+    "backToHome": "Back to Home"
   }
 }

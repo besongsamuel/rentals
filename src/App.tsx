@@ -16,6 +16,7 @@ import { UserProvider, useUserContext } from "./contexts/UserContext";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
 import Dashboard from "./pages/Dashboard";
+import DataDeletion from "./pages/DataDeletion";
 import DriverDetails from "./pages/DriverDetails";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
 import DriverSearch from "./pages/DriverSearch";
@@ -64,6 +65,9 @@ function DocumentTitle() {
         break;
       case "/terms-of-use":
         pageTitle = `${baseTitle} - Terms of Use`;
+        break;
+      case "/data-deletion":
+        pageTitle = `${baseTitle} - Data Deletion`;
         break;
       case "/cars/new":
         pageTitle = `${baseTitle} - Add New Car`;
@@ -157,6 +161,18 @@ function AppContent() {
                               path="/how-it-works"
                               element={<HowItWorks />}
                             />
+                            <Route
+                              path="/privacy-policy"
+                              element={<PrivacyPolicy />}
+                            />
+                            <Route
+                              path="/terms-of-use"
+                              element={<TermsOfUse />}
+                            />
+                            <Route
+                              path="/data-deletion"
+                              element={<DataDeletion />}
+                            />
                             <Route path="/cars/new" element={<CarForm />} />
                             <Route
                               path="/cars/:carId"
@@ -221,6 +237,7 @@ function AppContent() {
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-use" element={<TermsOfUse />} />
+                <Route path="/data-deletion" element={<DataDeletion />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Box>

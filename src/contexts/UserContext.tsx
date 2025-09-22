@@ -27,6 +27,7 @@ interface UserContextType {
   refreshProfile: () => void;
   resetPassword: (email: string) => Promise<{ data: any; error: any }>;
   signInWithGoogle: () => Promise<{ data: any; error: any }>;
+  signInWithFacebook: () => Promise<{ data: any; error: any }>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

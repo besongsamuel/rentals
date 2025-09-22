@@ -134,6 +134,11 @@ export const useAuth = () => {
     return { data, error };
   };
 
+  const signInWithFacebook = async () => {
+    const { data, error } = await authService.signInWithFacebook();
+    return { data, error };
+  };
+
   return {
     user,
     session,
@@ -148,5 +153,6 @@ export const useAuth = () => {
     refreshProfile,
     resetPassword,
     signInWithGoogle,
+    signInWithFacebook,
   };
 };

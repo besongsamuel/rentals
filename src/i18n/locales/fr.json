@@ -19,6 +19,7 @@
     "signIn": "Se connecter",
     "signUp": "S'inscrire",
     "continueWithGoogle": "Continuer avec Google",
+    "continueWithFacebook": "Continuer avec Facebook",
     "joinPlatform": "Rejoignez la plateforme de location aujourd'hui",
     "welcomeMessage": "🌟 Bienvenue sur mo kumbi - Votre Portail vers le Succès de la Location de Voitures Intelligente",
     "welcomeSubtitle": "Transformez votre voiture en machine à gagner de l'argent ! Connectez-vous avec des chauffeurs, suivez vos revenus et développez votre entreprise de location sans effort.",
@@ -527,6 +528,7 @@
   "legal": {
     "privacyPolicy": "Politique de Confidentialité",
     "termsOfUse": "Conditions d'Utilisation",
+    "dataDeletion": "Suppression de Données",
     "lastUpdated": "Dernière Mise à Jour",
     "introduction": "Introduction",
     "privacyIntroduction": "Chez mo kumbi, nous nous engageons à protéger votre vie privée et à assurer la sécurité de vos informations personnelles. Cette Politique de Confidentialité explique comment nous collectons, utilisons et protégeons vos données lorsque vous utilisez notre plateforme de location de voitures.",
@@ -559,5 +561,22 @@
     "terminationDescription": "Nous nous réservons le droit de résilier ou de suspendre votre compte à tout moment pour violation de ces conditions ou pour toute autre raison à notre discrétion.",
     "changesToTerms": "Modifications des Conditions",
     "changesToTermsDescription": "Nous pouvons mettre à jour ces Conditions d'Utilisation de temps à autre. Nous informerons les utilisateurs de tout changement important, et l'utilisation continue de la plateforme constitue l'acceptation des conditions mises à jour."
+  },
+  "dataDeletion": {
+    "title": "Demande de Suppression de Données",
+    "description": "Nous respectons votre vie privée et votre droit d'avoir vos données personnelles supprimées. Si vous souhaitez demander la suppression de vos données personnelles de notre plateforme, veuillez suivre les instructions ci-dessous.",
+    "howToRequest": "Comment Demander la Suppression de Données",
+    "step1": "Envoyez un email à notre équipe technique",
+    "step2": "Incluez votre nom complet et adresse email",
+    "step3": "Précisez que vous voulez que vos données soient supprimées",
+    "step4": "Nous traiterons votre demande dans les 7 jours ouvrables",
+    "whatToInclude": "Que Inclure dans Votre Demande",
+    "include1": "Votre nom complet tel qu'enregistré sur la plateforme",
+    "include2": "L'adresse email associée à votre compte",
+    "include3": "Une déclaration claire demandant la suppression des données",
+    "timeline": "Nous traiterons votre demande de suppression de données dans les 7 jours ouvrables suivant la réception de votre email. Vous recevrez un email de confirmation une fois que vos données auront été supprimées avec succès.",
+    "contactInfo": "Email: cto@aftermathtechnologies.com",
+    "sendEmail": "Envoyer la Demande par Email",
+    "backToHome": "Retour à l'Accueil"
   }
 }

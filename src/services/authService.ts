@@ -41,4 +41,13 @@ export const authService = {
       },
     });
   },
+
+  async signInWithFacebook() {
+    return await supabase.auth.signInWithOAuth({
+      provider: "facebook",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+  },
 };
