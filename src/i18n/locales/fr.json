@@ -88,6 +88,8 @@
     "fullName": "Nom complet",
     "phone": "Numéro de téléphone",
     "phoneHelper": "Optionnel - à des fins de communication",
+    "referredBy": "Référencé par",
+    "referredByHelper": "Optionnel - nom de la personne qui vous a référé à notre plateforme",
     "country": "Pays",
     "countryHelper": "Sélectionnez votre pays de résidence",
     "organization": "Organisation",

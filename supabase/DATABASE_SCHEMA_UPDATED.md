@@ -58,10 +58,18 @@ CREATE TABLE profiles (
   full_name TEXT,
   user_type TEXT NOT NULL CHECK (user_type IN ('driver', 'owner')),
   phone TEXT,
+  referred_by TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
+
+**Purpose**: Stores user profile information including referral tracking
+**Features**:
+
+- Links directly to Supabase auth users
+- Supports both driver and owner user types
+- Optional referral tracking via `referred_by` field
 
 ### 4. `cars`
 

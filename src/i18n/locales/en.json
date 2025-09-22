@@ -110,6 +110,8 @@
     "completeProfileDescription": "Let's get started with your basic information",
     "phoneNumber": "Phone Number",
     "phoneNumberHelper": "Optional - for emergency contact",
+    "referredBy": "Referred By",
+    "referredByHelper": "Optional - name of the person who referred you to our platform",
     "country": "Country",
     "countryHelper": "Select your country of residence",
     "chooseRole": "Choose Your Role",
@@ -123,7 +125,6 @@
     "nationality": "Nationality",
     "languagesSpoken": "Languages Spoken",
     "address": "Address",
-    "country": "Country",
     "stateProvince": "State/Province",
     "city": "City",
     "postalCode": "Postal Code",
@@ -187,7 +188,6 @@
     "userTypeCannotBeChanged": "User type cannot be changed",
     "updating": "Updating...",
     "updateProfile": "Update Profile",
-    "saving": "Saving...",
     "saveDriverDetails": "Save Driver Details",
     "profileUpdatedSuccessfully": "Profile updated successfully!",
     "driverDetailsUpdatedSuccessfully": "Driver details updated successfully!",
@@ -421,7 +421,6 @@
     "faq": "FAQ"
   },
   "common": {
-    "loading": "Loading...",
     "error": "Error",
     "success": "Success",
     "save": "Save",

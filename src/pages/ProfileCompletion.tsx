@@ -31,6 +31,7 @@ const ProfileCompletion: React.FC = () => {
     user_type: "driver" as "driver" | "owner",
     phone: "",
     country: "CM", // Default to Cameroon
+    referred_by: "",
   });
 
   const [error, setError] = useState("");
@@ -76,6 +77,7 @@ const ProfileCompletion: React.FC = () => {
           user_type: formData.user_type,
           phone: formData.phone.trim() || undefined,
           country: formData.country,
+          referred_by: formData.referred_by.trim() || undefined,
         });
 
         if (error) {
@@ -162,6 +164,26 @@ const ProfileCompletion: React.FC = () => {
         value={formData.phone}
         onChange={handleInputChange("phone")}
         helperText={t("profile.phoneNumberHelper")}
+        sx={{
+          mb: 3,
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 122, 255, 0.5)",
+            },
+          },
+        }}
+      />
+
+      <TextField
+        fullWidth
+        id="referred_by"
+        label={t("profile.referredBy")}
+        name="referred_by"
+        autoComplete="name"
+        value={formData.referred_by}
+        onChange={handleInputChange("referred_by")}
+        helperText={t("profile.referredByHelper")}
         sx={{
           mb: 3,
           "& .MuiOutlinedInput-root": {
