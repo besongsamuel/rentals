@@ -134,7 +134,14 @@
     "sms": "SMS",
     "whatsapp": "WhatsApp",
     "licenseClassPlaceholder": "ex., A, B, C",
-    "issuingAuthorityPlaceholder": "ex., Ministère des Transports"
+    "issuingAuthorityPlaceholder": "ex., Ministère des Transports",
+    "idCardType": "Type de pièce d'identité",
+    "idCardNumber": "Numéro de pièce d'identité",
+    "idCardExpiryDate": "Date d'expiration de la pièce d'identité",
+    "idCardTypeHelper": "Optionnel - Type de document d'identification",
+    "idCardNumberHelper": "Optionnel - Numéro de pièce d'identité pour vérification",
+    "idCardExpiryHelper": "Optionnel - Date d'expiration de votre pièce d'identité",
+    "noneSelected": "Aucune sélection"
   },
   "cars": {
     "title": "Véhicules",

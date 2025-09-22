@@ -213,6 +213,18 @@ export interface DriverDetails {
   availability_status: "available" | "busy" | "unavailable" | "on_break";
   preferred_working_hours: any | null; // JSONB
   communication_preference: "phone" | "email" | "sms" | "whatsapp";
+  // ID Card Information
+  id_card_type:
+    | "passport"
+    | "national_id"
+    | "residency_card"
+    | "drivers_license"
+    | "military_id"
+    | "student_id"
+    | "other"
+    | null;
+  id_card_number: string | null;
+  id_card_expiry_date: string | null;
   created_at: string;
   updated_at: string;
   last_active_at: string;
@@ -268,6 +280,17 @@ export interface CreateDriverDetailsData {
   availability_status?: "available" | "busy" | "unavailable" | "on_break";
   preferred_working_hours?: any;
   communication_preference?: "phone" | "email" | "sms" | "whatsapp";
+  // ID Card Information
+  id_card_type?:
+    | "passport"
+    | "national_id"
+    | "residency_card"
+    | "drivers_license"
+    | "military_id"
+    | "student_id"
+    | "other";
+  id_card_number?: string;
+  id_card_expiry_date?: string;
 }
 
 // Type for creating driver rating

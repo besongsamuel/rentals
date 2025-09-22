@@ -60,6 +60,10 @@ const ProfilePage: React.FC = () => {
     availability_status: "available",
     preferred_working_hours: null,
     communication_preference: "phone",
+    // ID Card Information
+    id_card_type: "national_id",
+    id_card_number: "",
+    id_card_expiry_date: "",
   });
 
   const [error, setError] = useState("");
@@ -162,6 +166,10 @@ const ProfilePage: React.FC = () => {
             existingDetails.preferred_working_hours || null,
           communication_preference:
             existingDetails.communication_preference || "phone",
+          // ID Card Information
+          id_card_type: existingDetails.id_card_type || "national_id",
+          id_card_number: existingDetails.id_card_number || "",
+          id_card_expiry_date: existingDetails.id_card_expiry_date || "",
         };
         setDriverDetails(driverDetailsData);
         setSelectedCountry(existingDetails.country || "CM");
@@ -296,9 +304,11 @@ const ProfilePage: React.FC = () => {
         | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         | SelectChangeEvent
     ) => {
+      const value = e.target.value;
       setDriverDetails((prev) => ({
         ...prev,
-        [field]: e.target.value,
+        [field]:
+          field === "id_card_type" && value === "" ? "national_id" : value,
       }));
     };
 
@@ -929,6 +939,63 @@ const ProfilePage: React.FC = () => {
                       </MenuItem>
                     </Select>
                   </FormControl>
+                </Grid>
+
+                {/* ID Card Information */}
+                <Grid size={{ xs: 12 }}>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ mb: 2, fontWeight: 600 }}
+                  >
+                    {t("profile.idCardType")} (Optional)
+                  </Typography>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <FormControl fullWidth>
+                    <InputLabel>{t("profile.idCardType")}</InputLabel>
+                    <Select
+                      value={driverDetails.id_card_type || "national_id"}
+                      onChange={handleDriverDetailsChange("id_card_type")}
+                      label={t("profile.idCardType")}
+                    >
+                      <MenuItem value="">
+                        <em>{t("profile.noneSelected")}</em>
+                      </MenuItem>
+                      <MenuItem value="passport">Passport</MenuItem>
+                      <MenuItem value="national_id">National ID Card</MenuItem>
+                      <MenuItem value="residency_card">Residency Card</MenuItem>
+                      <MenuItem value="drivers_license">
+                        Driver's License
+                      </MenuItem>
+                      <MenuItem value="military_id">Military ID</MenuItem>
+                      <MenuItem value="student_id">Student ID</MenuItem>
+                      <MenuItem value="other">Other</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    label={t("profile.idCardNumber")}
+                    value={driverDetails.id_card_number || ""}
+                    onChange={handleDriverDetailsChange("id_card_number")}
+                    helperText={t("profile.idCardNumberHelper")}
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField
+                    fullWidth
+                    type="date"
+                    label={t("profile.idCardExpiryDate")}
+                    value={driverDetails.id_card_expiry_date || ""}
+                    onChange={handleDriverDetailsChange("id_card_expiry_date")}
+                    InputLabelProps={{ shrink: true }}
+                    helperText={t("profile.idCardExpiryHelper")}
+                  />
                 </Grid>
               </Grid>
 
