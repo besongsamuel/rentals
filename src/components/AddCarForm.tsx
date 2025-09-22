@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import { carMakeModelService } from "../services/carMakeModelService";
 import { CarMake, CarModel, CreateCarData } from "../types";
@@ -25,6 +26,7 @@ interface AddCarFormProps {
 
 const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     vin: "",
     make: "",
@@ -53,14 +55,14 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
         setCarMakes(makesData);
       } catch (error) {
         console.error("Error loading data:", error);
-        setError("Failed to load form data");
+        setError(t("cars.failedToLoadData"));
       } finally {
         setLoadingMakes(false);
       }
     };
 
     loadData();
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,19 +70,19 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
 
     // Basic validation
     if (!formData.vin.trim()) {
-      setError("VIN is required");
+      setError(t("cars.vinRequired"));
       return;
     }
     if (!formData.make.trim()) {
-      setError("Make is required");
+      setError(t("cars.makeRequired"));
       return;
     }
     if (!formData.model.trim()) {
-      setError("Model is required");
+      setError(t("cars.modelRequired"));
       return;
     }
     if (!user) {
-      setError("You must be logged in to add a car");
+      setError(t("cars.failedToCreateCar"));
       return;
     }
 
@@ -104,7 +106,7 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
           (formData.transmission_type as "manual" | "automatic") || undefined,
       });
     } catch (error) {
-      setError("Failed to add car. Please try again.");
+      setError(t("cars.failedToCreateCar"));
     }
   };
 
@@ -146,7 +148,7 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
         }
       } catch (error) {
         console.error("Error loading models:", error);
-        setError("Failed to load car models. Please try again.");
+        setError(t("cars.failedToLoadModels"));
       } finally {
         setLoadingModels(false);
       }
@@ -163,27 +165,31 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Add New Car
+    <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 } }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{ textAlign: { xs: "center", sm: "left" } }}
+      >
+        {t("cars.addNewCar")}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>
         <ErrorAlert message={error} />
 
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 2, sm: 2 }}>
           <Grid size={12}>
             <TextField
               required
               fullWidth
-              label="VIN"
+              label={t("cars.vin")}
               value={formData.vin}
               onChange={handleInputChange("vin")}
-              placeholder="Enter VIN number"
+              placeholder={t("cars.vinPlaceholder")}
             />
           </Grid>
 
-          <Grid size={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Autocomplete
               freeSolo
               options={carMakes.map((make) => make.name)}
@@ -200,7 +206,7 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Make"
+                  label={t("cars.make")}
                   required
                   InputProps={{
                     ...params.InputProps,
@@ -218,7 +224,7 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
             />
           </Grid>
 
-          <Grid size={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Autocomplete
               freeSolo
               options={carModels.map((model) => model.name)}
@@ -234,7 +240,7 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Model"
+                  label={t("cars.model")}
                   required
                   InputProps={{
                     ...params.InputProps,
@@ -252,11 +258,11 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
             />
           </Grid>
 
-          <Grid size={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField
               required
               fullWidth
-              label="Year"
+              label={t("cars.year")}
               type="number"
               value={formData.year}
               onChange={handleInputChange("year")}
@@ -264,83 +270,103 @@ const AddCarForm: React.FC<AddCarFormProps> = ({ onSubmit, onCancel }) => {
             />
           </Grid>
 
-          <Grid size={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth>
-              <InputLabel>Fuel Type</InputLabel>
+              <InputLabel>{t("cars.fuelType")}</InputLabel>
               <Select
                 value={formData.fuel_type}
                 onChange={handleSelectChange("fuel_type")}
-                label="Fuel Type"
+                label={t("cars.fuelType")}
               >
                 <MenuItem value="">
-                  <em>Select fuel type</em>
+                  <em>{t("cars.selectFuelType")}</em>
                 </MenuItem>
-                <MenuItem value="gasoline">Gasoline</MenuItem>
-                <MenuItem value="diesel">Diesel</MenuItem>
-                <MenuItem value="hybrid">Hybrid</MenuItem>
-                <MenuItem value="electric">Electric</MenuItem>
+                <MenuItem value="gasoline">{t("cars.gasoline")}</MenuItem>
+                <MenuItem value="diesel">{t("cars.diesel")}</MenuItem>
+                <MenuItem value="hybrid">{t("cars.hybrid")}</MenuItem>
+                <MenuItem value="electric">{t("cars.electric")}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
 
-          <Grid size={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth>
-              <InputLabel>Transmission</InputLabel>
+              <InputLabel>{t("cars.transmission")}</InputLabel>
               <Select
                 value={formData.transmission_type}
                 onChange={handleSelectChange("transmission_type")}
-                label="Transmission"
+                label={t("cars.transmission")}
               >
                 <MenuItem value="">
-                  <em>Select transmission</em>
+                  <em>{t("cars.selectTransmission")}</em>
                 </MenuItem>
-                <MenuItem value="manual">Manual</MenuItem>
-                <MenuItem value="automatic">Automatic</MenuItem>
+                <MenuItem value="manual">{t("cars.manual")}</MenuItem>
+                <MenuItem value="automatic">{t("cars.automatic")}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
 
-          <Grid size={4}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="Color"
+              label={t("cars.color")}
               value={formData.color}
               onChange={handleInputChange("color")}
-              placeholder="e.g., Red"
+              placeholder={t("cars.colorPlaceholder")}
             />
           </Grid>
 
-          <Grid size={4}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="License Plate"
+              label={t("cars.licensePlate")}
               value={formData.license_plate}
               onChange={handleInputChange("license_plate")}
-              placeholder="e.g., ABC-123"
+              placeholder={t("cars.licensePlatePlaceholder")}
             />
           </Grid>
 
           <Grid size={12}>
             <TextField
               fullWidth
-              label="Initial Mileage"
+              label={t("cars.initialMileage")}
               type="number"
               value={formData.initial_mileage}
               onChange={handleInputChange("initial_mileage")}
               inputProps={{ min: 0 }}
-              helperText="Current mileage in KM when adding the car"
+              helperText={t("cars.initialMileageHelper")}
             />
           </Grid>
         </Grid>
 
         <Box
-          sx={{ mt: 3, display: "flex", gap: 2, justifyContent: "flex-end" }}
+          sx={{
+            mt: 3,
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: "flex-end",
+          }}
         >
-          <Button variant="outlined" onClick={onCancel}>
-            Cancel
+          <Button
+            variant="outlined"
+            onClick={onCancel}
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              order: { xs: 2, sm: 1 },
+            }}
+          >
+            {t("cars.cancel")}
           </Button>
-          <Button type="submit" variant="contained">
-            Add Car
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              order: { xs: 1, sm: 2 },
+            }}
+          >
+            {t("cars.addCar")}
           </Button>
         </Box>
       </Box>

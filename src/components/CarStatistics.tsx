@@ -139,7 +139,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
                 <Select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  label="Year"
+                  label={t("statistics.year")}
                 >
                   {Array.from(
                     { length: 5 },

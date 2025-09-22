@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorAlert from "../components/ErrorAlert";
 import { useUserContext } from "../contexts/UserContext";
@@ -26,6 +27,7 @@ const CarForm: React.FC = () => {
   const { carId } = useParams<{ carId: string }>();
   const navigate = useNavigate();
   const { user, profile } = useUserContext();
+  const { t } = useTranslation();
   const isEditMode = carId && carId !== "new";
 
   const [formData, setFormData] = useState({
@@ -109,7 +111,7 @@ const CarForm: React.FC = () => {
         }
       } catch (error) {
         console.error("Error loading data:", error);
-        setError("Failed to load data. Please try again.");
+        setError(t("cars.failedToLoadData"));
       } finally {
         setLoading(false);
         setLoadingOwners(false);
@@ -127,22 +129,22 @@ const CarForm: React.FC = () => {
 
     // Basic validation
     if (!formData.vin.trim()) {
-      setError("VIN is required");
+      setError(t("cars.vinRequired"));
       setSaving(false);
       return;
     }
     if (!formData.make.trim()) {
-      setError("Make is required");
+      setError(t("cars.makeRequired"));
       setSaving(false);
       return;
     }
     if (!formData.model.trim()) {
-      setError("Model is required");
+      setError(t("cars.modelRequired"));
       setSaving(false);
       return;
     }
     if (isEditMode && !formData.owner_id) {
-      setError("Please select an owner");
+      setError(t("cars.selectOwner"));
       setSaving(false);
       return;
     }
@@ -183,9 +185,7 @@ const CarForm: React.FC = () => {
     } catch (error) {
       console.error("Error saving car:", error);
       setError(
-        isEditMode
-          ? "Failed to update car. Please try again."
-          : "Failed to create car. Please try again."
+        isEditMode ? t("cars.failedToUpdateCar") : t("cars.failedToCreateCar")
       );
     } finally {
       setSaving(false);
@@ -230,7 +230,7 @@ const CarForm: React.FC = () => {
         }
       } catch (error) {
         console.error("Error loading models:", error);
-        setError("Failed to load car models. Please try again.");
+        setError(t("cars.failedToLoadModels"));
       } finally {
         setLoadingModels(false);
       }
@@ -252,11 +252,11 @@ const CarForm: React.FC = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
+      <Container maxWidth="md" sx={{ mt: 4, px: { xs: 2, sm: 3 } }}>
+        <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, textAlign: "center" }}>
           <CircularProgress />
           <Typography variant="body1" sx={{ mt: 2 }}>
-            Loading...
+            {t("common.loading")}
           </Typography>
         </Paper>
       </Container>
@@ -264,36 +264,48 @@ const CarForm: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
+    <Container maxWidth="md" sx={{ mt: 4, px: { xs: 2, sm: 3 } }}>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 } }}>
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: { xs: "stretch", sm: "center" },
+            gap: { xs: 2, sm: 0 },
             mb: 3,
           }}
         >
-          <Typography variant="h4">
-            {isEditMode ? "Edit Car" : "Add New Car"}
+          <Typography
+            variant="h4"
+            sx={{ textAlign: { xs: "center", sm: "left" } }}
+          >
+            {isEditMode ? t("cars.editCar") : t("cars.addNewCar")}
           </Typography>
-          <Button variant="outlined" onClick={handleCancel}>
-            Back to Dashboard
+          <Button
+            variant="outlined"
+            onClick={handleCancel}
+            sx={{
+              width: { xs: "100%", sm: "auto" },
+              minWidth: { xs: "auto", sm: "140px" },
+            }}
+          >
+            {t("cars.backToDashboard")}
           </Button>
         </Box>
 
         <Box component="form" onSubmit={handleSubmit}>
           <ErrorAlert message={error} />
 
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid size={12}>
               <TextField
                 required
                 fullWidth
-                label="VIN"
+                label={t("cars.vin")}
                 value={formData.vin}
                 onChange={handleInputChange("vin")}
-                placeholder="Enter VIN number"
+                placeholder={t("cars.vinPlaceholder")}
                 disabled={saving}
               />
             </Grid>
@@ -301,17 +313,17 @@ const CarForm: React.FC = () => {
             {isEditMode && (
               <Grid size={12}>
                 <FormControl fullWidth required>
-                  <InputLabel>Owner</InputLabel>
+                  <InputLabel>{t("cars.owner")}</InputLabel>
                   <Select
                     value={formData.owner_id}
                     onChange={handleSelectChange("owner_id")}
-                    label="Owner"
+                    label={t("cars.owner")}
                     disabled={loadingOwners || saving}
                   >
                     {loadingOwners ? (
                       <MenuItem disabled>
                         <CircularProgress size={20} sx={{ mr: 1 }} />
-                        Loading owners...
+                        {t("cars.loadingOwners")}
                       </MenuItem>
                     ) : (
                       owners.map((owner) => (
@@ -325,7 +337,7 @@ const CarForm: React.FC = () => {
               </Grid>
             )}
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Autocomplete
                 freeSolo
                 options={carMakes.map((make) => make.name)}
@@ -343,7 +355,7 @@ const CarForm: React.FC = () => {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Make"
+                    label={t("cars.make")}
                     required
                     InputProps={{
                       ...params.InputProps,
@@ -361,7 +373,7 @@ const CarForm: React.FC = () => {
               />
             </Grid>
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Autocomplete
                 freeSolo
                 options={carModels.map((model) => model.name)}
@@ -378,7 +390,7 @@ const CarForm: React.FC = () => {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Model"
+                    label={t("cars.model")}
                     required
                     InputProps={{
                       ...params.InputProps,
@@ -396,11 +408,11 @@ const CarForm: React.FC = () => {
               />
             </Grid>
 
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 required
                 fullWidth
-                label="Year"
+                label={t("cars.year")}
                 type="number"
                 value={formData.year}
                 onChange={handleInputChange("year")}
@@ -409,62 +421,62 @@ const CarForm: React.FC = () => {
               />
             </Grid>
 
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
-                <InputLabel>Fuel Type</InputLabel>
+                <InputLabel>{t("cars.fuelType")}</InputLabel>
                 <Select
                   value={formData.fuel_type}
                   onChange={handleSelectChange("fuel_type")}
-                  label="Fuel Type"
+                  label={t("cars.fuelType")}
                   disabled={saving}
                 >
                   <MenuItem value="">
-                    <em>Select fuel type</em>
+                    <em>{t("cars.selectFuelType")}</em>
                   </MenuItem>
-                  <MenuItem value="gasoline">Gasoline</MenuItem>
-                  <MenuItem value="diesel">Diesel</MenuItem>
-                  <MenuItem value="hybrid">Hybrid</MenuItem>
-                  <MenuItem value="electric">Electric</MenuItem>
+                  <MenuItem value="gasoline">{t("cars.gasoline")}</MenuItem>
+                  <MenuItem value="diesel">{t("cars.diesel")}</MenuItem>
+                  <MenuItem value="hybrid">{t("cars.hybrid")}</MenuItem>
+                  <MenuItem value="electric">{t("cars.electric")}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
 
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth>
-                <InputLabel>Transmission</InputLabel>
+                <InputLabel>{t("cars.transmission")}</InputLabel>
                 <Select
                   value={formData.transmission_type}
                   onChange={handleSelectChange("transmission_type")}
-                  label="Transmission"
+                  label={t("cars.transmission")}
                   disabled={saving}
                 >
                   <MenuItem value="">
-                    <em>Select transmission</em>
+                    <em>{t("cars.selectTransmission")}</em>
                   </MenuItem>
-                  <MenuItem value="manual">Manual</MenuItem>
-                  <MenuItem value="automatic">Automatic</MenuItem>
+                  <MenuItem value="manual">{t("cars.manual")}</MenuItem>
+                  <MenuItem value="automatic">{t("cars.automatic")}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
 
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="Color"
+                label={t("cars.color")}
                 value={formData.color}
                 onChange={handleInputChange("color")}
-                placeholder="e.g., Red"
+                placeholder={t("cars.colorPlaceholder")}
                 disabled={saving}
               />
             </Grid>
 
-            <Grid size={4}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
-                label="License Plate"
+                label={t("cars.licensePlate")}
                 value={formData.license_plate}
                 onChange={handleInputChange("license_plate")}
-                placeholder="e.g., ABC-123"
+                placeholder={t("cars.licensePlatePlaceholder")}
                 disabled={saving}
               />
             </Grid>
@@ -472,33 +484,55 @@ const CarForm: React.FC = () => {
             <Grid size={12}>
               <TextField
                 fullWidth
-                label="Initial Mileage"
+                label={t("cars.initialMileage")}
                 type="number"
                 value={formData.initial_mileage}
                 onChange={handleInputChange("initial_mileage")}
                 inputProps={{ min: 0 }}
-                helperText="Current mileage in KM when adding the car"
+                helperText={t("cars.initialMileageHelper")}
                 disabled={saving}
               />
             </Grid>
           </Grid>
 
           <Box
-            sx={{ mt: 4, display: "flex", gap: 2, justifyContent: "flex-end" }}
+            sx={{
+              mt: 4,
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              gap: 2,
+              justifyContent: "flex-end",
+            }}
           >
-            <Button variant="outlined" onClick={handleCancel} disabled={saving}>
-              Cancel
+            <Button
+              variant="outlined"
+              onClick={handleCancel}
+              disabled={saving}
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                order: { xs: 2, sm: 1 },
+              }}
+            >
+              {t("cars.cancel")}
             </Button>
-            <Button type="submit" variant="contained" disabled={saving}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={saving}
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                order: { xs: 1, sm: 2 },
+              }}
+            >
               {saving ? (
                 <>
                   <CircularProgress size={20} sx={{ mr: 1 }} />
-                  {isEditMode ? "Updating..." : "Creating..."}
+                  {isEditMode ? t("cars.updating") : t("cars.creating")}
                 </>
               ) : isEditMode ? (
-                "Update Car"
+                t("cars.updateCar")
               ) : (
-                "Add Car"
+                t("cars.addCar")
               )}
             </Button>
           </Box>
