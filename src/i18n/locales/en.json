@@ -209,7 +209,8 @@
     "sms": "SMS",
     "whatsapp": "WhatsApp",
     "licenseClassPlaceholder": "e.g., A, B, C",
-    "issuingAuthorityPlaceholder": "e.g., Ministry of Transport"
+    "issuingAuthorityPlaceholder": "e.g., Ministry of Transport",
+    "issuingAuthorityDefault": "Ministry of Transport"
   },
   "cars": {
     "title": "Cars",

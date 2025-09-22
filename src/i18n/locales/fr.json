@@ -136,6 +136,7 @@
     "whatsapp": "WhatsApp",
     "licenseClassPlaceholder": "ex., A, B, C",
     "issuingAuthorityPlaceholder": "ex., Ministère des Transports",
+    "issuingAuthorityDefault": "Ministère des Transports",
     "idCardType": "Type de pièce d'identité",
     "idCardNumber": "Numéro de pièce d'identité",
     "idCardExpiryDate": "Date d'expiration de la pièce d'identité",

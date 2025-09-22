@@ -224,6 +224,38 @@ const Footer: React.FC = () => {
             >
               Empowering car owners and drivers to maximize their earnings
             </Typography>
+
+            {/* Built by Aftermath Technologies */}
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{
+                fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                fontWeight: 400,
+                color: "#86868B",
+                letterSpacing: "-0.01em",
+                opacity: 0.6,
+                mt: 1,
+              }}
+            >
+              by{" "}
+              <Link
+                href="https://www.aftermathtechnologies.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  color: "#86868B",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                  "&:hover": {
+                    color: "#007AFF",
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                Aftermath Technologies
+              </Link>
+            </Typography>
           </Box>
         </Container>
       </Box>

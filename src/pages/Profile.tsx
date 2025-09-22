@@ -48,13 +48,13 @@ const ProfilePage: React.FC = () => {
     address: "",
     city: "",
     state_province: "",
-    postal_code: "",
+    postal_code: "00000",
     country: "CM", // Cameroon
     license_number: "",
     license_issue_date: "",
     license_expiry_date: "",
     license_class: "",
-    license_issuing_authority: "",
+    license_issuing_authority: t("profile.issuingAuthorityDefault"),
     years_of_experience: 0,
     preferred_transmission: "both",
     availability_status: "available",
@@ -149,14 +149,14 @@ const ProfilePage: React.FC = () => {
           address: existingDetails.address || "",
           city: existingDetails.city || "",
           state_province: existingDetails.state_province || "",
-          postal_code: existingDetails.postal_code || "",
+          postal_code: existingDetails.postal_code || "00000",
           country: existingDetails.country || "CM",
           license_number: existingDetails.license_number || "",
           license_issue_date: existingDetails.license_issue_date || "",
           license_expiry_date: existingDetails.license_expiry_date || "",
           license_class: existingDetails.license_class || "",
           license_issuing_authority:
-            existingDetails.license_issuing_authority || "",
+            existingDetails.license_issuing_authority || t("profile.issuingAuthorityDefault"),
           years_of_experience: existingDetails.years_of_experience || 0,
           preferred_transmission:
             existingDetails.preferred_transmission || "both",
@@ -577,12 +577,6 @@ const ProfilePage: React.FC = () => {
               {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
                   {error}
-                </Alert>
-              )}
-
-              {success && (
-                <Alert severity="success" sx={{ mb: 2 }}>
-                  {success}
                 </Alert>
               )}
 
@@ -1007,6 +1001,12 @@ const ProfilePage: React.FC = () => {
               >
                 {loading ? t("profile.saving") : t("profile.saveDriverDetails")}
               </Button>
+
+              {success && (
+                <Alert severity="success" sx={{ mt: 2 }}>
+                  {success}
+                </Alert>
+              )}
             </Box>
           )}
         </Paper>
