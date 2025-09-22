@@ -271,11 +271,11 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
         {mode === "add" ? t("reports.addReport") : t("reports.editReport")}
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           {error && <ErrorAlert message={error} />}
 
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             {assignedCars.length > 1 && (
               <Grid size={12}>
                 <FormControl fullWidth required>
@@ -304,7 +304,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "stretch", sm: "center" },
                   gap: 2,
                   mb: 3,
                   p: 2,
@@ -319,36 +320,47 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                     flexGrow: 1,
                     color: "text.primary",
                     fontWeight: 600,
+                    textAlign: { xs: "center", sm: "left" },
                   }}
                 >
                   {t("reports.weekPeriod")}
                 </Typography>
-                <Button
-                  onClick={() => handleWeekNavigation("prev")}
-                  size="small"
-                  startIcon={<ChevronLeft />}
-                  variant="outlined"
+                <Box
                   sx={{
-                    minWidth: "auto",
+                    display: "flex",
+                    gap: 1,
+                    justifyContent: { xs: "center", sm: "flex-end" },
                   }}
                 >
-                  {t("reports.previousWeek")}
-                </Button>
-                <Button
-                  onClick={() => handleWeekNavigation("next")}
-                  size="small"
-                  endIcon={<ChevronRight />}
-                  variant="outlined"
-                  sx={{
-                    minWidth: "auto",
-                  }}
-                >
-                  {t("reports.nextWeek")}
-                </Button>
+                  <Button
+                    onClick={() => handleWeekNavigation("prev")}
+                    size="small"
+                    startIcon={<ChevronLeft />}
+                    variant="outlined"
+                    sx={{
+                      minWidth: "auto",
+                      flex: { xs: 1, sm: "none" },
+                    }}
+                  >
+                    {t("reports.previousWeek")}
+                  </Button>
+                  <Button
+                    onClick={() => handleWeekNavigation("next")}
+                    size="small"
+                    endIcon={<ChevronRight />}
+                    variant="outlined"
+                    sx={{
+                      minWidth: "auto",
+                      flex: { xs: 1, sm: "none" },
+                    }}
+                  >
+                    {t("reports.nextWeek")}
+                  </Button>
+                </Box>
               </Box>
             </Grid>
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.weekStart")}
@@ -361,7 +373,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 required
               />
             </Grid>
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.weekEnd")}
@@ -375,7 +387,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               />
             </Grid>
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.startMileage")}
@@ -387,7 +399,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 required
               />
             </Grid>
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.endMileage")}
@@ -400,7 +412,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               />
             </Grid>
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.driverEarnings")}
@@ -419,7 +431,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 required
               />
             </Grid>
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.maintenanceExpenses")}
@@ -439,7 +451,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               />
             </Grid>
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.gasExpense")}
@@ -459,7 +471,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               />
             </Grid>
 
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.rideShareIncome")}
@@ -478,7 +490,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 required
               />
             </Grid>
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.rentalIncome")}
@@ -497,7 +509,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 required
               />
             </Grid>
-            <Grid size={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t("reports.taxiIncome")}
@@ -551,8 +563,21 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ p: 2 }}>
-        <Button onClick={handleClose} color="primary">
+      <DialogActions
+        sx={{
+          p: 2,
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+        }}
+      >
+        <Button
+          onClick={handleClose}
+          color="primary"
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            order: { xs: 2, sm: 1 },
+          }}
+        >
           {t("common.cancel")}
         </Button>
         <Button
@@ -560,6 +585,10 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           variant="contained"
           color="primary"
           type="submit"
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            order: { xs: 1, sm: 2 },
+          }}
         >
           {mode === "add" ? t("reports.addReport") : t("reports.updateReport")}
         </Button>
