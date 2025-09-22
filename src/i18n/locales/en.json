@@ -317,7 +317,11 @@
     "nextWeek": "Next Week",
     "driverEarningsHelper": "Driver's earnings for the week",
     "maintenanceExpensesHelper": "Maintenance and repair costs",
-    "totalDistance": "Total Distance"
+    "totalDistance": "Total Distance",
+    "viewEarnings": "View Earnings",
+    "viewComments": "View Comments",
+    "draftReminder": "This report is in draft status. Don't forget to submit it when ready!",
+    "submitReminder": "Remember to submit your report to get it reviewed."
   },
   "incomeSources": {
     "title": "Income Sources",

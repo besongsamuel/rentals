@@ -363,10 +363,12 @@ const CarDetailManagement: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Driver Assignment Section */}
-        <Grid size={12}>
-          <DriverAssignment currentUser={profile!} carId={carId!} />
-        </Grid>
+        {/* Driver Assignment Section - Only show for owners */}
+        {profile?.user_type === "owner" && (
+          <Grid size={12}>
+            <DriverAssignment currentUser={profile!} carId={carId!} />
+          </Grid>
+        )}
 
         {/* Car Owners Section */}
         <Grid size={12}>

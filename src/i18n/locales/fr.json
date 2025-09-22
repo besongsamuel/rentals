@@ -250,7 +250,11 @@
     "nextWeek": "Semaine suivante",
     "driverEarningsHelper": "Gains du conducteur pour la semaine",
     "maintenanceExpensesHelper": "Coûts de maintenance et de réparation",
-    "totalDistance": "Distance totale"
+    "totalDistance": "Distance totale",
+    "viewEarnings": "Voir les gains",
+    "viewComments": "Voir les commentaires",
+    "draftReminder": "Ce rapport est en brouillon. N'oubliez pas de le soumettre quand il est prêt !",
+    "submitReminder": "N'oubliez pas de soumettre votre rapport pour qu'il soit examiné."
   },
   "incomeSources": {
     "title": "Sources de revenus",
