@@ -165,7 +165,7 @@ CREATE TABLE comments (
 );
 ```
 
-### 9. `car_assignments` (Historical tracking)
+### 9. `car_assignments` (Enhanced - Historical tracking with contract termination)
 
 ```sql
 CREATE TABLE car_assignments (
@@ -176,9 +176,218 @@ CREATE TABLE car_assignments (
   unassigned_at TIMESTAMP WITH TIME ZONE,
   assigned_by UUID REFERENCES profiles(id) NOT NULL,
   notes TEXT,
+  -- Contract termination fields
+  contract_start_date DATE,
+  contract_end_date DATE,
+  termination_reason TEXT CHECK (termination_reason IN (
+    'contract_completed',
+    'mutual_agreement',
+    'owner_terminated',
+    'driver_terminated',
+    'violation_of_terms',
+    'other'
+  )),
+  termination_notes TEXT,
+  terminated_by UUID REFERENCES profiles(id),
+  terminated_at TIMESTAMP WITH TIME ZONE,
+  is_active BOOLEAN DEFAULT true,
+  rating_required BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
+
+**Purpose**: Tracks car assignments with enhanced contract termination support
+**Features**:
+
+- Historical tracking of all car assignments
+- Contract start and end date tracking
+- Termination reason and notes
+- Rating requirement flags
+- Active status management
+
+### 10. `driver_details` (Driver Extended Details)
+
+```sql
+CREATE TABLE driver_details (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  -- Personal Information
+  date_of_birth DATE,
+  gender TEXT CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say')),
+  nationality TEXT,
+  languages TEXT[], -- Array of languages spoken
+  -- Contact Information
+  emergency_contact_name TEXT,
+  emergency_contact_phone TEXT,
+  emergency_contact_relationship TEXT,
+  address TEXT,
+  city TEXT,
+  state_province TEXT,
+  postal_code TEXT,
+  country TEXT DEFAULT 'Cameroon',
+  -- Driver License Information
+  license_number TEXT UNIQUE,
+  license_issue_date DATE,
+  license_expiry_date DATE,
+  license_class TEXT, -- A, B, C, etc.
+  license_issuing_authority TEXT,
+  -- Professional Information
+  years_of_experience INTEGER DEFAULT 0,
+  preferred_transmission TEXT CHECK (preferred_transmission IN ('manual', 'automatic', 'both')),
+  -- Availability
+  availability_status TEXT DEFAULT 'available' CHECK (availability_status IN ('available', 'busy', 'unavailable', 'on_break')),
+  preferred_working_hours JSONB, -- {"start": "08:00", "end": "18:00", "days": ["monday", "tuesday", "wednesday", "thursday", "friday"]}
+  -- Preferences
+  communication_preference TEXT DEFAULT 'phone' CHECK (communication_preference IN ('phone', 'email', 'sms', 'whatsapp')),
+  -- ID Card Information (NEW)
+  id_card_type TEXT CHECK (id_card_type IN ('passport', 'national_id', 'residency_card', 'drivers_license', 'military_id', 'student_id', 'other')),
+  id_card_number TEXT,
+  id_card_expiry_date DATE,
+  -- Metadata
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  last_active_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Purpose**: Stores extended driver information including personal, contact, license, professional, and ID card details.
+**Features**:
+
+- Links to user profiles
+- Comprehensive driver data for better selection and management
+- Optional ID card information for verification
+
+### 11. `driver_ratings` (Enhanced - Driver Performance Ratings)
+
+```sql
+CREATE TABLE driver_ratings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  driver_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  rater_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL, -- Usually car owner
+  car_id UUID REFERENCES cars(id) ON DELETE CASCADE,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  categories JSONB, -- {"punctuality": 5, "communication": 4, "vehicle_care": 5, "safety": 5}
+  -- Enhanced fields for contract termination
+  car_assignment_id UUID REFERENCES car_assignments(id) ON DELETE CASCADE,
+  rating_type TEXT DEFAULT 'contract_completion' CHECK (rating_type IN (
+    'contract_completion',
+    'ongoing_performance',
+    'other'
+  )),
+  would_recommend BOOLEAN,
+  is_anonymous BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Purpose**: Stores driver performance ratings and feedback from car owners with contract termination support.
+**Features**:
+
+- Links to specific car assignments
+- Multiple rating types (contract completion, ongoing performance)
+- Recommendation tracking
+- Anonymous rating option
+
+### 12. `contract_terminations` (NEW - Contract Termination Audit Trail)
+
+```sql
+CREATE TABLE contract_terminations (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  car_assignment_id UUID REFERENCES car_assignments(id) ON DELETE CASCADE NOT NULL,
+  car_id UUID REFERENCES cars(id) ON DELETE CASCADE NOT NULL,
+  driver_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  owner_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  -- Termination details
+  termination_date DATE NOT NULL,
+  termination_reason TEXT NOT NULL CHECK (termination_reason IN (
+    'contract_completed',
+    'mutual_agreement',
+    'owner_terminated',
+    'driver_terminated',
+    'violation_of_terms',
+    'other'
+  )),
+  termination_notes TEXT,
+  initiated_by UUID REFERENCES profiles(id) NOT NULL,
+  -- Contract summary
+  total_weeks_worked INTEGER,
+  total_reports_submitted INTEGER,
+  total_earnings DECIMAL(10,2),
+  final_mileage INTEGER,
+  -- Rating status
+  rating_provided BOOLEAN DEFAULT false,
+  rating_provided_at TIMESTAMP WITH TIME ZONE,
+  -- Metadata
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(car_assignment_id)
+);
+```
+
+**Purpose**: Comprehensive audit trail for contract terminations and performance summaries.
+**Features**:
+
+- Complete contract lifecycle tracking
+- Performance metrics (weeks worked, reports, earnings)
+- Rating requirement tracking
+- Termination reason categorization
+
+## Database Functions
+
+### Contract Termination Functions
+
+#### `terminate_contract(car_assignment_id, termination_reason, termination_notes, terminated_by)`
+
+Terminates a contract and creates a termination record with performance summary.
+
+**Parameters:**
+
+- `car_assignment_id`: UUID of the car assignment to terminate
+- `termination_reason`: Reason for termination (contract_completed, mutual_agreement, etc.)
+- `termination_notes`: Optional notes about the termination
+- `terminated_by`: UUID of user initiating termination (defaults to auth.uid())
+
+**Returns:** Boolean indicating success
+
+**Actions:**
+
+- Updates car assignment with termination details
+- Sets car status to 'available' and removes driver assignment
+- Creates contract termination record with performance metrics
+- Sets rating_required flag to true
+
+#### `mark_rating_provided(car_assignment_id, rating_id)`
+
+Marks a rating as provided and updates termination record.
+
+**Parameters:**
+
+- `car_assignment_id`: UUID of the car assignment
+- `rating_id`: UUID of the rating record
+
+**Returns:** Boolean indicating success
+
+#### `get_driver_average_rating(driver_id)`
+
+Calculates average ratings for a driver across all categories.
+
+**Parameters:**
+
+- `driver_id`: UUID of the driver
+
+**Returns:** Table with overall_avg, total_ratings, recommendation_rate, category_avgs
+
+#### `get_pending_ratings(owner_id)`
+
+Gets all pending ratings for an owner (terminated contracts without ratings).
+
+**Parameters:**
+
+- `owner_id`: UUID of the car owner
+
+**Returns:** Table with termination details and driver/car information
 
 ## Row Level Security (RLS) Policies
 

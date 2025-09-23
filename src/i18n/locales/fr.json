@@ -368,7 +368,7 @@
     "initialMileage": "Kilométrage initial",
     "fuelType": "Type de carburant",
     "transmission": "Transmission",
-    "manageReports": "Gérer les rapports",
+    "manageReports": "Gérer",
     "driverDetailsTip": "Complétez vos détails de conducteur pour augmenter vos chances !",
     "driverDetailsTipDescription": "Les propriétaires de véhicules préfèrent les conducteurs avec des profils complets. Ajouter votre expérience, vos informations de permis et votre localisation vous aide à être assigné à des véhicules plus rapidement.",
     "noCarsMessage": "Vous n'avez pas encore ajouté de véhicules. Ajoutez votre premier véhicule pour commencer à gérer votre flotte et gagner des revenus de location.",
@@ -378,7 +378,7 @@
     "addFirstCar": "Ajouter votre premier véhicule",
     "unassignedCarsTitle": "Assigner des conducteurs à vos véhicules",
     "unassignedCarsDescription": "Vous avez des véhicules qui ne sont pas encore assignés à des conducteurs. Voici vos options :",
-    "unassignedCarsOption1": "• Cliquez sur 'Gérer les rapports' pour rechercher et assigner des conducteurs à des véhicules spécifiques",
+    "unassignedCarsOption1": "• Cliquez sur 'Gérer' pour rechercher et assigner des conducteurs à des véhicules spécifiques",
     "unassignedCarsOption2": "• Utilisez 'Trouver des conducteurs' dans l'en-tête pour parcourir les conducteurs disponibles et voir leur expérience, préférences et détails",
     "unassignedCarsBenefit": "Une fois assignés, les conducteurs saisiront des rapports hebdomadaires et vous pourrez surveiller l'utilisation et les gains de votre véhicule - tout gratuitement !",
     "assigned": "Assigné"

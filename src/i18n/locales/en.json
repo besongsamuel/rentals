@@ -433,7 +433,7 @@
     "initialMileage": "Initial Mileage",
     "fuelType": "Fuel Type",
     "transmission": "Transmission",
-    "manageReports": "Manage Reports",
+    "manageReports": "Manage",
     "driverDetailsTip": "Complete your driver details to increase your chances!",
     "driverDetailsTipDescription": "Car owners prefer drivers with complete profiles. Adding your experience, license info, and location helps you get assigned to vehicles faster.",
     "noCarsMessage": "You haven't added any cars yet. Add your first car to start managing your fleet and earning rental income.",
@@ -443,7 +443,7 @@
     "addFirstCar": "Add Your First Car",
     "unassignedCarsTitle": "Assign Drivers to Your Cars",
     "unassignedCarsDescription": "You have cars that are not assigned to drivers yet. Here are your options:",
-    "unassignedCarsOption1": "• Click 'Manage Reports' to search for and assign drivers to specific cars",
+    "unassignedCarsOption1": "• Click 'Manage' to search for and assign drivers to specific cars",
     "unassignedCarsOption2": "• Use 'Find Drivers' in the header to browse available drivers and view their experience, preferences, and details",
     "unassignedCarsBenefit": "Once assigned, drivers will enter weekly reports and you can monitor your car's usage and earnings - all for free!",
     "assigned": "Assigned"
