@@ -21,6 +21,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import AssignedOwnerCar from "../components/AssignedOwnerCar";
+import RewardsSection from "../components/RewardsSection";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
@@ -93,6 +94,11 @@ const OwnerDashboard: React.FC = () => {
           >
             {t("dashboard.manageCars")}
           </Typography>
+        </Box>
+
+        {/* Rewards Section */}
+        <Box sx={{ mb: 4 }}>
+          <RewardsSection />
         </Box>
 
         {/* Stats Cards */}

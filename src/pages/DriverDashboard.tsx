@@ -17,6 +17,7 @@ import {
   DriverDetails,
   WeeklyReport,
 } from "../types";
+import RewardsSection from "../components/RewardsSection";
 
 const DriverDashboard: React.FC = () => {
   const { profile } = useUserContext();
@@ -112,6 +113,7 @@ const DriverDashboard: React.FC = () => {
 
   return (
     <Box sx={{ py: { xs: 3, sm: 4 } }}>
+      <RewardsSection />
       <Box sx={{ mb: 6 }}>
         <Typography
           variant="h3"
