@@ -41,21 +41,16 @@ export async function inviteUser(
   inviterId: string,
   inviteeEmail: string | null
 ) {
-  const edgeBase =
-    process.env.REACT_APP_SUPABASE_EDGE_URL ??
-    "https://mqivlclsihkvhsdrtemg.supabase.co";
-  const url = `${edgeBase}/functions/v1/create-referral`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const { data, error } = await supabase.functions.invoke("create-referral", {
     body: JSON.stringify({
       inviter_id: inviterId,
       invitee_email: inviteeEmail,
     }),
   });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`Invite failed: ${res.status} ${t}`);
+
+  if (error) {
+    throw new Error(`Invite failed: ${error.message}`);
   }
-  return res.json();
+
+  return data;
 }
