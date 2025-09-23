@@ -41,6 +41,7 @@ export interface Profile {
   phone: string | null;
   country: string | null;
   referred_by: string | null;
+  is_admin?: boolean; // default false
   created_at: string;
   updated_at: string;
 }

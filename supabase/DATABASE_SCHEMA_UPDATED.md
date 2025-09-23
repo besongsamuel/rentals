@@ -59,6 +59,7 @@ CREATE TABLE profiles (
   user_type TEXT NOT NULL CHECK (user_type IN ('driver', 'owner')),
   phone TEXT,
   referred_by TEXT,
+  is_admin BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
