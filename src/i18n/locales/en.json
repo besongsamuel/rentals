@@ -701,6 +701,19 @@
     "noInvitations": "No invitations yet.",
     "signedUp": "Signed up",
     "pending": "Pending",
-    "code": "Code"
+    "code": "Code",
+    "withdraw": "Withdraw",
+    "requestWithdrawal": "Request Withdrawal",
+    "withdrawalInstructions": "How should the transfer be made?",
+    "withdrawalInstructionsHelper": "e.g., If via MoMo, please provide your phone number and full names",
+    "withdrawalNotes": "Transfer Instructions",
+    "withdrawalNotesPlaceholder": "Please provide your phone number and full name for MoMo transfer, or bank account details for bank transfer...",
+    "submitWithdrawal": "Submit Withdrawal Request",
+    "withdrawalRequested": "Withdrawal request submitted successfully!",
+    "withdrawalError": "Failed to submit withdrawal request. Please try again.",
+    "processingWithdrawal": "Processing...",
+    "cancelWithdrawal": "Cancel",
+    "withdrawalDialogTitle": "Request Withdrawal",
+    "withdrawalDialogDescription": "You can request a withdrawal of your full balance ({{amount}} {{currency}}). Please provide transfer instructions below."
   }
 }

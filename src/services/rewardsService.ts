@@ -16,6 +16,18 @@ export type Referral = {
   accepted_at: string | null;
 };
 
+export type WithdrawalRequest = {
+  id: string;
+  user_id: string;
+  status: "pending" | "processing" | "completed" | "rejected" | "cancelled";
+  user_notes: string | null;
+  created_at: string;
+  updated_at: string;
+  processed_at: string | null;
+  rejection_reason: string | null;
+  admin_notes: string | null;
+};
+
 export async function fetchRewardAccount(): Promise<RewardAccount | null> {
   const { data, error } = await supabase
     .from("reward_accounts")
@@ -53,4 +65,34 @@ export async function inviteUser(
   }
 
   return data;
+}
+
+export async function fetchWithdrawalRequests(): Promise<WithdrawalRequest[]> {
+  const { data, error } = await supabase
+    .from("withdrawal_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createWithdrawalRequest(
+  userNotes: string
+): Promise<{ withdrawal_id: string; status: string }> {
+  const { data, error } = await supabase.rpc("create_withdrawal_request", {
+    p_user_notes: userNotes || null,
+  });
+
+  if (error) {
+    throw new Error(`Withdrawal request failed: ${error.message}`);
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error("Failed to create withdrawal request");
+  }
+
+  return {
+    withdrawal_id: data[0].withdrawal_id,
+    status: data[0].status,
+  };
 }

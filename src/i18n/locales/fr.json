@@ -635,6 +635,19 @@
     "noInvitations": "Aucune invitation pour le moment.",
     "signedUp": "Inscrit",
     "pending": "En attente",
-    "code": "Code"
+    "code": "Code",
+    "withdraw": "Retirer",
+    "requestWithdrawal": "Demander un Retrait",
+    "withdrawalInstructions": "Comment le transfert doit-il être effectué?",
+    "withdrawalInstructionsHelper": "ex., Si par MoMo, veuillez fournir votre numéro de téléphone et nom complet",
+    "withdrawalNotes": "Instructions de Transfert",
+    "withdrawalNotesPlaceholder": "Veuillez fournir votre numéro de téléphone et nom complet pour un transfert MoMo, ou détails du compte bancaire pour un virement bancaire...",
+    "submitWithdrawal": "Soumettre la Demande de Retrait",
+    "withdrawalRequested": "Demande de retrait soumise avec succès!",
+    "withdrawalError": "Échec de la soumission de la demande de retrait. Veuillez réessayer.",
+    "processingWithdrawal": "Traitement en cours...",
+    "cancelWithdrawal": "Annuler",
+    "withdrawalDialogTitle": "Demander un Retrait",
+    "withdrawalDialogDescription": "Vous pouvez demander un retrait de votre solde complet ({{amount}} {{currency}}). Veuillez fournir les instructions de transfert ci-dessous."
   }
 }

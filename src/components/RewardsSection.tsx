@@ -1,3 +1,4 @@
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -6,6 +7,11 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Collapse from "@mui/material/Collapse";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
@@ -19,6 +25,7 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import {
+  createWithdrawalRequest,
   fetchReferrals,
   fetchRewardAccount,
   inviteUser,
@@ -49,6 +56,9 @@ export const RewardsSection: React.FC<Props> = () => {
   const [creating, setCreating] = useState(false);
   const [lastReferralCode, setLastReferralCode] = useState<string | null>(null);
   const [invitationsExpanded, setInvitationsExpanded] = useState(true);
+  const [withdrawalDialogOpen, setWithdrawalDialogOpen] = useState(false);
+  const [withdrawalNotes, setWithdrawalNotes] = useState("");
+  const [processingWithdrawal, setProcessingWithdrawal] = useState(false);
 
   React.useEffect(() => {
     let active = true;
@@ -109,6 +119,35 @@ export const RewardsSection: React.FC<Props> = () => {
     navigator.clipboard.writeText(link);
   }
 
+  async function handleWithdrawalRequest() {
+    if (!withdrawalNotes.trim()) return;
+
+    setProcessingWithdrawal(true);
+    try {
+      await createWithdrawalRequest(withdrawalNotes.trim());
+      setWithdrawalDialogOpen(false);
+      setWithdrawalNotes("");
+      // Refresh account data to show updated balance
+      const acc = await fetchRewardAccount();
+      if (acc) {
+        setAccount({
+          balance_cents: acc.balance_cents,
+          currency: acc.currency,
+        });
+      }
+    } catch (error) {
+      console.error("Withdrawal request failed:", error);
+      // Could show error toast here
+    } finally {
+      setProcessingWithdrawal(false);
+    }
+  }
+
+  function handleWithdrawalDialogClose() {
+    setWithdrawalDialogOpen(false);
+    setWithdrawalNotes("");
+  }
+
   return (
     <Grid container spacing={2} sx={{ width: "100%", mb: 2 }}>
       <Grid size={{ xs: 12 }}>
@@ -148,11 +187,25 @@ export const RewardsSection: React.FC<Props> = () => {
                     <Typography
                       variant="caption"
                       color={canWithdraw ? "success.main" : "text.secondary"}
+                      sx={{ mb: 1, display: "block" }}
                     >
                       {canWithdraw
                         ? t("rewards.canWithdraw")
                         : t("rewards.withdrawalsAvailable")}
                     </Typography>
+                    {canWithdraw && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        startIcon={<AccountBalanceWalletIcon />}
+                        onClick={() => setWithdrawalDialogOpen(true)}
+                        disabled={loading}
+                        sx={{ width: "100%" }}
+                      >
+                        {t("rewards.withdraw")}
+                      </Button>
+                    )}
                   </Card>
                 )}
               </Grid>
@@ -303,6 +356,62 @@ export const RewardsSection: React.FC<Props> = () => {
           </CardContent>
         </Card>
       </Grid>
+
+      {/* Withdrawal Request Dialog */}
+      <Dialog
+        open={withdrawalDialogOpen}
+        onClose={handleWithdrawalDialogClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>{t("rewards.withdrawalDialogTitle")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            {t("rewards.withdrawalDialogDescription", {
+              amount: balance,
+              currency: account?.currency ?? "CAD",
+            })}
+          </DialogContentText>
+
+          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+            {t("rewards.withdrawalInstructions")}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {t("rewards.withdrawalInstructionsHelper")}
+          </Typography>
+
+          <TextField
+            autoFocus
+            margin="dense"
+            label={t("rewards.withdrawalNotes")}
+            placeholder={t("rewards.withdrawalNotesPlaceholder")}
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            value={withdrawalNotes}
+            onChange={(e) => setWithdrawalNotes(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleWithdrawalDialogClose}
+            disabled={processingWithdrawal}
+          >
+            {t("rewards.cancelWithdrawal")}
+          </Button>
+          <Button
+            onClick={handleWithdrawalRequest}
+            variant="contained"
+            disabled={!withdrawalNotes.trim() || processingWithdrawal}
+            startIcon={<AccountBalanceWalletIcon />}
+          >
+            {processingWithdrawal
+              ? t("rewards.processingWithdrawal")
+              : t("rewards.submitWithdrawal")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };
