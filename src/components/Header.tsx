@@ -1,5 +1,6 @@
 import {
   AccountCircle,
+  AdminPanelSettings,
   Close,
   Dashboard,
   DirectionsCar,
@@ -83,6 +84,15 @@ const Header: React.FC = () => {
       { label: "Profile", path: "/profile", icon: <Person /> },
       { label: t("howItWorks.faq"), path: "/how-it-works", icon: <Help /> },
     ];
+
+    // Add admin link if user is admin
+    if (profile.is_admin) {
+      baseItems.push({
+        label: t("admin.admin"),
+        path: "/admin",
+        icon: <AdminPanelSettings />,
+      });
+    }
 
     if (profile.user_type === "owner") {
       return [
