@@ -202,6 +202,11 @@
     "failedToCreateCar": "Échec de la création du véhicule. Veuillez réessayer."
   },
   "reports": {
+    "entryMode": "Mode de saisie",
+    "weekly": "Hebdomadaire",
+    "daily": "Quotidien",
+    "dailyDate": "Date",
+    "dailyDateHelper": "Sélectionnez une date pour créer un rapport quotidien",
     "title": "Rapports hebdomadaires",
     "addReport": "Ajouter un nouveau rapport",
     "weekStart": "Date de début de semaine",

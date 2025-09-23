@@ -43,6 +43,10 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const { t } = useTranslation();
 
+  // Entry mode: weekly or daily
+  const [entryMode, setEntryMode] = useState<"weekly" | "daily">("weekly");
+  const [dailyDate, setDailyDate] = useState<string>("");
+
   // Helper function to get the start of the week (Sunday)
   const getWeekStart = useCallback((date: Date): Date => {
     const d = new Date(date);
@@ -130,6 +134,11 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           taxi_income: (editingReport as any).taxi_income || 0,
           currency: (editingReport as any).currency || "XAF",
         });
+        // Determine entry mode from existing dates
+        const isDaily =
+          editingReport.week_start_date === editingReport.week_end_date;
+        setEntryMode(isDaily ? "daily" : "weekly");
+        setDailyDate(editingReport.week_start_date);
       } else {
         // Reset form for add mode with current week as default
         const currentWeek = getCurrentWeek();
@@ -147,10 +156,19 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           taxi_income: 0,
           currency: "XAF",
         });
+        setEntryMode("weekly");
+        setDailyDate(formatDateForInput(new Date()));
       }
       setError("");
     }
-  }, [open, mode, editingReport, assignedCars, getCurrentWeek]);
+  }, [
+    open,
+    mode,
+    editingReport,
+    assignedCars,
+    getCurrentWeek,
+    formatDateForInput,
+  ]);
 
   const handleInputChange =
     (field: string) =>
@@ -215,7 +233,16 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     }
 
     try {
-      onSubmit(formData);
+      // In daily mode, ensure start and end dates are the selected daily date
+      const payload =
+        entryMode === "daily"
+          ? {
+              ...formData,
+              week_start_date: dailyDate,
+              week_end_date: dailyDate,
+            }
+          : formData;
+      onSubmit(payload);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Failed to save report"
@@ -236,6 +263,36 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
         ...prev,
         week_start_date: newWeek.start,
         week_end_date: newWeek.end,
+      }));
+    }
+  };
+
+  // Handle switch between weekly and daily modes
+  const handleEntryModeChange = (
+    e: React.ChangeEvent<{ value: unknown }> | any
+  ) => {
+    const value = (e.target?.value as "weekly" | "daily") || "weekly";
+    setEntryMode(value);
+    if (value === "daily") {
+      // set both dates to today initially
+      const today = formatDateForInput(new Date());
+      setDailyDate(today);
+      setFormData((prev) => ({
+        ...prev,
+        week_start_date: today,
+        week_end_date: today,
+      }));
+    } else {
+      // revert to the current week window based on existing start date or today
+      const base = formData.week_start_date
+        ? new Date(formData.week_start_date)
+        : new Date();
+      const start = formatDateForInput(getWeekStart(base));
+      const end = formatDateForInput(getWeekEnd(base));
+      setFormData((prev) => ({
+        ...prev,
+        week_start_date: start,
+        week_end_date: end,
       }));
     }
   };
@@ -276,6 +333,20 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           {error && <ErrorAlert message={error} />}
 
           <Grid container spacing={{ xs: 2, sm: 3 }}>
+            {/* Entry Mode Selector */}
+            <Grid size={12}>
+              <FormControl fullWidth>
+                <InputLabel>{t("reports.entryMode")}</InputLabel>
+                <Select
+                  value={entryMode}
+                  label={t("reports.entryMode")}
+                  onChange={handleEntryModeChange}
+                >
+                  <MenuItem value="weekly">{t("reports.weekly")}</MenuItem>
+                  <MenuItem value="daily">{t("reports.daily")}</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
             {assignedCars.length > 1 && (
               <Grid size={12}>
                 <FormControl fullWidth required>
@@ -300,65 +371,90 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               </Grid>
             )}
 
-            <Grid size={12}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
-                  alignItems: { xs: "stretch", sm: "center" },
-                  gap: 2,
-                  mb: 3,
-                  p: 2,
-                  background: "rgba(37, 99, 235, 0.02)",
-                  borderRadius: 1,
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    flexGrow: 1,
-                    color: "text.primary",
-                    fontWeight: 600,
-                    textAlign: { xs: "center", sm: "left" },
-                  }}
-                >
-                  {t("reports.weekPeriod")}
-                </Typography>
+            {entryMode === "weekly" && (
+              <Grid size={12}>
                 <Box
                   sx={{
                     display: "flex",
-                    gap: 1,
-                    justifyContent: { xs: "center", sm: "flex-end" },
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "stretch", sm: "center" },
+                    gap: 2,
+                    mb: 3,
+                    p: 2,
+                    background: "rgba(37, 99, 235, 0.02)",
+                    borderRadius: 1,
+                    border: "1px solid #e2e8f0",
                   }}
                 >
-                  <Button
-                    onClick={() => handleWeekNavigation("prev")}
-                    size="small"
-                    startIcon={<ChevronLeft />}
-                    variant="outlined"
+                  <Typography
+                    variant="h6"
                     sx={{
-                      minWidth: "auto",
-                      flex: { xs: 1, sm: "none" },
+                      flexGrow: 1,
+                      color: "text.primary",
+                      fontWeight: 600,
+                      textAlign: { xs: "center", sm: "left" },
                     }}
                   >
-                    {t("reports.previousWeek")}
-                  </Button>
-                  <Button
-                    onClick={() => handleWeekNavigation("next")}
-                    size="small"
-                    endIcon={<ChevronRight />}
-                    variant="outlined"
+                    {t("reports.weekPeriod")}
+                  </Typography>
+                  <Box
                     sx={{
-                      minWidth: "auto",
-                      flex: { xs: 1, sm: "none" },
+                      display: "flex",
+                      gap: 1,
+                      justifyContent: { xs: "center", sm: "flex-end" },
                     }}
                   >
-                    {t("reports.nextWeek")}
-                  </Button>
+                    <Button
+                      onClick={() => handleWeekNavigation("prev")}
+                      size="small"
+                      startIcon={<ChevronLeft />}
+                      variant="outlined"
+                      sx={{
+                        minWidth: "auto",
+                        flex: { xs: 1, sm: "none" },
+                      }}
+                    >
+                      {t("reports.previousWeek")}
+                    </Button>
+                    <Button
+                      onClick={() => handleWeekNavigation("next")}
+                      size="small"
+                      endIcon={<ChevronRight />}
+                      variant="outlined"
+                      sx={{
+                        minWidth: "auto",
+                        flex: { xs: 1, sm: "none" },
+                      }}
+                    >
+                      {t("reports.nextWeek")}
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            </Grid>
+              </Grid>
+            )}
+
+            {entryMode === "daily" && (
+              <Grid size={12}>
+                <TextField
+                  fullWidth
+                  label={t("reports.dailyDate")}
+                  type="date"
+                  value={dailyDate}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDailyDate(val);
+                    setFormData((prev) => ({
+                      ...prev,
+                      week_start_date: val,
+                      week_end_date: val,
+                    }));
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                  helperText={t("reports.dailyDateHelper")}
+                  required
+                />
+              </Grid>
+            )}
 
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField

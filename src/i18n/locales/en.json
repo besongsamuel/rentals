@@ -269,6 +269,11 @@
     "failedToCreateCar": "Failed to create car. Please try again."
   },
   "reports": {
+    "entryMode": "Entry Mode",
+    "weekly": "Weekly",
+    "daily": "Daily",
+    "dailyDate": "Date",
+    "dailyDateHelper": "Select a date to create a daily report",
     "title": "Weekly Reports",
     "addReport": "Add New Report",
     "weekStart": "Week Start Date",
