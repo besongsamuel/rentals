@@ -2,9 +2,11 @@ import {
   Add,
   Assignment,
   DirectionsCar,
+  Info,
   TrendingUp,
 } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -246,6 +248,39 @@ const OwnerDashboard: React.FC = () => {
           </Card>
         </Box>
 
+        {/* Unassigned Cars Alert */}
+        {cars.length > 0 && assignedCars < totalCars && (
+          <Alert
+            severity="info"
+            icon={<Info />}
+            sx={{
+              mb: 4,
+              borderRadius: 2,
+              backgroundColor: "rgba(0, 122, 255, 0.05)",
+              border: "0.5px solid rgba(0, 122, 255, 0.2)",
+              "& .MuiAlert-message": {
+                width: "100%",
+              },
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+              {t("dashboard.unassignedCarsTitle")}
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              {t("dashboard.unassignedCarsDescription")}
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              {t("dashboard.unassignedCarsOption1")}
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              {t("dashboard.unassignedCarsOption2")}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t("dashboard.unassignedCarsBenefit")}
+            </Typography>
+          </Alert>
+        )}
+
         {/* Cars List */}
         <Box sx={{ mb: 4 }}>
           <Typography
@@ -261,35 +296,67 @@ const OwnerDashboard: React.FC = () => {
           </Typography>
 
           {cars.length === 0 ? (
-            <Box sx={{ textAlign: "center", py: 8 }}>
-              <DirectionsCar sx={{ fontSize: 64, color: "#86868B", mb: 2 }} />
-              <Typography
-                variant="h6"
+            <Box>
+              {/* Call-to-Action Alert */}
+              <Alert
+                severity="info"
+                icon={<Info />}
                 sx={{
-                  mb: 2,
-                  fontWeight: 400,
-                  color: "#1D1D1F",
-                }}
-              >
-                {t("cars.noCars")}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                {t("dashboard.noCarsMessage")}
-              </Typography>
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                component={Link}
-                to="/cars/new"
-                sx={{
-                  backgroundColor: "#007AFF",
-                  "&:hover": {
-                    backgroundColor: "#0056CC",
+                  mb: 4,
+                  borderRadius: 2,
+                  backgroundColor: "rgba(0, 122, 255, 0.05)",
+                  border: "0.5px solid rgba(0, 122, 255, 0.2)",
+                  "& .MuiAlert-message": {
+                    width: "100%",
                   },
                 }}
               >
-                {t("cars.addCar")}
-              </Button>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+                  {t("dashboard.noCarsTitle")}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  {t("dashboard.noCarsDescription")}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
+                  {t("dashboard.noCarsInstructions")}
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  component={Link}
+                  to="/cars/new"
+                  sx={{
+                    backgroundColor: "#007AFF",
+                    "&:hover": {
+                      backgroundColor: "#0056CC",
+                    },
+                  }}
+                >
+                  {t("dashboard.addFirstCar")}
+                </Button>
+              </Alert>
+
+              {/* Empty State Visual */}
+              <Box sx={{ textAlign: "center", py: 6 }}>
+                <DirectionsCar sx={{ fontSize: 64, color: "#86868B", mb: 2 }} />
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 2,
+                    fontWeight: 400,
+                    color: "#1D1D1F",
+                  }}
+                >
+                  {t("cars.noCars")}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {t("dashboard.noCarsMessage")}
+                </Typography>
+              </Box>
             </Box>
           ) : (
             <Grid container spacing={3}>

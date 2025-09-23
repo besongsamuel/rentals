@@ -1,5 +1,5 @@
 import { Add } from "@mui/icons-material";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BasicInformation from "../components/BasicInformation";
@@ -176,6 +176,32 @@ const DriverDashboard: React.FC = () => {
             </Grid>
           </Paper>
         </Grid>
+
+        {/* No Assigned Cars Alert */}
+        {assignedCars.length === 0 && (
+          <Grid size={12}>
+            <Alert
+              severity="info"
+              sx={{
+                mb: 3,
+                borderRadius: 2,
+                "& .MuiAlert-message": {
+                  width: "100%",
+                },
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                {t("dashboard.noAssignedCarsTitle")}
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                {t("dashboard.noAssignedCarsMessage")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t("dashboard.noAssignedCarsInstructions")}
+              </Typography>
+            </Alert>
+          </Grid>
+        )}
 
         {/* Weekly Reports Section */}
         <Grid size={12}>
