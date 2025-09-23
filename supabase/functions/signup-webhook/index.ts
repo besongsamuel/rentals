@@ -8,14 +8,24 @@ type SignupWebhookBody = {
   referral_code?: string; // if present, use it directly
 };
 
+const corsHeaders: Record<string, string> = {
+  "Access-Control-Allow-Origin": Deno.env.get("CORS_ORIGIN") ?? "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 function jsonResponse(status: number, body: any) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...corsHeaders },
   });
 }
 
 serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
   if (req.method !== "POST") {
     return jsonResponse(405, { error: "Method Not Allowed" });
   }
