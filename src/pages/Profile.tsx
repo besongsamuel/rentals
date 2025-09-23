@@ -156,7 +156,8 @@ const ProfilePage: React.FC = () => {
           license_expiry_date: existingDetails.license_expiry_date || "",
           license_class: existingDetails.license_class || "",
           license_issuing_authority:
-            existingDetails.license_issuing_authority || t("profile.issuingAuthorityDefault"),
+            existingDetails.license_issuing_authority ||
+            t("profile.issuingAuthorityDefault"),
           years_of_experience: existingDetails.years_of_experience || 0,
           preferred_transmission:
             existingDetails.preferred_transmission || "both",
