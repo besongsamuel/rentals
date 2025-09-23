@@ -119,6 +119,29 @@ serve(async (req) => {
     return jsonResponse(500, { error: insertErr.message });
   }
 
+  // Send email invitation if email is provided
+  if (inviteeEmail) {
+    const { data: inviteData, error: inviteError } =
+      await supabase.auth.admin.inviteUserByEmail(inviteeEmail, {
+        data: {
+          referral_code: code,
+          inviter_id: inviterId,
+          referral_id: referral.id,
+        },
+        redirectTo: `${
+          Deno.env.get("SITE_URL") || "http://localhost:3000"
+        }/signup?referral=${code}`,
+      });
+
+    if (inviteError) {
+      console.error("Failed to send email invitation:", inviteError);
+      // Don't fail the entire operation if email sending fails
+      // The referral is still created and can be shared manually
+    } else {
+      console.log("Email invitation sent successfully to:", inviteeEmail);
+    }
+  }
+
   // Optional: record a zero-amount ledger entry for observability
   await supabase.rpc("apply_reward_entry", {
     p_user_id: inviterId,
