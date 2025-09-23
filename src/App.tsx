@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
+import AssignedCars from "./pages/AssignedCars";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
 import Dashboard from "./pages/Dashboard";
@@ -68,6 +69,9 @@ function DocumentTitle() {
         break;
       case "/data-deletion":
         pageTitle = `${baseTitle} - Data Deletion`;
+        break;
+      case "/assigned-cars":
+        pageTitle = `${baseTitle} - Assigned Cars`;
         break;
       case "/cars/new":
         pageTitle = `${baseTitle} - Add New Car`;
@@ -157,6 +161,10 @@ function AppContent() {
                           <Routes>
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/profile" element={<ProfilePage />} />
+                            <Route
+                              path="/assigned-cars"
+                              element={<AssignedCars />}
+                            />
                             <Route
                               path="/how-it-works"
                               element={<HowItWorks />}

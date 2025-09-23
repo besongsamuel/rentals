@@ -2,6 +2,7 @@ import {
   AccountCircle,
   Close,
   Dashboard,
+  DirectionsCar,
   Help,
   Menu as MenuIcon,
   MoreVert,
@@ -87,6 +88,17 @@ const Header: React.FC = () => {
       return [
         ...baseItems,
         { label: "Find Drivers", path: "/drivers", icon: <Person /> },
+      ];
+    }
+
+    if (profile.user_type === "driver") {
+      return [
+        ...baseItems,
+        {
+          label: "Assigned Cars",
+          path: "/assigned-cars",
+          icon: <DirectionsCar />,
+        },
       ];
     }
 
