@@ -1,8 +1,11 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SendIcon from "@mui/icons-material/Send";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Collapse from "@mui/material/Collapse";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
@@ -13,6 +16,7 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import {
   fetchReferrals,
@@ -25,6 +29,7 @@ type Props = {
 };
 
 export const RewardsSection: React.FC<Props> = () => {
+  const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState<{
@@ -43,6 +48,7 @@ export const RewardsSection: React.FC<Props> = () => {
   const [inviteEmail, setInviteEmail] = useState("");
   const [creating, setCreating] = useState(false);
   const [lastReferralCode, setLastReferralCode] = useState<string | null>(null);
+  const [invitationsExpanded, setInvitationsExpanded] = useState(true);
 
   React.useEffect(() => {
     let active = true;
@@ -109,10 +115,15 @@ export const RewardsSection: React.FC<Props> = () => {
         <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
           <CardContent>
             <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-              Invite friends, drivers and owners and earn rewards
+              {t("rewards.title")}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Limited time offer: Invite friends and earn rewards.
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              <span style={{ color: "#d32f2f", fontWeight: 600 }}>
+                {t("rewards.subtitle").split(":")[0]}:
+              </span>{" "}
+              <span style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                {t("rewards.subtitle").split(":").slice(1).join(":").trim()}
+              </span>
             </Typography>
 
             <Grid container spacing={2} sx={{ width: "100%" }}>
@@ -129,7 +140,7 @@ export const RewardsSection: React.FC<Props> = () => {
                     }}
                   >
                     <Typography variant="subtitle2" color="text.secondary">
-                      Current Balance
+                      {t("rewards.currentBalance")}
                     </Typography>
                     <Typography variant="h5" sx={{ fontWeight: 800 }}>
                       {account?.currency ?? "CAD"} {balance}
@@ -139,8 +150,8 @@ export const RewardsSection: React.FC<Props> = () => {
                       color={canWithdraw ? "success.main" : "text.secondary"}
                     >
                       {canWithdraw
-                        ? "You can request a withdrawal"
-                        : "Withdrawals available at 20 CAD+"}
+                        ? t("rewards.canWithdraw")
+                        : t("rewards.withdrawalsAvailable")}
                     </Typography>
                   </Card>
                 )}
@@ -153,16 +164,16 @@ export const RewardsSection: React.FC<Props> = () => {
                     color="text.secondary"
                     sx={{ mb: 1 }}
                   >
-                    How it works
+                    {t("rewards.howItWorks")}
                   </Typography>
                   <Typography variant="body2" sx={{ mb: 1 }}>
-                    - Invite a user with the button below.
+                    - {t("rewards.step1")}
                   </Typography>
                   <Typography variant="body2" sx={{ mb: 1 }}>
-                    - When they sign up, you’re credited 2 CAD.
+                    - {t("rewards.step2")}
                   </Typography>
                   <Typography variant="body2" sx={{ mb: 2 }}>
-                    - Withdraw once your balance is over 20 CAD.
+                    - {t("rewards.step3")}
                   </Typography>
 
                   <Grid container spacing={1} sx={{ width: "100%" }}>
@@ -171,7 +182,7 @@ export const RewardsSection: React.FC<Props> = () => {
                         fullWidth
                         size="small"
                         type="email"
-                        label="Invite by email (optional)"
+                        label={t("rewards.inviteByEmail")}
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
                       />
@@ -186,7 +197,7 @@ export const RewardsSection: React.FC<Props> = () => {
                         disabled={creating || authLoading}
                         sx={{ height: 40 }}
                       >
-                        Invite User
+                        {t("rewards.inviteUser")}
                       </Button>
                     </Grid>
                   </Grid>
@@ -195,7 +206,7 @@ export const RewardsSection: React.FC<Props> = () => {
                     <Grid container spacing={1} sx={{ mt: 1 }}>
                       <Grid size={{ xs: 12 }}>
                         <Typography variant="caption">
-                          Share this link with your invitee
+                          {t("rewards.shareThisLink")}
                         </Typography>
                       </Grid>
                       <Grid
@@ -210,7 +221,7 @@ export const RewardsSection: React.FC<Props> = () => {
                             window.location.origin
                           }/signup?ref=${encodeURIComponent(lastReferralCode)}`}
                         </Typography>
-                        <Tooltip title="Copy link">
+                        <Tooltip title={t("rewards.copyLink")}>
                           <IconButton
                             onClick={copyReferral}
                             size="small"
@@ -228,41 +239,63 @@ export const RewardsSection: React.FC<Props> = () => {
               <Grid size={{ xs: 12 }}>
                 <Card sx={{ borderRadius: 2 }}>
                   <CardContent>
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        marginBottom: invitationsExpanded ? 8 : 0,
+                      }}
+                      onClick={() =>
+                        setInvitationsExpanded(!invitationsExpanded)
+                      }
                     >
-                      Your Invitations
-                    </Typography>
-                    {loading ? (
-                      <>
-                        <Skeleton height={32} />
-                        <Skeleton height={32} />
-                        <Skeleton height={32} />
-                      </>
-                    ) : referrals.length === 0 ? (
-                      <Typography variant="body2" color="text.secondary">
-                        No invitations yet.
+                      <Typography
+                        variant="subtitle2"
+                        color="text.secondary"
+                        sx={{ flexGrow: 1 }}
+                      >
+                        {t("rewards.yourInvitations")} ({referrals.length})
                       </Typography>
-                    ) : (
-                      <List dense>
-                        {referrals.map((r) => (
-                          <ListItem key={r.id} divider>
-                            <ListItemText
-                              primary={
-                                r.invitee_email || `Code: ${r.referral_code}`
-                              }
-                              secondary={
-                                r.status === "accepted"
-                                  ? "Signed up"
-                                  : "Pending"
-                              }
-                            />
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
+                      <IconButton size="small">
+                        {invitationsExpanded ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )}
+                      </IconButton>
+                    </div>
+                    <Collapse in={invitationsExpanded}>
+                      {loading ? (
+                        <>
+                          <Skeleton height={32} />
+                          <Skeleton height={32} />
+                          <Skeleton height={32} />
+                        </>
+                      ) : referrals.length === 0 ? (
+                        <Typography variant="body2" color="text.secondary">
+                          {t("rewards.noInvitations")}
+                        </Typography>
+                      ) : (
+                        <List dense>
+                          {referrals.map((r) => (
+                            <ListItem key={r.id} divider>
+                              <ListItemText
+                                primary={
+                                  r.invitee_email ||
+                                  `${t("rewards.code")}: ${r.referral_code}`
+                                }
+                                secondary={
+                                  r.status === "accepted"
+                                    ? t("rewards.signedUp")
+                                    : t("rewards.pending")
+                                }
+                              />
+                            </ListItem>
+                          ))}
+                        </List>
+                      )}
+                    </Collapse>
                   </CardContent>
                 </Card>
               </Grid>

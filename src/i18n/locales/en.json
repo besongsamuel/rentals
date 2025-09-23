@@ -682,5 +682,25 @@
     "contactInfo": "Email: cto@aftermathtechnologies.com",
     "sendEmail": "Send Email Request",
     "backToHome": "Back to Home"
+  },
+  "rewards": {
+    "title": "Invite friends, drivers and owners and earn rewards",
+    "subtitle": "Limited time offer: Invite friends and earn rewards.",
+    "currentBalance": "Current Balance",
+    "canWithdraw": "You can request a withdrawal",
+    "withdrawalsAvailable": "Withdrawals available at 20 CAD+",
+    "howItWorks": "How it works",
+    "step1": "Invite a user with the button below.",
+    "step2": "When they sign up, you're credited 2 CAD.",
+    "step3": "Withdraw once your balance is over 20 CAD.",
+    "inviteByEmail": "Invite by email (optional)",
+    "inviteUser": "Invite User",
+    "shareThisLink": "Share this link with your invitee",
+    "copyLink": "Copy link",
+    "yourInvitations": "Your Invitations",
+    "noInvitations": "No invitations yet.",
+    "signedUp": "Signed up",
+    "pending": "Pending",
+    "code": "Code"
   }
 }

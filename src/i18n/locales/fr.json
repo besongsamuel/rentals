@@ -616,5 +616,25 @@
     "contactInfo": "Email: cto@aftermathtechnologies.com",
     "sendEmail": "Envoyer la Demande par Email",
     "backToHome": "Retour à l'Accueil"
+  },
+  "rewards": {
+    "title": "Invitez des amis, des conducteurs et des propriétaires et gagnez des récompenses",
+    "subtitle": "Offre limitée dans le temps : Invitez des amis et gagnez des récompenses.",
+    "currentBalance": "Solde Actuel",
+    "canWithdraw": "Vous pouvez demander un retrait",
+    "withdrawalsAvailable": "Retraits disponibles à partir de 20 CAD+",
+    "howItWorks": "Comment ça marche",
+    "step1": "Invitez un utilisateur avec le bouton ci-dessous.",
+    "step2": "Quand ils s'inscrivent, vous êtes crédité de 2 CAD.",
+    "step3": "Retirez une fois que votre solde dépasse 20 CAD.",
+    "inviteByEmail": "Inviter par email (optionnel)",
+    "inviteUser": "Inviter un Utilisateur",
+    "shareThisLink": "Partagez ce lien avec votre invité",
+    "copyLink": "Copier le lien",
+    "yourInvitations": "Vos Invitations",
+    "noInvitations": "Aucune invitation pour le moment.",
+    "signedUp": "Inscrit",
+    "pending": "En attente",
+    "code": "Code"
   }
 }
