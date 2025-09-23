@@ -565,7 +565,18 @@
     "carOwner": "Car Owner",
     "noAdditionalOwners": "No additional owners",
     "noCarOwners": "No car owners",
-    "remove": "Remove"
+    "remove": "Remove",
+    "terminateContract": "Terminate Contract",
+    "completeContract": "Complete Contract",
+    "terminateDialogTitle": "Terminate or Complete Contract",
+    "terminateDialogDescription": "End the current contract, unassign the driver, and provide a rating.",
+    "terminationReason": "Reason for termination",
+    "terminationNotes": "Notes (optional)",
+    "ratingLabel": "Overall Rating",
+    "wouldRecommend": "Would recommend this driver",
+    "anonymousRating": "Submit rating anonymously",
+    "submitTermination": "End Contract",
+    "cancel": "Cancel"
   },
   "statistics": {
     "title": "Car Statistics",

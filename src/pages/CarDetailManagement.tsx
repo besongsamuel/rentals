@@ -15,9 +15,13 @@ import {
   FormControl,
   Grid,
   IconButton,
+  InputLabel,
   MenuItem,
   Paper,
+  Rating,
   Select,
+  Switch,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -31,6 +35,10 @@ import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
+import {
+  assignmentService,
+  TerminationReason,
+} from "../services/assignmentService";
 import { carService } from "../services/carService";
 import { weeklyReportService } from "../services/weeklyReportService";
 import { Car, WeeklyReport } from "../types";
@@ -61,6 +69,14 @@ const CarDetailManagement: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
     null
   );
+  const [terminateOpen, setTerminateOpen] = useState(false);
+  const [terminationReason, setTerminationReason] =
+    useState<TerminationReason>("contract_completed");
+  const [terminationNotes, setTerminationNotes] = useState("");
+  const [rating, setRating] = useState<number>(5);
+  const [wouldRecommend, setWouldRecommend] = useState<boolean>(true);
+  const [anonymousRating, setAnonymousRating] = useState<boolean>(false);
+  const [terminating, setTerminating] = useState<boolean>(false);
 
   const loadData = useCallback(async () => {
     if (!carId) return;
@@ -284,49 +300,10 @@ const CarDetailManagement: React.FC = () => {
         {/* Header */}
         <Grid size={12}>
           <Paper elevation={3} sx={{ p: 4 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 2,
-              }}
-            >
+            <Box sx={{ mb: 2 }}>
               <Typography variant="h4">
                 {car.year} {car.make} {car.model} - Management
               </Typography>
-
-              {/* Action Buttons */}
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <Tooltip title={t("carManagement.backToDashboard")}>
-                  <IconButton
-                    onClick={() => navigate("/")}
-                    sx={{
-                      bgcolor: "primary.main",
-                      color: "white",
-                      "&:hover": { bgcolor: "primary.dark" },
-                      boxShadow: 2,
-                    }}
-                  >
-                    <ArrowBack />
-                  </IconButton>
-                </Tooltip>
-                {profile?.user_type === "owner" && (
-                  <Tooltip title={t("carManagement.editCar")}>
-                    <IconButton
-                      onClick={() => navigate(`/cars/${carId}/edit`)}
-                      sx={{
-                        bgcolor: "secondary.main",
-                        color: "white",
-                        "&:hover": { bgcolor: "secondary.dark" },
-                        boxShadow: 2,
-                      }}
-                    >
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Box>
             </Box>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
               <Typography variant="body2" color="text.secondary">
@@ -359,6 +336,56 @@ const CarDetailManagement: React.FC = () => {
                 color={getStatusColor(car.status) as any}
                 size="small"
               />
+            </Box>
+
+            {/* Action Buttons moved to bottom of card */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                gap: 1,
+                mt: 2,
+              }}
+            >
+              <Tooltip title={t("carManagement.backToDashboard")}>
+                <IconButton
+                  onClick={() => navigate("/")}
+                  sx={{
+                    bgcolor: "primary.main",
+                    color: "white",
+                    "&:hover": { bgcolor: "primary.dark" },
+                    boxShadow: 2,
+                  }}
+                >
+                  <ArrowBack />
+                </IconButton>
+              </Tooltip>
+              {profile?.user_type === "owner" && (
+                <Tooltip title={t("carManagement.editCar")}>
+                  <IconButton
+                    onClick={() => navigate(`/cars/${carId}/edit`)}
+                    sx={{
+                      bgcolor: "secondary.main",
+                      color: "white",
+                      "&:hover": { bgcolor: "secondary.dark" },
+                      boxShadow: 2,
+                    }}
+                  >
+                    <Edit />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {profile?.user_type === "owner" && car?.driver_id && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() => setTerminateOpen(true)}
+                >
+                  {t("carManagement.terminateContract")}
+                </Button>
+              )}
             </Box>
           </Paper>
         </Grid>
@@ -555,6 +582,157 @@ const CarDetailManagement: React.FC = () => {
         onClose={handleCloseEarningsDialog}
         weeklyReport={selectedReport}
       />
+
+      {/* Terminate/Complete Contract Dialog */}
+      <Dialog
+        open={terminateOpen}
+        onClose={() => setTerminateOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>{t("carManagement.terminateDialogTitle")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            {t("carManagement.terminateDialogDescription")}
+          </DialogContentText>
+
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <FormControl fullWidth>
+                <InputLabel id="termination-reason-label">
+                  {t("carManagement.terminationReason")}
+                </InputLabel>
+                <Select
+                  labelId="termination-reason-label"
+                  value={terminationReason}
+                  label={t("carManagement.terminationReason")}
+                  onChange={(e) =>
+                    setTerminationReason(e.target.value as TerminationReason)
+                  }
+                >
+                  <MenuItem value="contract_completed">
+                    Contract completed
+                  </MenuItem>
+                  <MenuItem value="mutual_agreement">Mutual agreement</MenuItem>
+                  <MenuItem value="owner_terminated">Owner terminated</MenuItem>
+                  <MenuItem value="driver_terminated">
+                    Driver terminated
+                  </MenuItem>
+                  <MenuItem value="violation_of_terms">
+                    Violation of terms
+                  </MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid size={12}>
+              <TextField
+                fullWidth
+                label={t("carManagement.terminationNotes")}
+                value={terminationNotes}
+                onChange={(e) => setTerminationNotes(e.target.value)}
+                multiline
+                minRows={3}
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                {t("carManagement.ratingLabel")} ({rating})
+              </Typography>
+              <Rating
+                name="driver-rating"
+                value={rating}
+                onChange={(_, newValue) => setRating((newValue || 0) as number)}
+                size="large"
+              />
+            </Grid>
+
+            <Grid size={12}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Switch
+                  checked={wouldRecommend}
+                  onChange={(e) => setWouldRecommend(e.target.checked)}
+                />
+                <Typography>{t("carManagement.wouldRecommend")}</Typography>
+              </Box>
+            </Grid>
+
+            <Grid size={12}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Switch
+                  checked={anonymousRating}
+                  onChange={(e) => setAnonymousRating(e.target.checked)}
+                />
+                <Typography>{t("carManagement.anonymousRating")}</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTerminateOpen(false)}>
+            {t("carManagement.cancel")}
+          </Button>
+          <Button
+            variant="contained"
+            disabled={terminating}
+            onClick={async () => {
+              try {
+                if (!profile?.id || !car?.id || !car.driver_id) return;
+                setTerminating(true);
+                const assignment =
+                  await assignmentService.getActiveAssignmentByCar(car.id);
+                if (!assignment?.id)
+                  throw new Error("Active assignment not found");
+
+                // End contract (unassigns driver and creates termination)
+                await assignmentService.terminateContract({
+                  car_assignment_id: assignment.id,
+                  termination_reason: terminationReason,
+                  termination_notes: terminationNotes || undefined,
+                });
+
+                // Create rating
+                const ratingRes = await assignmentService.createDriverRating({
+                  driver_id: car.driver_id,
+                  rater_id: profile.id,
+                  car_id: car.id,
+                  car_assignment_id: assignment.id,
+                  rating,
+                  comment: terminationNotes || undefined,
+                  categories: undefined,
+                  would_recommend: wouldRecommend,
+                  is_anonymous: anonymousRating,
+                  rating_type: "contract_completion",
+                });
+
+                if (ratingRes?.id) {
+                  await assignmentService.markRatingProvided(
+                    assignment.id,
+                    ratingRes.id
+                  );
+                }
+
+                setTerminateOpen(false);
+                // Refresh details
+                loadData();
+              } catch (err) {
+                console.error("Terminate contract failed", err);
+                alert(
+                  err instanceof Error
+                    ? err.message
+                    : "Failed to terminate contract"
+                );
+              } finally {
+                setTerminating(false);
+              }
+            }}
+          >
+            {t("carManagement.submitTermination")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

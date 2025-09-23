@@ -499,7 +499,18 @@
     "carOwner": "Propriétaire de véhicule",
     "noAdditionalOwners": "Aucun propriétaire supplémentaire",
     "noCarOwners": "Aucun propriétaire de véhicule",
-    "remove": "Supprimer"
+    "remove": "Supprimer",
+    "terminateContract": "Terminer le contrat",
+    "completeContract": "Clore le contrat",
+    "terminateDialogTitle": "Terminer ou clore le contrat",
+    "terminateDialogDescription": "Mettre fin au contrat en cours, désassigner le conducteur et fournir une évaluation.",
+    "terminationReason": "Raison de la terminaison",
+    "terminationNotes": "Notes (optionnel)",
+    "ratingLabel": "Note globale",
+    "wouldRecommend": "Recommanderiez-vous ce conducteur",
+    "anonymousRating": "Soumettre l'évaluation anonymement",
+    "submitTermination": "Mettre fin au contrat",
+    "cancel": "Annuler"
   },
   "statistics": {
     "title": "Statistiques du véhicule",
