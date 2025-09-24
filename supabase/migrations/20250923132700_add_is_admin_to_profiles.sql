@@ -4,3 +4,4 @@ ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT false;
 
 COMMENT ON COLUMN profiles.is_admin IS 'Indicates if the user is a platform administrator';
 
+

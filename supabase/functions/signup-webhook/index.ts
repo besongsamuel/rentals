@@ -59,28 +59,35 @@ serve(async (req) => {
     return jsonResponse(400, { error: "Invalid JSON body" });
   }
 
-  // Validate database webhook payload
-  if (
-    !body ||
-    body.type !== "INSERT" ||
-    body.table !== "profiles" ||
-    body.schema !== "public"
-  ) {
-    return jsonResponse(400, {
-      error: "Invalid webhook payload - expected INSERT on public.profiles",
+  // Validate and scope: only react to INSERTs on public.driver_details or public.cars
+  if (!body || body.schema !== "public" || body.type !== "INSERT") {
+    return jsonResponse(200, {
+      status: "ignored",
+      reason: "non-insert or non-public schema",
     });
   }
 
-  if (!body.record?.id) {
-    return jsonResponse(400, {
-      error: "Missing profile id in webhook payload",
+  if (body.table !== "driver_details" && body.table !== "cars") {
+    return jsonResponse(200, {
+      status: "ignored",
+      reason: "unsupported table",
     });
   }
 
-  const inviteeId = body.record.id;
+  // Determine inviteeId based on the table
+  const inviteeId =
+    body.table === "driver_details"
+      ? body.record?.profile_id
+      : body.record?.owner_id;
 
-  // Since this webhook is triggered by the profiles table INSERT, the profile already exists
-  // No need to check if profile exists - it's the trigger for this webhook
+  if (!inviteeId || typeof inviteeId !== "string") {
+    return jsonResponse(400, {
+      error: "Missing invitee id in webhook payload",
+      details: { table: body.table },
+    });
+  }
+
+  // Since this webhook is triggered by dependent tables, the corresponding profile should already exist
 
   // Get the user's email from auth.users table using the profile ID
   const { data: authUser, error: authUserError } =
