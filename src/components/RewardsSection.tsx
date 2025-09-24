@@ -236,6 +236,21 @@ export const RewardsSection: React.FC<Props> = () => {
                     - {t("rewards.step3")}
                   </Typography>
 
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 0.5 }}
+                  >
+                    {t("rewards.inviteNoteDriver")}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                  >
+                    {t("rewards.inviteNoteOwner")}
+                  </Typography>
+
                   <Grid container spacing={1} sx={{ width: "100%" }}>
                     <Grid size={{ xs: 12, sm: 8 }}>
                       <TextField

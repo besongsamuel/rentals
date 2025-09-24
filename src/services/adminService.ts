@@ -37,6 +37,17 @@ export type RewardAccount = {
   };
 };
 
+export type UserStatistics = {
+  total_users: number;
+  total_drivers: number;
+  total_owners: number;
+  total_admins: number;
+  users_by_country: Array<{
+    country: string;
+    count: number;
+  }>;
+};
+
 // User Management Functions
 export async function fetchAllUsers(): Promise<UserProfile[]> {
   const { data, error } = await supabase
@@ -150,6 +161,64 @@ export async function processWithdrawalRequest(
   }
 
   return data === true;
+}
+
+// User Statistics
+export async function fetchUserStatistics(): Promise<UserStatistics> {
+  // Get total counts
+  const { data: totalUsers, error: totalError } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact" });
+
+  if (totalError) throw totalError;
+
+  const { data: drivers, error: driversError } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact" })
+    .eq("user_type", "driver");
+
+  if (driversError) throw driversError;
+
+  const { data: owners, error: ownersError } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact" })
+    .eq("user_type", "owner");
+
+  if (ownersError) throw ownersError;
+
+  const { data: admins, error: adminsError } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact" })
+    .eq("is_admin", true);
+
+  if (adminsError) throw adminsError;
+
+  // Get users by country
+  const { data: countryData, error: countryError } = await supabase
+    .from("profiles")
+    .select("country")
+    .not("country", "is", null);
+
+  if (countryError) throw countryError;
+
+  // Count users by country
+  const countryCounts = countryData.reduce((acc, user) => {
+    const country = user.country || "Unknown";
+    acc[country] = (acc[country] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const usersByCountry = Object.entries(countryCounts)
+    .map(([country, count]) => ({ country, count }))
+    .sort((a, b) => b.count - a.count);
+
+  return {
+    total_users: totalUsers?.length || 0,
+    total_drivers: drivers?.length || 0,
+    total_owners: owners?.length || 0,
+    total_admins: admins?.length || 0,
+    users_by_country: usersByCountry,
+  };
 }
 
 // Admin Verification

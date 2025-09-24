@@ -442,7 +442,8 @@
     "km": "KM",
     "miles": "Miles",
     "currency": "XAF",
-    "about": "À propos"
+    "about": "À propos",
+    "notProvided": "Non fourni"
   },
   "errors": {
     "required": "Ce champ est requis",
@@ -627,6 +628,8 @@
     "step1": "Invitez un utilisateur avec le bouton ci-dessous.",
     "step2": "Quand ils s'inscrivent, vous êtes crédité de 2 CAD.",
     "step3": "Retirez une fois que votre solde dépasse 20 CAD.",
+    "inviteNoteDriver": "Si votre invité est conducteur : il doit compléter son profil conducteur pour être mis en relation avec des propriétaires.",
+    "inviteNoteOwner": "Si votre invité est propriétaire : il doit ajouter au moins une voiture pour commencer à gérer et assigner des conducteurs.",
     "inviteByEmail": "Inviter par email (optionnel)",
     "inviteUser": "Inviter un Utilisateur",
     "shareThisLink": "Partagez ce lien avec votre invité",
@@ -700,6 +703,12 @@
     "refresh": "Actualiser",
     "export": "Exporter",
     "filter": "Filtrer",
-    "clearFilters": "Effacer les Filtres"
+    "clearFilters": "Effacer les Filtres",
+    "userStatistics": "Statistiques des Utilisateurs",
+    "totalUsers": "Total Utilisateurs",
+    "totalDrivers": "Total Conducteurs",
+    "totalOwners": "Total Propriétaires",
+    "totalAdmins": "Total Admins",
+    "usersByCountry": "Utilisateurs par Pays"
   }
 }

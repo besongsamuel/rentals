@@ -91,8 +91,6 @@ export const RewardsManagement: React.FC = () => {
         fetchAllWithdrawalRequests(),
         fetchAllRewardAccounts(),
       ]);
-      console.log("withdrawals", withdrawals);
-      console.log("accounts", accounts);
       setWithdrawalRequests(withdrawals);
       setRewardAccounts(accounts);
     } catch (error) {
@@ -174,17 +172,17 @@ export const RewardsManagement: React.FC = () => {
 
   const withdrawalColumns: GridColDef[] = [
     {
-      field: "user_profile",
+      field: "user_full_name",
       headerName: t("admin.name"),
       width: 200,
       renderCell: (params) =>
-        params.value?.full_name || t("common.notProvided"),
+        params.row.user_profile?.full_name || t("common.notProvided"),
     },
     {
-      field: "user_profile",
+      field: "user_email",
       headerName: t("admin.email"),
       width: 250,
-      renderCell: (params) => params.value?.email,
+      renderCell: (params) => params.row.user_profile?.email,
     },
     {
       field: "status",
@@ -248,17 +246,17 @@ export const RewardsManagement: React.FC = () => {
 
   const rewardColumns: GridColDef[] = [
     {
-      field: "user_profile",
+      field: "user_full_name",
       headerName: t("admin.name"),
       width: 200,
       renderCell: (params) =>
-        params.value?.full_name || t("common.notProvided"),
+        params.row.user_profile?.full_name || t("common.notProvided"),
     },
     {
-      field: "user_profile",
+      field: "user_email",
       headerName: t("admin.email"),
       width: 250,
-      renderCell: (params) => params.value?.email,
+      renderCell: (params) => params.row.user_profile?.email,
     },
     {
       field: "balance_cents",

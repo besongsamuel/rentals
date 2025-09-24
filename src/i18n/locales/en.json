@@ -508,7 +508,8 @@
     "km": "KM",
     "miles": "Miles",
     "currency": "XAF",
-    "about": "About"
+    "about": "About",
+    "notProvided": "Not provided"
   },
   "errors": {
     "required": "This field is required",
@@ -693,6 +694,8 @@
     "step1": "Invite a user with the button below.",
     "step2": "When they sign up, you're credited 2 CAD.",
     "step3": "Withdraw once your balance is over 20 CAD.",
+    "inviteNoteDriver": "If your invitee is a driver: they must complete their driver profile to get matched with owners.",
+    "inviteNoteOwner": "If your invitee is an owner: they must add at least one car to start managing and assigning drivers.",
     "inviteByEmail": "Invite by email (optional)",
     "inviteUser": "Invite User",
     "shareThisLink": "Share this link with your invitee",
@@ -766,6 +769,12 @@
     "refresh": "Refresh",
     "export": "Export",
     "filter": "Filter",
-    "clearFilters": "Clear Filters"
+    "clearFilters": "Clear Filters",
+    "userStatistics": "User Statistics",
+    "totalUsers": "Total Users",
+    "totalDrivers": "Total Drivers",
+    "totalOwners": "Total Owners",
+    "totalAdmins": "Total Admins",
+    "usersByCountry": "Users by Country"
   }
 }

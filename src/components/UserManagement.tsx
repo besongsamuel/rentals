@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   Chip,
+  Grid,
   IconButton,
   Skeleton,
   TextField,
@@ -23,13 +24,16 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   fetchAllUsers,
+  fetchUserStatistics,
   searchUsers,
   UserProfile,
+  UserStatistics,
 } from "../services/adminService";
 
 export const UserManagement: React.FC = () => {
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [statistics, setStatistics] = useState<UserStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -37,8 +41,12 @@ export const UserManagement: React.FC = () => {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const userData = await fetchAllUsers();
+      const [userData, statsData] = await Promise.all([
+        fetchAllUsers(),
+        fetchUserStatistics(),
+      ]);
       setUsers(userData);
+      setStatistics(statsData);
     } catch (error) {
       console.error("Failed to load users:", error);
     } finally {
@@ -173,6 +181,100 @@ export const UserManagement: React.FC = () => {
             <RefreshIcon />
           </IconButton>
         </Box>
+
+        {/* User Statistics */}
+        {statistics && (
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+              {t("admin.userStatistics")}
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Card sx={{ p: 2, textAlign: "center" }}>
+                  <Typography
+                    variant="h4"
+                    color="primary"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    {statistics.total_users}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t("admin.totalUsers")}
+                  </Typography>
+                </Card>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Card sx={{ p: 2, textAlign: "center" }}>
+                  <Typography
+                    variant="h4"
+                    color="primary"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    {statistics.total_drivers}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t("admin.totalDrivers")}
+                  </Typography>
+                </Card>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Card sx={{ p: 2, textAlign: "center" }}>
+                  <Typography
+                    variant="h4"
+                    color="secondary"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    {statistics.total_owners}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t("admin.totalOwners")}
+                  </Typography>
+                </Card>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Card sx={{ p: 2, textAlign: "center" }}>
+                  <Typography
+                    variant="h4"
+                    color="success.main"
+                    sx={{ fontWeight: 700 }}
+                  >
+                    {statistics.total_admins}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t("admin.totalAdmins")}
+                  </Typography>
+                </Card>
+              </Grid>
+            </Grid>
+
+            {/* Users by Country */}
+            {statistics.users_by_country.length > 0 && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                  {t("admin.usersByCountry")}
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  {statistics.users_by_country.slice(0, 10).map((country) => (
+                    <Chip
+                      key={country.country}
+                      label={`${country.country}: ${country.count}`}
+                      variant="outlined"
+                      size="small"
+                    />
+                  ))}
+                  {statistics.users_by_country.length > 10 && (
+                    <Chip
+                      label={`+${statistics.users_by_country.length - 10} more`}
+                      variant="outlined"
+                      size="small"
+                      color="default"
+                    />
+                  )}
+                </Box>
+              </Box>
+            )}
+          </Box>
+        )}
 
         <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
           <TextField
