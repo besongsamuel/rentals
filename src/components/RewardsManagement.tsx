@@ -91,6 +91,8 @@ export const RewardsManagement: React.FC = () => {
         fetchAllWithdrawalRequests(),
         fetchAllRewardAccounts(),
       ]);
+      console.log("withdrawals", withdrawals);
+      console.log("accounts", accounts);
       setWithdrawalRequests(withdrawals);
       setRewardAccounts(accounts);
     } catch (error) {

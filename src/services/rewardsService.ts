@@ -29,13 +29,48 @@ export type WithdrawalRequest = {
 };
 
 export async function fetchRewardAccount(): Promise<RewardAccount | null> {
-  const { data, error } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.id) return null;
+
+  // First, try to get existing account
+  let { data, error } = await supabase
     .from("reward_accounts")
     .select("user_id, balance_cents, currency")
-    .eq("user_id", (await supabase.auth.getUser()).data.user?.id ?? "")
+    .eq("user_id", user.id)
     .maybeSingle();
+
   if (error) throw error;
-  return data || null;
+
+  // If no account exists, create one automatically
+  if (!data) {
+    const { error: createError } = await supabase.rpc(
+      "create_user_reward_account_if_not_exists"
+    );
+    if (createError) {
+      console.error("Error creating reward account:", createError);
+      // Return default account even if creation fails
+      return { user_id: user.id, balance_cents: 0, currency: "CAD" };
+    }
+
+    // Try to fetch the newly created account
+    const { data: newData, error: fetchError } = await supabase
+      .from("reward_accounts")
+      .select("user_id, balance_cents, currency")
+      .eq("user_id", user.id)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching newly created reward account:", fetchError);
+      // Return default account even if fetch fails
+      return { user_id: user.id, balance_cents: 0, currency: "CAD" };
+    }
+
+    data = newData;
+  }
+
+  return data;
 }
 
 export async function fetchReferrals(): Promise<Referral[]> {

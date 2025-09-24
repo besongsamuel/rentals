@@ -71,12 +71,19 @@ export const RewardsSection: React.FC<Props> = () => {
           fetchReferrals(),
         ]);
         if (!active) return;
+
+        // Always set an account, even if it's a default one
         setAccount(
           acc
             ? { balance_cents: acc.balance_cents, currency: acc.currency }
             : { balance_cents: 0, currency: "CAD" }
         );
-        setReferrals(refs);
+        setReferrals(refs || []);
+      } catch (error) {
+        console.error("Error loading rewards data:", error);
+        // Set default values even on error
+        setAccount({ balance_cents: 0, currency: "CAD" });
+        setReferrals([]);
       } finally {
         if (active) setLoading(false);
       }

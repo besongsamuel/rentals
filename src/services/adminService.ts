@@ -111,13 +111,17 @@ export async function fetchAllRewardAccounts(): Promise<RewardAccount[]> {
       currency,
       user_profile:profiles!user_id (
         full_name,
-        email
+        email,
+        user_type
       )
     `
     )
     .order("balance_cents", { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    console.error("Error fetching reward accounts:", error);
+    throw error;
+  }
 
   // Transform the data to handle the array structure from Supabase
   return (data ?? []).map((item: any) => ({
