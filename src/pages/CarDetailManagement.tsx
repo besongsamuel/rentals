@@ -152,7 +152,20 @@ const CarDetailManagement: React.FC = () => {
           user.id
         );
       } else if (confirmAction.type === "submit") {
-        await weeklyReportService.submitReport(confirmAction.reportId);
+        // Submit report. If the submitter is the car owner, auto-approve immediately
+        const submitted = await weeklyReportService.submitReport(
+          confirmAction.reportId
+        );
+        if (
+          profile?.user_type === "owner" &&
+          submitted?.car_id &&
+          car?.id === submitted.car_id
+        ) {
+          await weeklyReportService.approveReport(
+            confirmAction.reportId,
+            user.id
+          );
+        }
       }
       loadData(); // Refresh the data
     } catch (error) {
@@ -200,13 +213,32 @@ const CarDetailManagement: React.FC = () => {
         await weeklyReportService.updateReport(editingReport.id, reportData);
       } else {
         // Create new report
-        if (!profile?.id) {
-          throw new Error("Driver ID is required to create a report");
+        if (profile?.user_type === "driver") {
+          if (!profile.id) {
+            throw new Error("Driver ID is required to create a report");
+          }
+          await weeklyReportService.createReport({
+            ...reportData,
+            driver_id: profile.id,
+          });
+        } else if (profile?.user_type === "owner") {
+          if (!car?.id || car.owner_id !== profile.id) {
+            throw new Error("Only the car owner can add reports for this car");
+          }
+          // Only require assigned driver if current user is not the owner
+          if (car.owner_id !== profile.id && !car.driver_id) {
+            throw new Error(
+              "Cannot create report: this car has no assigned driver"
+            );
+          }
+          await weeklyReportService.createReport({
+            ...reportData,
+            car_id: car.id,
+            driver_id: car.driver_id || profile.id, // Use owner as driver if no assigned driver
+          });
+        } else {
+          throw new Error("Unauthorized to create weekly reports");
         }
-        await weeklyReportService.createReport({
-          ...reportData,
-          driver_id: profile.id,
-        });
       }
       setShowReportDialog(false);
       setEditingReport(null);
@@ -503,7 +535,9 @@ const CarDetailManagement: React.FC = () => {
                 <Typography variant="h6">
                   {t("carManagement.weeklyReportsDetails")}
                 </Typography>
-                {profile?.user_type === "driver" && (
+                {(profile?.user_type === "driver" ||
+                  (profile?.user_type === "owner" &&
+                    car?.owner_id === profile.id)) && (
                   <Button
                     variant="contained"
                     startIcon={<Add />}
