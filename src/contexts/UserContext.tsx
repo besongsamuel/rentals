@@ -28,6 +28,8 @@ interface UserContextType {
   resetPassword: (email: string) => Promise<{ data: any; error: any }>;
   signInWithGoogle: () => Promise<{ data: any; error: any }>;
   signInWithFacebook: () => Promise<{ data: any; error: any }>;
+  signInWithOtp: (email: string) => Promise<{ data: any; error: any }>;
+  signUpWithOtp: (email: string) => Promise<{ data: any; error: any }>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

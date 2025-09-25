@@ -139,6 +139,27 @@ export const useAuth = () => {
     return { data, error };
   };
 
+  const signInWithOtp = async (email: string) => {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+    return { data, error };
+  };
+
+  const signUpWithOtp = async (email: string) => {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/signup-complete`,
+        shouldCreateUser: true,
+      },
+    });
+    return { data, error };
+  };
+
   return {
     user,
     session,
@@ -154,5 +175,7 @@ export const useAuth = () => {
     resetPassword,
     signInWithGoogle,
     signInWithFacebook,
+    signInWithOtp,
+    signUpWithOtp,
   };
 };

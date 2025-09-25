@@ -1,3 +1,4 @@
+import EmailIcon from "@mui/icons-material/Email";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import {
@@ -24,8 +25,15 @@ const LoginForm: React.FC = () => {
   const [resetMessage, setResetMessage] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
-  const { signIn, resetPassword, signInWithGoogle, signInWithFacebook } =
-    useUserContext();
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpMessage, setOtpMessage] = useState("");
+  const {
+    signIn,
+    resetPassword,
+    signInWithGoogle,
+    signInWithFacebook,
+    signInWithOtp,
+  } = useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -88,6 +96,27 @@ const LoginForm: React.FC = () => {
       setFacebookLoading(false);
     }
     // Note: If successful, user will be redirected to dashboard
+  };
+
+  const handleOtpSignIn = async () => {
+    if (!email.trim()) {
+      setError("Please enter your email address first");
+      return;
+    }
+
+    setOtpLoading(true);
+    setError("");
+    setOtpMessage("");
+
+    const { error } = await signInWithOtp(email);
+
+    if (error) {
+      setError(t("auth.otpError"));
+    } else {
+      setOtpMessage(t("auth.otpSent"));
+    }
+
+    setOtpLoading(false);
   };
 
   return (
@@ -247,6 +276,20 @@ const LoginForm: React.FC = () => {
               </Alert>
             )}
 
+            {otpMessage && (
+              <Alert
+                severity="success"
+                sx={{
+                  mb: 3,
+                  backgroundColor: "rgba(52, 199, 89, 0.1)",
+                  border: "0.5px solid rgba(52, 199, 89, 0.2)",
+                  borderRadius: 2,
+                }}
+              >
+                {otpMessage}
+              </Alert>
+            )}
+
             {/* Google Sign In Button */}
             <Button
               fullWidth
@@ -276,6 +319,9 @@ const LoginForm: React.FC = () => {
                   borderColor: "#dadce0",
                   color: "#9aa0a6",
                 },
+                "& .MuiSvgIcon-root": {
+                  color: "#4285f4", // Google blue color
+                },
               }}
             >
               {googleLoading
@@ -288,11 +334,13 @@ const LoginForm: React.FC = () => {
               fullWidth
               variant="outlined"
               onClick={handleFacebookSignIn}
-              disabled={facebookLoading || loading || googleLoading}
+              disabled={
+                facebookLoading || loading || googleLoading || otpLoading
+              }
               startIcon={<FacebookIcon />}
               sx={{
                 py: 2,
-                mb: 3,
+                mb: 2,
                 fontSize: "0.875rem",
                 fontWeight: 400,
                 borderColor: "#1877f2",
@@ -317,6 +365,42 @@ const LoginForm: React.FC = () => {
               {facebookLoading
                 ? t("common.loading")
                 : t("auth.continueWithFacebook")}
+            </Button>
+
+            {/* OTP Sign In Button */}
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleOtpSignIn}
+              disabled={
+                otpLoading || loading || googleLoading || facebookLoading
+              }
+              startIcon={<EmailIcon />}
+              sx={{
+                py: 2,
+                mb: 3,
+                fontSize: "0.875rem",
+                fontWeight: 400,
+                borderColor: "#007AFF",
+                color: "#007AFF",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                backgroundColor: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 122, 255, 0.05)",
+                  borderColor: "#007AFF",
+                  boxShadow:
+                    "0 1px 2px 0 rgba(0,122,255,.3), 0 1px 3px 1px rgba(0,122,255,.15)",
+                },
+                "&:disabled": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#dadce0",
+                  color: "#9aa0a6",
+                },
+              }}
+            >
+              {otpLoading ? t("common.loading") : t("auth.continueWithOtp")}
             </Button>
 
             {/* Divider */}
