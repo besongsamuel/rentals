@@ -663,6 +663,8 @@
     "withdrawalError": "Échec de la soumission de la demande de retrait. Veuillez réessayer.",
     "processingWithdrawal": "Traitement en cours...",
     "cancelWithdrawal": "Annuler",
+    "withdrawalPending": "Retrait en Attente",
+    "withdrawalPendingTooltip": "Vous avez déjà une demande de retrait en attente. Veuillez attendre qu'elle soit traitée avant d'en créer une nouvelle.",
     "withdrawalDialogTitle": "Demander un Retrait",
     "withdrawalDialogDescription": "Vous pouvez demander un retrait de votre solde complet ({{amount}} {{currency}}). Veuillez fournir les instructions de transfert ci-dessous."
   },

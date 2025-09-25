@@ -26,9 +26,11 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import {
   createWithdrawalRequest,
+  fetchPendingWithdrawalRequest,
   fetchReferrals,
   fetchRewardAccount,
   inviteUser,
+  WithdrawalRequest,
 } from "../services/rewardsService";
 
 type Props = {
@@ -59,6 +61,8 @@ export const RewardsSection: React.FC<Props> = () => {
   const [withdrawalDialogOpen, setWithdrawalDialogOpen] = useState(false);
   const [withdrawalNotes, setWithdrawalNotes] = useState("");
   const [processingWithdrawal, setProcessingWithdrawal] = useState(false);
+  const [pendingWithdrawal, setPendingWithdrawal] =
+    useState<WithdrawalRequest | null>(null);
 
   React.useEffect(() => {
     let active = true;
@@ -66,9 +70,10 @@ export const RewardsSection: React.FC<Props> = () => {
       if (!user) return;
       setLoading(true);
       try {
-        const [acc, refs] = await Promise.all([
+        const [acc, refs, pendingWithdrawalData] = await Promise.all([
           fetchRewardAccount(),
           fetchReferrals(),
+          fetchPendingWithdrawalRequest(),
         ]);
         if (!active) return;
 
@@ -79,11 +84,13 @@ export const RewardsSection: React.FC<Props> = () => {
             : { balance_cents: 0, currency: "CAD" }
         );
         setReferrals(refs || []);
+        setPendingWithdrawal(pendingWithdrawalData);
       } catch (error) {
         console.error("Error loading rewards data:", error);
         // Set default values even on error
         setAccount({ balance_cents: 0, currency: "CAD" });
         setReferrals([]);
+        setPendingWithdrawal(null);
       } finally {
         if (active) setLoading(false);
       }
@@ -99,7 +106,8 @@ export const RewardsSection: React.FC<Props> = () => {
     return (cents / 100).toFixed(2);
   }, [account]);
 
-  const canWithdraw = (account?.balance_cents ?? 0) >= 2000;
+  const canWithdraw =
+    (account?.balance_cents ?? 0) >= 2000 && !pendingWithdrawal;
 
   async function handleInvite() {
     if (!user) return;
@@ -134,14 +142,18 @@ export const RewardsSection: React.FC<Props> = () => {
       await createWithdrawalRequest(withdrawalNotes.trim());
       setWithdrawalDialogOpen(false);
       setWithdrawalNotes("");
-      // Refresh account data to show updated balance
-      const acc = await fetchRewardAccount();
+      // Refresh account data and pending withdrawal status
+      const [acc, pendingWithdrawalData] = await Promise.all([
+        fetchRewardAccount(),
+        fetchPendingWithdrawalRequest(),
+      ]);
       if (acc) {
         setAccount({
           balance_cents: acc.balance_cents,
           currency: acc.currency,
         });
       }
+      setPendingWithdrawal(pendingWithdrawalData);
     } catch (error) {
       console.error("Withdrawal request failed:", error);
       // Could show error toast here
@@ -196,22 +208,37 @@ export const RewardsSection: React.FC<Props> = () => {
                       color={canWithdraw ? "success.main" : "text.secondary"}
                       sx={{ mb: 1, display: "block" }}
                     >
-                      {canWithdraw
+                      {pendingWithdrawal
+                        ? t("rewards.withdrawalPending")
+                        : canWithdraw
                         ? t("rewards.canWithdraw")
                         : t("rewards.withdrawalsAvailable")}
                     </Typography>
                     {canWithdraw && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        startIcon={<AccountBalanceWalletIcon />}
-                        onClick={() => setWithdrawalDialogOpen(true)}
-                        disabled={loading}
-                        sx={{ width: "100%" }}
+                      <Tooltip
+                        title={
+                          pendingWithdrawal
+                            ? t("rewards.withdrawalPendingTooltip")
+                            : ""
+                        }
+                        arrow
                       >
-                        {t("rewards.withdraw")}
-                      </Button>
+                        <span>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            startIcon={<AccountBalanceWalletIcon />}
+                            onClick={() => setWithdrawalDialogOpen(true)}
+                            disabled={loading || !!pendingWithdrawal}
+                            sx={{ width: "100%" }}
+                          >
+                            {pendingWithdrawal
+                              ? t("rewards.withdrawalPending")
+                              : t("rewards.withdraw")}
+                          </Button>
+                        </span>
+                      </Tooltip>
                     )}
                   </Card>
                 )}

@@ -111,6 +111,19 @@ export async function fetchWithdrawalRequests(): Promise<WithdrawalRequest[]> {
   return data ?? [];
 }
 
+export async function fetchPendingWithdrawalRequest(): Promise<WithdrawalRequest | null> {
+  const { data, error } = await supabase
+    .from("withdrawal_requests")
+    .select("*")
+    .in("status", ["pending", "processing"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
 export async function createWithdrawalRequest(
   userNotes: string
 ): Promise<{ withdrawal_id: string; status: string }> {

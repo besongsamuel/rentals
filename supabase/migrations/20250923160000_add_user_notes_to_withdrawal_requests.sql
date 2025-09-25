@@ -49,7 +49,7 @@ BEGIN
   -- Create withdrawal request with optional user notes
   INSERT INTO withdrawal_requests (user_id, user_notes)
   VALUES (auth.uid(), p_user_notes)
-  RETURNING id, status
+  RETURNING id, withdrawal_requests.status
   INTO withdrawal_id, status;
   
   RETURN QUERY SELECT withdrawal_id, status;

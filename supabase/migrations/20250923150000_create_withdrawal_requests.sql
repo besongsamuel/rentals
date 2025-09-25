@@ -139,7 +139,7 @@ BEGIN
   -- Create withdrawal request
   INSERT INTO withdrawal_requests (user_id)
   VALUES (auth.uid())
-  RETURNING id, status
+  RETURNING id, withdrawal_requests.status
   INTO withdrawal_id, status;
   
   RETURN QUERY SELECT withdrawal_id, status;

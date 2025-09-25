@@ -729,6 +729,8 @@
     "withdrawalError": "Failed to submit withdrawal request. Please try again.",
     "processingWithdrawal": "Processing...",
     "cancelWithdrawal": "Cancel",
+    "withdrawalPending": "Withdrawal Pending",
+    "withdrawalPendingTooltip": "You already have a pending withdrawal request. Please wait for it to be processed before creating a new one.",
     "withdrawalDialogTitle": "Request Withdrawal",
     "withdrawalDialogDescription": "You can request a withdrawal of your full balance ({{amount}} {{currency}}). Please provide transfer instructions below."
   },
