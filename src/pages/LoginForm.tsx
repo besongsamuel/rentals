@@ -6,6 +6,10 @@ import {
   Box,
   Button,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Paper,
   TextField,
@@ -27,6 +31,8 @@ const LoginForm: React.FC = () => {
   const [facebookLoading, setFacebookLoading] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpMessage, setOtpMessage] = useState("");
+  const [otpDialogOpen, setOtpDialogOpen] = useState(false);
+  const [otpEmail, setOtpEmail] = useState("");
   const {
     signIn,
     resetPassword,
@@ -98,9 +104,19 @@ const LoginForm: React.FC = () => {
     // Note: If successful, user will be redirected to dashboard
   };
 
-  const handleOtpSignIn = async () => {
-    if (!email.trim()) {
-      setError("Please enter your email address first");
+  const handleOtpSignIn = () => {
+    setOtpDialogOpen(true);
+    setOtpEmail(email); // Pre-fill with existing email if available
+  };
+
+  const handleOtpDialogClose = () => {
+    setOtpDialogOpen(false);
+    setOtpEmail("");
+  };
+
+  const handleOtpSubmit = async () => {
+    if (!otpEmail.trim()) {
+      setError("Please enter your email address");
       return;
     }
 
@@ -108,12 +124,13 @@ const LoginForm: React.FC = () => {
     setError("");
     setOtpMessage("");
 
-    const { error } = await signInWithOtp(email);
+    const { error } = await signInWithOtp(otpEmail);
 
     if (error) {
       setError(t("auth.otpError"));
     } else {
       setOtpMessage(t("auth.otpSent"));
+      setOtpDialogOpen(false);
     }
 
     setOtpLoading(false);
@@ -546,6 +563,101 @@ const LoginForm: React.FC = () => {
           </Box>
         </Paper>
       </Container>
+
+      {/* OTP Email Dialog */}
+      <Dialog
+        open={otpDialogOpen}
+        onClose={handleOtpDialogClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            p: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontSize: "1.25rem",
+            fontWeight: 400,
+            color: "#1d1d1f",
+            pb: 1,
+          }}
+        >
+          {t("auth.continueWithOtp")}
+        </DialogTitle>
+        <DialogContent sx={{ px: 3, py: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#86868b",
+              fontSize: "0.875rem",
+              textAlign: "center",
+              mb: 3,
+              lineHeight: 1.4,
+            }}
+          >
+            Enter your email address and we'll send you a magic link to sign in.
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            label={t("auth.email")}
+            type="email"
+            value={otpEmail}
+            onChange={(e) => setOtpEmail(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(0, 122, 255, 0.5)",
+                },
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+          <Button
+            onClick={handleOtpDialogClose}
+            disabled={otpLoading}
+            sx={{
+              textTransform: "none",
+              color: "#86868b",
+              fontWeight: 400,
+              fontSize: "0.875rem",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleOtpSubmit}
+            disabled={otpLoading || !otpEmail.trim()}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              backgroundColor: "#007AFF",
+              fontWeight: 400,
+              fontSize: "0.875rem",
+              borderRadius: 2,
+              px: 3,
+              "&:hover": {
+                backgroundColor: "#0056CC",
+              },
+              "&:disabled": {
+                backgroundColor: "#C7C7CC",
+                color: "#8E8E93",
+              },
+            }}
+          >
+            {otpLoading ? t("common.loading") : "Send Magic Link"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
