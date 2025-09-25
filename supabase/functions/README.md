@@ -110,3 +110,4 @@ Notes:
 - The function marks the referral as `accepted`, links `invitee_user_id`, then calls `credit_signup_referral` which credits the inviter 100 cents (1 CAD) with idempotency.
 - If invoked multiple times for the same signup/referral, the idempotency key prevents duplicate credits.
 
+

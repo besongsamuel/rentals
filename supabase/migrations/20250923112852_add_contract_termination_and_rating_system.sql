@@ -353,3 +353,4 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Add comment explaining the migration
 COMMENT ON SCHEMA public IS 'Enhanced with contract termination and rating system - Migration 20250923112852';
 
+
