@@ -89,14 +89,19 @@ const Home: React.FC = () => {
             sx={{
               fontWeight: 400,
               fontSize: { xs: "2.5rem", sm: "3rem", md: "3.5rem" },
-              color: "#1d1d1f",
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
               textAlign: "center",
               mb: 1,
             }}
           >
-            {t("auth.homeTitle")}
+            Welcome to{" "}
+            <Box component="span" sx={{ color: "rgb(255, 59, 48)" }}>
+              mo
+            </Box>{" "}
+            <Box component="span" sx={{ color: "rgb(255, 149, 0)" }}>
+              kumbi
+            </Box>
           </Typography>
           <Typography
             variant="body1"
@@ -155,13 +160,19 @@ const Home: React.FC = () => {
             sx={{
               fontWeight: 400,
               fontSize: { xs: "1.5rem", sm: "1.75rem" },
-              color: "#1d1d1f",
               letterSpacing: "-0.01em",
               textAlign: "center",
               mb: 4,
             }}
           >
-            {t("auth.whoIsThisFor")}
+            Who is{" "}
+            <Box component="span" sx={{ color: "rgb(255, 59, 48)" }}>
+              mo
+            </Box>{" "}
+            <Box component="span" sx={{ color: "rgb(255, 149, 0)" }}>
+              kumbi
+            </Box>{" "}
+            for?
           </Typography>
 
           <Grid container spacing={4} sx={{ maxWidth: 900, mx: "auto" }}>
