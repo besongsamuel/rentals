@@ -1,8 +1,12 @@
 import {
   Analytics,
   Assessment,
+  Assignment,
+  Business,
   DirectionsCar,
+  Person,
   Star,
+  TrendingUp,
 } from "@mui/icons-material";
 import {
   Box,
@@ -142,6 +146,297 @@ const Home: React.FC = () => {
           >
             {t("auth.homeDescription")}
           </Typography>
+        </Box>
+
+        {/* Who This App Is For Section */}
+        <Box sx={{ mb: 6, width: "100%" }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "1.5rem", sm: "1.75rem" },
+              color: "#1d1d1f",
+              letterSpacing: "-0.01em",
+              textAlign: "center",
+              mb: 4,
+            }}
+          >
+            {t("auth.whoIsThisFor")}
+          </Typography>
+
+          <Grid container spacing={4} sx={{ maxWidth: 900, mx: "auto" }}>
+            {/* For Drivers Card */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  background:
+                    "linear-gradient(135deg, rgba(255, 149, 0, 0.05) 0%, rgba(255, 149, 0, 0.02) 100%)",
+                  border: "1px solid rgba(255, 149, 0, 0.2)",
+                  borderRadius: 3,
+                  boxShadow: "0 4px 20px rgba(255, 149, 0, 0.1)",
+                  transition: "all 0.3s ease-in-out",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 8px 30px rgba(255, 149, 0, 0.15)",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 4 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 3,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(255, 149, 0, 0.15)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mr: 2,
+                      }}
+                    >
+                      <Person
+                        sx={{ fontSize: 24, color: "rgb(255, 149, 0)" }}
+                      />
+                    </Box>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: 500,
+                        fontSize: "1.25rem",
+                        color: "#1d1d1f",
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {t("auth.forDrivers")}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "flex-start", mb: 2 }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "rgb(255, 149, 0)",
+                          mt: 1,
+                          mr: 2,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: "#1d1d1f",
+                          fontSize: "0.95rem",
+                          lineHeight: 1.6,
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        {t("auth.driverBenefit1")}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "rgb(255, 149, 0)",
+                          mt: 1,
+                          mr: 2,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: "#1d1d1f",
+                          fontSize: "0.95rem",
+                          lineHeight: 1.6,
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        {t("auth.driverBenefit2")}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      p: 2,
+                      backgroundColor: "rgba(255, 149, 0, 0.08)",
+                      borderRadius: 2,
+                      border: "1px solid rgba(255, 149, 0, 0.15)",
+                    }}
+                  >
+                    <TrendingUp
+                      sx={{ fontSize: 20, color: "rgb(255, 149, 0)", mr: 1 }}
+                    />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#1d1d1f",
+                        fontSize: "0.875rem",
+                        fontWeight: 500,
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {t("auth.driverCallToAction")}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* For Car Owners Card */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  background:
+                    "linear-gradient(135deg, rgba(255, 59, 48, 0.05) 0%, rgba(255, 59, 48, 0.02) 100%)",
+                  border: "1px solid rgba(255, 59, 48, 0.2)",
+                  borderRadius: 3,
+                  boxShadow: "0 4px 20px rgba(255, 59, 48, 0.1)",
+                  transition: "all 0.3s ease-in-out",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 8px 30px rgba(255, 59, 48, 0.15)",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 4 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 3,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(255, 59, 48, 0.15)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mr: 2,
+                      }}
+                    >
+                      <Business
+                        sx={{ fontSize: 24, color: "rgb(255, 59, 48)" }}
+                      />
+                    </Box>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: 500,
+                        fontSize: "1.25rem",
+                        color: "#1d1d1f",
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {t("auth.forOwners")}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ mb: 3 }}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "flex-start", mb: 2 }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "rgb(255, 59, 48)",
+                          mt: 1,
+                          mr: 2,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: "#1d1d1f",
+                          fontSize: "0.95rem",
+                          lineHeight: 1.6,
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        {t("auth.ownerBenefit1")}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "rgb(255, 59, 48)",
+                          mt: 1,
+                          mr: 2,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: "#1d1d1f",
+                          fontSize: "0.95rem",
+                          lineHeight: 1.6,
+                          letterSpacing: "-0.01em",
+                        }}
+                      >
+                        {t("auth.ownerBenefit2")}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      p: 2,
+                      backgroundColor: "rgba(255, 59, 48, 0.08)",
+                      borderRadius: 2,
+                      border: "1px solid rgba(255, 59, 48, 0.15)",
+                    }}
+                  >
+                    <Assignment
+                      sx={{ fontSize: 20, color: "rgb(255, 59, 48)", mr: 1 }}
+                    />
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#1d1d1f",
+                        fontSize: "0.875rem",
+                        fontWeight: 500,
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {t("auth.ownerCallToAction")}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </Box>
 
         {/* Platform Goals Section */}

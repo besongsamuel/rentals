@@ -83,7 +83,16 @@
     "checkEmail": "Vérifiez votre email ({email}) pour un lien de vérification",
     "clickVerificationLink": "Cliquez sur le lien de vérification dans l'email",
     "completeProfileAfterVerification": "Vous serez redirigé pour compléter votre profil",
-    "emailNotReceived": "Vous n'avez pas reçu l'email? Vérifiez votre dossier spam ou réessayez de vous inscrire."
+    "emailNotReceived": "Vous n'avez pas reçu l'email? Vérifiez votre dossier spam ou réessayez de vous inscrire.",
+    "whoIsThisFor": "Pour qui est mo kumbi?",
+    "forDrivers": "🚗 Pour les Conducteurs",
+    "driverBenefit1": "Rejoignez notre réseau de conducteurs vérifiés et soyez découvert par des propriétaires à la recherche de conducteurs fiables",
+    "driverBenefit2": "Débloquez des insights basés sur les données pour maximiser vos gains dans le VTC, taxi et location",
+    "driverCallToAction": "Commencez à gagner plus avec des insights intelligents",
+    "forOwners": "🏢 Pour les Propriétaires de Voitures",
+    "ownerBenefit1": "Fatigué des maux de tête de gestion des conducteurs? Laissez mo kumbi transformer vos conducteurs en partenaires transparents et responsables avec des rapports automatisés.",
+    "ownerBenefit2": "Que vous conduisiez vous-même ou gériez d'autres personnes, obtenez des insights cristallins sur les performances de votre voiture et débloquez des opportunités de profit cachées.",
+    "ownerCallToAction": "Transformez votre flotte en machine à profit"
   },
   "profile": {
     "completeProfile": "Complétez Votre Profil",

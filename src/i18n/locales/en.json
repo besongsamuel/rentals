@@ -83,7 +83,16 @@
     "checkEmail": "Check your email ({email}) for a verification link",
     "clickVerificationLink": "Click the verification link in the email",
     "completeProfileAfterVerification": "You'll be redirected back to complete your profile",
-    "emailNotReceived": "Didn't receive the email? Check your spam folder or try signing up again."
+    "emailNotReceived": "Didn't receive the email? Check your spam folder or try signing up again.",
+    "whoIsThisFor": "Who is mo kumbi for?",
+    "forDrivers": "🚗 For Drivers",
+    "driverBenefit1": "Join our network of verified drivers and get discovered by car owners looking for reliable drivers",
+    "driverBenefit2": "Unlock data-driven insights to maximize your earnings across ride-share, taxi, and rental businesses",
+    "driverCallToAction": "Start earning more with smart insights",
+    "forOwners": "🏢 For Car Owners",
+    "ownerBenefit1": "Tired of driver management headaches? Let mo kumbi transform your drivers into transparent, accountable partners with automated reporting.",
+    "ownerBenefit2": "Whether you drive yourself or manage others, get crystal-clear insights into your car's performance and unlock hidden profit opportunities.",
+    "ownerCallToAction": "Turn your fleet into a profit machine"
   },
   "profile": {
     "completeProfile": "Complete Your Profile",
