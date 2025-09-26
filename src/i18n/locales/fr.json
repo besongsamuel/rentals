@@ -287,7 +287,10 @@
     "viewEarnings": "Voir les gains",
     "viewComments": "Voir les commentaires",
     "draftReminder": "Ce rapport est en brouillon. N'oubliez pas de le soumettre quand il est prêt !",
-    "submitReminder": "N'oubliez pas de soumettre votre rapport pour qu'il soit examiné."
+    "submitReminder": "N'oubliez pas de soumettre votre rapport pour qu'il soit examiné.",
+    "addAmount": "Ajouter un montant",
+    "addAmountDescription": "Entrez le montant à ajouter à {{field}}. Ce montant sera ajouté à la valeur actuelle.",
+    "amountToAdd": "Montant à ajouter"
   },
   "incomeSources": {
     "title": "Sources de revenus",
@@ -381,7 +384,7 @@
     "initialMileage": "Kilométrage initial",
     "fuelType": "Type de carburant",
     "transmission": "Transmission",
-    "manageReports": "Gérer",
+    "manageReports": "Gérer les Rapports de Voiture",
     "driverDetailsTip": "Complétez vos détails de conducteur pour augmenter vos chances !",
     "driverDetailsTipDescription": "Les propriétaires de véhicules préfèrent les conducteurs avec des profils complets. Ajouter votre expérience, vos informations de permis et votre localisation vous aide à être assigné à des véhicules plus rapidement.",
     "noCarsMessage": "Vous n'avez pas encore ajouté de véhicules. Ajoutez votre premier véhicule pour commencer à gérer votre flotte et gagner des revenus de location.",
@@ -500,6 +503,10 @@
     "updatingDriverAssignment": "Mise à jour de l'assignation du conducteur...",
     "weeklyReportsDetails": "Détails des rapports hebdomadaires",
     "addNewReport": "Ajouter un nouveau rapport",
+    "reportTipsTitle": "Processus de Rapport Hebdomadaire",
+    "reportTip1": "Créez un nouveau rapport au début de chaque semaine et enregistrez votre kilométrage de départ et vos dépenses initiales",
+    "reportTip2": "Mettez à jour votre rapport quotidiennement avec les gains, dépenses et kilométrage pour maintenir des enregistrements précis",
+    "reportTip3": "Examinez et soumettez votre rapport complet à la fin de la semaine pour approbation par le propriétaire",
     "approveReport": "Approuver le rapport",
     "submitReport": "Soumettre le rapport",
     "approveReportConfirm": "Êtes-vous sûr de vouloir approuver ce rapport hebdomadaire? Cette action ne peut pas être annulée.",

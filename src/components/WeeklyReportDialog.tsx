@@ -1,18 +1,21 @@
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { Add, ChevronLeft, ChevronRight } from "@mui/icons-material";
 import {
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   DialogTitle,
   FormControl,
   Grid,
+  IconButton,
   InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -115,6 +118,9 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     currency: "XAF",
   });
   const [error, setError] = useState("");
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [addDialogField, setAddDialogField] = useState<string>("");
+  const [addDialogValue, setAddDialogValue] = useState<number>(0);
 
   // Initialize form data when dialog opens or editing report changes
   useEffect(() => {
@@ -185,6 +191,44 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
             : value,
       }));
     };
+
+  const handleAddButtonClick = (field: string) => {
+    setAddDialogField(field);
+    setAddDialogValue(0);
+    setAddDialogOpen(true);
+  };
+
+  const handleAddDialogSubmit = () => {
+    if (addDialogValue > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        [addDialogField]:
+          (prev[addDialogField as keyof typeof prev] as number) +
+          addDialogValue,
+      }));
+    }
+    setAddDialogOpen(false);
+    setAddDialogValue(0);
+    setAddDialogField("");
+  };
+
+  const handleAddDialogClose = () => {
+    setAddDialogOpen(false);
+    setAddDialogValue(0);
+    setAddDialogField("");
+  };
+
+  const getFieldLabel = (field: string) => {
+    const labels: { [key: string]: string } = {
+      driver_earnings: t("reports.driverEarnings"),
+      maintenance_expenses: t("reports.maintenanceExpenses"),
+      gas_expense: t("reports.gasExpense"),
+      ride_share_income: t("reports.rideShareIncome"),
+      rental_income: t("reports.rentalIncome"),
+      taxi_income: t("reports.taxiIncome"),
+    };
+    return labels[field] || field;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -509,120 +553,230 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("reports.driverEarnings")}
-                type="number"
-                value={formData.driver_earnings}
-                onChange={handleInputChange("driver_earnings")}
-                inputProps={{ min: 0, step: 0.01 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {formData.currency}
-                    </InputAdornment>
-                  ),
-                }}
-                helperText={t("reports.driverEarningsHelper")}
-                required
-              />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  label={t("reports.driverEarnings")}
+                  type="number"
+                  value={formData.driver_earnings}
+                  onChange={handleInputChange("driver_earnings")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {formData.currency}
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={t("reports.driverEarningsHelper")}
+                  required
+                />
+                {mode === "edit" && editingReport?.status === "draft" && (
+                  <Tooltip title={t("reports.addAmount")}>
+                    <IconButton
+                      onClick={() => handleAddButtonClick("driver_earnings")}
+                      sx={{
+                        mt: 1,
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "rgba(25, 118, 210, 0.08)",
+                        },
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("reports.maintenanceExpenses")}
-                type="number"
-                value={formData.maintenance_expenses}
-                onChange={handleInputChange("maintenance_expenses")}
-                inputProps={{ min: 0, step: 0.01 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {formData.currency}
-                    </InputAdornment>
-                  ),
-                }}
-                helperText={t("reports.maintenanceExpensesHelper")}
-                required
-              />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  label={t("reports.maintenanceExpenses")}
+                  type="number"
+                  value={formData.maintenance_expenses}
+                  onChange={handleInputChange("maintenance_expenses")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {formData.currency}
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={t("reports.maintenanceExpensesHelper")}
+                  required
+                />
+                {mode === "edit" && editingReport?.status === "draft" && (
+                  <Tooltip title={t("reports.addAmount")}>
+                    <IconButton
+                      onClick={() =>
+                        handleAddButtonClick("maintenance_expenses")
+                      }
+                      sx={{
+                        mt: 1,
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "rgba(25, 118, 210, 0.08)",
+                        },
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("reports.gasExpense")}
-                type="number"
-                value={formData.gas_expense}
-                onChange={handleInputChange("gas_expense")}
-                inputProps={{ min: 0, step: 0.01 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {formData.currency}
-                    </InputAdornment>
-                  ),
-                }}
-                helperText={t("reports.gasExpenseHelper")}
-                required
-              />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  label={t("reports.gasExpense")}
+                  type="number"
+                  value={formData.gas_expense}
+                  onChange={handleInputChange("gas_expense")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {formData.currency}
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={t("reports.gasExpenseHelper")}
+                  required
+                />
+                {mode === "edit" && editingReport?.status === "draft" && (
+                  <Tooltip title={t("reports.addAmount")}>
+                    <IconButton
+                      onClick={() => handleAddButtonClick("gas_expense")}
+                      sx={{
+                        mt: 1,
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "rgba(25, 118, 210, 0.08)",
+                        },
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Grid>
 
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("reports.rideShareIncome")}
-                type="number"
-                value={formData.ride_share_income}
-                onChange={handleInputChange("ride_share_income")}
-                inputProps={{ min: 0, step: 0.01 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {formData.currency}
-                    </InputAdornment>
-                  ),
-                }}
-                helperText={t("reports.rideShareIncomeHelper")}
-                required
-              />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  label={t("reports.rideShareIncome")}
+                  type="number"
+                  value={formData.ride_share_income}
+                  onChange={handleInputChange("ride_share_income")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {formData.currency}
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={t("reports.rideShareIncomeHelper")}
+                  required
+                />
+                {mode === "edit" && editingReport?.status === "draft" && (
+                  <Tooltip title={t("reports.addAmount")}>
+                    <IconButton
+                      onClick={() => handleAddButtonClick("ride_share_income")}
+                      sx={{
+                        mt: 1,
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "rgba(25, 118, 210, 0.08)",
+                        },
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("reports.rentalIncome")}
-                type="number"
-                value={formData.rental_income}
-                onChange={handleInputChange("rental_income")}
-                inputProps={{ min: 0, step: 0.01 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {formData.currency}
-                    </InputAdornment>
-                  ),
-                }}
-                helperText={t("reports.rentalIncomeHelper")}
-                required
-              />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  label={t("reports.rentalIncome")}
+                  type="number"
+                  value={formData.rental_income}
+                  onChange={handleInputChange("rental_income")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {formData.currency}
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={t("reports.rentalIncomeHelper")}
+                  required
+                />
+                {mode === "edit" && editingReport?.status === "draft" && (
+                  <Tooltip title={t("reports.addAmount")}>
+                    <IconButton
+                      onClick={() => handleAddButtonClick("rental_income")}
+                      sx={{
+                        mt: 1,
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "rgba(25, 118, 210, 0.08)",
+                        },
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Grid>
             <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("reports.taxiIncome")}
-                type="number"
-                value={formData.taxi_income}
-                onChange={handleInputChange("taxi_income")}
-                inputProps={{ min: 0, step: 0.01 }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      {formData.currency}
-                    </InputAdornment>
-                  ),
-                }}
-                helperText={t("reports.taxiIncomeHelper")}
-                required
-              />
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+                <TextField
+                  fullWidth
+                  label={t("reports.taxiIncome")}
+                  type="number"
+                  value={formData.taxi_income}
+                  onChange={handleInputChange("taxi_income")}
+                  inputProps={{ min: 0, step: 0.01 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {formData.currency}
+                      </InputAdornment>
+                    ),
+                  }}
+                  helperText={t("reports.taxiIncomeHelper")}
+                  required
+                />
+                {mode === "edit" && editingReport?.status === "draft" && (
+                  <Tooltip title={t("reports.addAmount")}>
+                    <IconButton
+                      onClick={() => handleAddButtonClick("taxi_income")}
+                      sx={{
+                        mt: 1,
+                        color: "primary.main",
+                        "&:hover": {
+                          backgroundColor: "rgba(25, 118, 210, 0.08)",
+                        },
+                      }}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </Grid>
 
             {formData.start_mileage > 0 && formData.end_mileage > 0 && (
@@ -689,6 +843,109 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           {mode === "add" ? t("reports.addReport") : t("reports.updateReport")}
         </Button>
       </DialogActions>
+
+      {/* Add Amount Dialog */}
+      <Dialog
+        open={addDialogOpen}
+        onClose={handleAddDialogClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            p: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontSize: "1.25rem",
+            fontWeight: 400,
+            color: "#1d1d1f",
+            pb: 1,
+          }}
+        >
+          {t("reports.addAmount")}
+        </DialogTitle>
+        <DialogContent sx={{ px: 3, py: 2 }}>
+          <DialogContentText
+            sx={{
+              color: "#86868b",
+              fontSize: "0.875rem",
+              textAlign: "center",
+              mb: 3,
+              lineHeight: 1.4,
+            }}
+          >
+            {t("reports.addAmountDescription", {
+              field: getFieldLabel(addDialogField),
+            })}
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            label={t("reports.amountToAdd")}
+            type="number"
+            value={addDialogValue}
+            onChange={(e) => setAddDialogValue(parseFloat(e.target.value) || 0)}
+            inputProps={{ min: 0, step: 0.01 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  {formData.currency}
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "rgba(0, 122, 255, 0.5)",
+                },
+              },
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3, gap: 1 }}>
+          <Button
+            onClick={handleAddDialogClose}
+            sx={{
+              textTransform: "none",
+              color: "#86868b",
+              fontWeight: 400,
+              fontSize: "0.875rem",
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.04)",
+              },
+            }}
+          >
+            {t("common.cancel")}
+          </Button>
+          <Button
+            onClick={handleAddDialogSubmit}
+            disabled={addDialogValue <= 0}
+            variant="contained"
+            sx={{
+              textTransform: "none",
+              backgroundColor: "#007AFF",
+              fontWeight: 400,
+              fontSize: "0.875rem",
+              borderRadius: 2,
+              px: 3,
+              "&:hover": {
+                backgroundColor: "#0056CC",
+              },
+              "&:disabled": {
+                backgroundColor: "#C7C7CC",
+                color: "#8E8E93",
+              },
+            }}
+          >
+            {t("reports.addAmount")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 };

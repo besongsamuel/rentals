@@ -170,30 +170,33 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
             </IconButton>
           </Box>
 
-          {/* Draft Reminder for Drivers */}
-          {report.status === "draft" && profile?.user_type === "driver" && (
-            <Box
-              sx={{
-                mt: 1,
-                p: 1.5,
-                backgroundColor: "rgba(255, 193, 7, 0.1)",
-                border: "1px solid rgba(255, 193, 7, 0.3)",
-                borderRadius: 1,
-                borderLeft: "4px solid #ffc107",
-              }}
-            >
-              <Typography
-                variant="body2"
+          {/* Draft Reminder for Drivers and Owners */}
+          {report.status === "draft" &&
+            (profile?.user_type === "driver" ||
+              (profile?.user_type === "owner" &&
+                report.driver_id === profile.id)) && (
+              <Box
                 sx={{
-                  color: "warning.dark",
-                  fontWeight: 500,
-                  fontSize: "0.875rem",
+                  mt: 1,
+                  p: 1.5,
+                  backgroundColor: "rgba(255, 193, 7, 0.1)",
+                  border: "1px solid rgba(255, 193, 7, 0.3)",
+                  borderRadius: 1,
+                  borderLeft: "4px solid #ffc107",
                 }}
               >
-                {t("reports.draftReminder")}
-              </Typography>
-            </Box>
-          )}
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "warning.dark",
+                    fontWeight: 500,
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  {t("reports.draftReminder")}
+                </Typography>
+              </Box>
+            )}
         </CardContent>
 
         {/* Collapsible Details */}
@@ -297,7 +300,9 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
             {/* Action Buttons */}
             {onEditReport &&
               report.status === "draft" &&
-              profile?.user_type === "driver" && (
+              (profile?.user_type === "driver" ||
+                (profile?.user_type === "owner" &&
+                  report.driver_id === profile.id)) && (
                 <Button
                   size="small"
                   startIcon={<Edit />}
@@ -365,7 +370,9 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
               )}
 
             {user &&
-              profile?.user_type === "driver" &&
+              (profile?.user_type === "driver" ||
+                (profile?.user_type === "owner" &&
+                  report.driver_id === profile.id)) &&
               report.status === "draft" &&
               onSubmitReport && (
                 <Button

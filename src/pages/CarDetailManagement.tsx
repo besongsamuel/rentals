@@ -549,6 +549,100 @@ const CarDetailManagement: React.FC = () => {
                 )}
               </Box>
 
+              {/* Weekly Reports Tips */}
+              <Card
+                sx={{
+                  mb: 3,
+                  background:
+                    "linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(0, 122, 255, 0.02) 100%)",
+                  border: "1px solid rgba(0, 122, 255, 0.2)",
+                  borderRadius: 2,
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 500,
+                      color: "#1d1d1f",
+                      mb: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    💡 {t("carManagement.reportTipsTitle")}
+                  </Typography>
+                  <Box sx={{ pl: 2 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#1d1d1f",
+                        mb: 1.5,
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "#007AFF",
+                          mt: 1,
+                          flexShrink: 0,
+                        }}
+                      />
+                      {t("carManagement.reportTip1")}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#1d1d1f",
+                        mb: 1.5,
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "#007AFF",
+                          mt: 1,
+                          flexShrink: 0,
+                        }}
+                      />
+                      {t("carManagement.reportTip2")}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: "#1d1d1f",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: "50%",
+                          backgroundColor: "#007AFF",
+                          mt: 1,
+                          flexShrink: 0,
+                        }}
+                      />
+                      {t("carManagement.reportTip3")}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+
               <WeeklyReportsTable
                 weeklyReports={weeklyReports}
                 reportsWithIncomeSources={reportsWithIncomeSources}

@@ -352,7 +352,10 @@
     "viewEarnings": "View Earnings",
     "viewComments": "View Comments",
     "draftReminder": "This report is in draft status. Don't forget to submit it when ready!",
-    "submitReminder": "Remember to submit your report to get it reviewed."
+    "submitReminder": "Remember to submit your report to get it reviewed.",
+    "addAmount": "Add Amount",
+    "addAmountDescription": "Enter the amount to add to {{field}}. This will be added to the current value.",
+    "amountToAdd": "Amount to Add"
   },
   "incomeSources": {
     "title": "Income Sources",
@@ -446,7 +449,7 @@
     "initialMileage": "Initial Mileage",
     "fuelType": "Fuel Type",
     "transmission": "Transmission",
-    "manageReports": "Manage",
+    "manageReports": "Manage Car Reports",
     "driverDetailsTip": "Complete your driver details to increase your chances!",
     "driverDetailsTipDescription": "Car owners prefer drivers with complete profiles. Adding your experience, license info, and location helps you get assigned to vehicles faster.",
     "noCarsMessage": "You haven't added any cars yet. Add your first car to start managing your fleet and earning rental income.",
@@ -566,6 +569,10 @@
     "updatingDriverAssignment": "Updating driver assignment...",
     "weeklyReportsDetails": "Weekly Reports Details",
     "addNewReport": "Add New Report",
+    "reportTipsTitle": "Weekly Report Workflow",
+    "reportTip1": "Create a new report at the beginning of each week and record your starting mileage and initial expenses",
+    "reportTip2": "Update your report daily with earnings, expenses, and mileage to maintain accurate records",
+    "reportTip3": "Review and submit your completed report at the end of the week for owner approval",
     "approveReport": "Approve Report",
     "submitReport": "Submit Report",
     "approveReportConfirm": "Are you sure you want to approve this weekly report? This action cannot be undone.",
