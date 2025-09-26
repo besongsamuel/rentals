@@ -14,6 +14,7 @@ import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
 import AdminDashboard from "./pages/AdminDashboard";
+import Analytics from "./pages/Analytics";
 import AssignedCars from "./pages/AssignedCars";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
@@ -28,6 +29,7 @@ import LoginForm from "./pages/LoginForm";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
+import Rewards from "./pages/Rewards";
 import SignUpForm from "./pages/SignUpForm";
 import SignupComplete from "./pages/SignupComplete";
 import TermsOfUse from "./pages/TermsOfUse";
@@ -71,8 +73,14 @@ function DocumentTitle() {
       case "/data-deletion":
         pageTitle = `${baseTitle} - Data Deletion`;
         break;
+      case "/rewards":
+        pageTitle = `${baseTitle} - Rewards`;
+        break;
       case "/admin":
         pageTitle = `${baseTitle} - Admin Dashboard`;
+        break;
+      case "/analytics":
+        pageTitle = `${baseTitle} - Analytics`;
         break;
       case "/assigned-cars":
         pageTitle = `${baseTitle} - Assigned Cars`;
@@ -164,6 +172,7 @@ function AppContent() {
                         <DriverDetailsGuard profile={profile}>
                           <Routes>
                             <Route path="/" element={<Dashboard />} />
+                            <Route path="/analytics" element={<Analytics />} />
                             <Route path="/profile" element={<ProfilePage />} />
                             <Route
                               path="/assigned-cars"
@@ -185,6 +194,7 @@ function AppContent() {
                               path="/data-deletion"
                               element={<DataDeletion />}
                             />
+                            <Route path="/rewards" element={<Rewards />} />
                             <Route path="/cars/new" element={<CarForm />} />
                             <Route
                               path="/cars/:carId"

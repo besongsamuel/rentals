@@ -302,3 +302,32 @@ export interface CreateDriverRatingData {
   comment?: string;
   categories?: any;
 }
+
+// Analytics Types
+export interface AnalyticsData {
+  totalEarnings: number;
+  totalRevenue: number;
+  totalMileage: number;
+  totalReports: number;
+  assignedCars: number;
+  totalCars: number;
+}
+
+export interface PerformanceMetrics {
+  averageWeeklyEarnings: number;
+  averageWeeklyMileage: number;
+  earningsPerMile: number;
+  carUtilization: number; // Percentage of cars being utilized
+  last30DaysEarnings: number;
+  last30DaysMileage: number;
+  reportSubmissionRate: number; // Percentage of reports submitted on time
+  activeDrivers: number; // Number of active drivers (for owners)
+}
+
+export interface ChartData {
+  week: string;
+  earnings: number;
+  mileage: number;
+  expenses: number;
+  netEarnings: number;
+}

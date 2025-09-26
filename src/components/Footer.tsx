@@ -194,6 +194,33 @@ const Footer: React.FC = () => {
               >
                 {t("legal.dataDeletion")}
               </Link>
+              <Box
+                sx={{
+                  display: { xs: "none", sm: "block" },
+                  width: "1px",
+                  height: "12px",
+                  backgroundColor: "#86868B",
+                  opacity: 0.3,
+                }}
+              />
+              <Link
+                component={RouterLink}
+                to="/rewards"
+                sx={{
+                  color: "#86868B",
+                  textDecoration: "none",
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  fontWeight: 400,
+                  letterSpacing: "-0.01em",
+                  transition: "color 0.2s ease-in-out",
+                  "&:hover": {
+                    color: "#007AFF",
+                    textDecoration: "none",
+                  },
+                }}
+              >
+                Rewards
+              </Link>
             </Box>
 
             {/* Copyright */}

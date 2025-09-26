@@ -1,6 +1,7 @@
 import {
   AccountCircle,
   AdminPanelSettings,
+  Analytics,
   Close,
   Dashboard,
   DirectionsCar,
@@ -81,6 +82,7 @@ const Header: React.FC = () => {
 
     const baseItems = [
       { label: t("dashboard.title"), path: "/", icon: <Dashboard /> },
+      { label: "Analytics", path: "/analytics", icon: <Analytics /> },
       { label: "Profile", path: "/profile", icon: <Person /> },
       { label: t("howItWorks.faq"), path: "/how-it-works", icon: <Help /> },
     ];

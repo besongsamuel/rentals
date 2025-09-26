@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BasicInformation from "../components/BasicInformation";
 import DriverDetail from "../components/DriverDetail";
-import RewardsSection from "../components/RewardsSection";
 import SkeletonLoader from "../components/SkeletonLoader";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
@@ -113,7 +112,6 @@ const DriverDashboard: React.FC = () => {
 
   return (
     <Box sx={{ py: { xs: 3, sm: 4 } }}>
-      <RewardsSection />
       <Box sx={{ mb: 6 }}>
         <Typography
           variant="h3"
