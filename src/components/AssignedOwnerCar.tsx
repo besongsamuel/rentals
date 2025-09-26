@@ -2,6 +2,7 @@ import {
   Assessment,
   CalendarToday,
   ConfirmationNumber,
+  Description,
   DirectionsCar,
   Edit,
   LocalGasStation,
@@ -39,6 +40,8 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
   const [carMake, setCarMake] = useState<CarMake | null>(null);
   const [carModel, setCarModel] = useState<CarModel | null>(null);
   const [loadingCarInfo, setLoadingCarInfo] = useState(true);
+  const [reportCount, setReportCount] = useState<number>(0);
+  const [loadingReportCount, setLoadingReportCount] = useState(true);
 
   useEffect(() => {
     const calculateCurrentMileage = async () => {
@@ -82,6 +85,24 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
 
     loadCarInfo();
   }, [car.make, car.model]);
+
+  // Load report count
+  useEffect(() => {
+    const loadReportCount = async () => {
+      try {
+        setLoadingReportCount(true);
+        const count = await weeklyReportService.getReportCountForCar(car.id);
+        setReportCount(count);
+      } catch (error) {
+        console.error("Error loading report count:", error);
+        setReportCount(0);
+      } finally {
+        setLoadingReportCount(false);
+      }
+    };
+
+    loadReportCount();
+  }, [car.id]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -472,6 +493,38 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
               </Box>
             </Grid>
           )}
+
+          {/* Report Count */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <Description
+                sx={{
+                  mr: 1.5,
+                  fontSize: 20,
+                  color: "text.secondary",
+                }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                {t("statistics.reports")}:
+              </Typography>
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 500,
+                color: "#1D1D1F",
+                fontSize: "0.875rem",
+              }}
+            >
+              {loadingReportCount
+                ? "..."
+                : `${reportCount} ${
+                    reportCount === 1
+                      ? t("statistics.report")
+                      : t("statistics.reports")
+                  }`}
+            </Typography>
+          </Grid>
         </Grid>
 
         {/* Action Buttons */}

@@ -436,4 +436,23 @@ export const weeklyReportService = {
       throw error;
     }
   },
+
+  async getReportCountForCar(carId: string): Promise<number> {
+    try {
+      const { count, error } = await supabase
+        .from("weekly_reports")
+        .select("*", { count: "exact", head: true })
+        .eq("car_id", carId);
+
+      if (error) {
+        console.error("Error fetching report count for car:", error);
+        return 0;
+      }
+
+      return count || 0;
+    } catch (error) {
+      console.error("Error getting report count for car:", error);
+      return 0;
+    }
+  },
 };
