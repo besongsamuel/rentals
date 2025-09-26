@@ -10,11 +10,14 @@ import {
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import DateRangePicker, { DateRange } from "../components/DateRangePicker";
 import PerformanceCharts from "../components/PerformanceCharts";
+import PerformanceComparison from "../components/PerformanceComparison";
+import ReportExporter from "../components/ReportExporter";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useUserContext } from "../contexts/UserContext";
 import { analyticsService } from "../services/analyticsService";
-import { AnalyticsData, PerformanceMetrics } from "../types";
+import { AnalyticsData, ChartData, PerformanceMetrics } from "../types";
 
 const Analytics: React.FC = () => {
   const { profile, loading } = useUserContext();
@@ -27,6 +30,12 @@ const Analytics: React.FC = () => {
   );
   const [performanceMetrics, setPerformanceMetrics] =
     useState<PerformanceMetrics | null>(null);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [dateRange, setDateRange] = useState<DateRange>({
+    startDate: null,
+    endDate: null,
+    period: "last_30_days",
+  });
   const [loadingData, setLoadingData] = useState(true);
 
   const loadAnalyticsData = useCallback(async () => {
@@ -34,13 +43,15 @@ const Analytics: React.FC = () => {
 
     setLoadingData(true);
     try {
-      const [analytics, metrics] = await Promise.all([
+      const [analytics, metrics, charts] = await Promise.all([
         analyticsService.getAnalyticsData(profile.id, profile.user_type),
         analyticsService.getPerformanceMetrics(profile.id, profile.user_type),
+        analyticsService.getChartData(profile.id, profile.user_type, 12),
       ]);
 
       setAnalyticsData(analytics);
       setPerformanceMetrics(metrics);
+      setChartData(charts);
     } catch (error) {
       console.error("Error loading analytics data:", error);
     } finally {
@@ -95,6 +106,36 @@ const Analytics: React.FC = () => {
             ? "Track your performance, earnings, and driving efficiency"
             : "Monitor your fleet performance, profitability, and driver metrics"}
         </Typography>
+      </Box>
+
+      {/* Date Range Picker and Export */}
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+          alignItems: { xs: "stretch", sm: "flex-end" },
+        }}
+      >
+        <Box sx={{ flex: 1 }}>
+          <DateRangePicker
+            value={dateRange}
+            onChange={setDateRange}
+            disabled={loadingData}
+          />
+        </Box>
+        <Box sx={{ minWidth: { xs: "100%", sm: "auto" } }}>
+          {analyticsData && performanceMetrics && (
+            <ReportExporter
+              analyticsData={analyticsData}
+              performanceMetrics={performanceMetrics}
+              chartData={chartData}
+              userType={profile.user_type}
+              dateRange={dateRange}
+            />
+          )}
+        </Box>
       </Box>
 
       {/* Performance Overview Cards */}
@@ -321,6 +362,17 @@ const Analytics: React.FC = () => {
       {profile && (
         <Box sx={{ mt: 4 }}>
           <PerformanceCharts userId={profile.id} userType={profile.user_type} />
+        </Box>
+      )}
+
+      {/* Performance Comparison */}
+      {profile && dateRange.startDate && dateRange.endDate && (
+        <Box sx={{ mt: 4 }}>
+          <PerformanceComparison
+            userId={profile.id}
+            userType={profile.user_type}
+            currentDateRange={dateRange}
+          />
         </Box>
       )}
     </Box>

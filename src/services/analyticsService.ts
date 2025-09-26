@@ -524,4 +524,227 @@ export const analyticsService = {
       return dateA.getTime() - dateB.getTime();
     });
   },
+
+  async getAnalyticsDataForPeriod(
+    userId: string,
+    userType: "driver" | "owner",
+    startDate: Date,
+    endDate: Date
+  ): Promise<AnalyticsData & PerformanceMetrics> {
+    try {
+      if (userType === "driver") {
+        return await this.getDriverAnalyticsForPeriod(
+          userId,
+          startDate,
+          endDate
+        );
+      } else {
+        return await this.getOwnerAnalyticsForPeriod(
+          userId,
+          startDate,
+          endDate
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching analytics data for period:", error);
+      throw error;
+    }
+  },
+
+  async getDriverAnalyticsForPeriod(
+    driverId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<AnalyticsData & PerformanceMetrics> {
+    // Get driver's assigned cars
+    const { data: assignedCars, error: carsError } = await supabase
+      .from("cars")
+      .select("id")
+      .eq("driver_id", driverId);
+
+    if (carsError) throw carsError;
+
+    const carIds = assignedCars?.map((car) => car.id) || [];
+
+    if (carIds.length === 0) {
+      return {
+        totalEarnings: 0,
+        totalRevenue: 0,
+        totalMileage: 0,
+        totalReports: 0,
+        assignedCars: 0,
+        totalCars: 0,
+        averageWeeklyEarnings: 0,
+        averageWeeklyMileage: 0,
+        earningsPerMile: 0,
+        carUtilization: 0,
+        last30DaysEarnings: 0,
+        last30DaysMileage: 0,
+        reportSubmissionRate: 0,
+        activeDrivers: 0,
+      };
+    }
+
+    // Get weekly reports for the specified period
+    const { data: reports, error: reportsError } = await supabase
+      .from("weekly_reports")
+      .select(
+        "driver_earnings, start_mileage, end_mileage, week_start_date, status"
+      )
+      .in("car_id", carIds)
+      .eq("driver_id", driverId)
+      .gte("week_start_date", startDate.toISOString().split("T")[0])
+      .lte("week_start_date", endDate.toISOString().split("T")[0]);
+
+    if (reportsError) throw reportsError;
+
+    const totalEarnings =
+      reports?.reduce(
+        (sum, report) => sum + (report.driver_earnings || 0),
+        0
+      ) || 0;
+    const totalMileage =
+      reports?.reduce(
+        (sum, report) => sum + (report.end_mileage - report.start_mileage),
+        0
+      ) || 0;
+    const totalReports = reports?.length || 0;
+    const totalWeeks = totalReports || 1;
+
+    const submittedReports =
+      reports?.filter(
+        (report) =>
+          report.status === "submitted" || report.status === "approved"
+      ).length || 0;
+    const reportSubmissionRate =
+      totalWeeks > 0 ? (submittedReports / totalWeeks) * 100 : 0;
+
+    return {
+      totalEarnings,
+      totalRevenue: totalEarnings,
+      totalMileage,
+      totalReports,
+      assignedCars: carIds.length,
+      totalCars: carIds.length,
+      averageWeeklyEarnings: totalWeeks > 0 ? totalEarnings / totalWeeks : 0,
+      averageWeeklyMileage: totalWeeks > 0 ? totalMileage / totalWeeks : 0,
+      earningsPerMile: totalMileage > 0 ? totalEarnings / totalMileage : 0,
+      carUtilization: 0,
+      last30DaysEarnings: totalEarnings,
+      last30DaysMileage: totalMileage,
+      reportSubmissionRate,
+      activeDrivers: 0,
+    };
+  },
+
+  async getOwnerAnalyticsForPeriod(
+    ownerId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<AnalyticsData & PerformanceMetrics> {
+    // Get owner's cars (main owner and additional owner)
+    const { data: mainOwnerCars, error: mainCarsError } = await supabase
+      .from("cars")
+      .select("id")
+      .eq("owner_id", ownerId);
+
+    if (mainCarsError) throw mainCarsError;
+
+    const { data: additionalOwnerCars, error: additionalCarsError } =
+      await supabase
+        .from("car_owners")
+        .select("car_id")
+        .eq("owner_id", ownerId);
+
+    if (additionalCarsError) throw additionalCarsError;
+
+    const mainCarIds = mainOwnerCars?.map((car) => car.id) || [];
+    const additionalCarIds =
+      additionalOwnerCars?.map((car) => car.car_id) || [];
+    const allCarIds = Array.from(new Set([...mainCarIds, ...additionalCarIds]));
+
+    if (allCarIds.length === 0) {
+      return {
+        totalEarnings: 0,
+        totalRevenue: 0,
+        totalMileage: 0,
+        totalReports: 0,
+        assignedCars: 0,
+        totalCars: 0,
+        averageWeeklyEarnings: 0,
+        averageWeeklyMileage: 0,
+        earningsPerMile: 0,
+        carUtilization: 0,
+        last30DaysEarnings: 0,
+        last30DaysMileage: 0,
+        reportSubmissionRate: 0,
+        activeDrivers: 0,
+      };
+    }
+
+    // Get weekly reports for the specified period
+    const { data: reports, error: reportsError } = await supabase
+      .from("weekly_reports")
+      .select(
+        "car_id, driver_id, driver_earnings, ride_share_income, rental_income, start_mileage, end_mileage, week_start_date, status"
+      )
+      .in("car_id", allCarIds)
+      .gte("week_start_date", startDate.toISOString().split("T")[0])
+      .lte("week_start_date", endDate.toISOString().split("T")[0]);
+
+    if (reportsError) throw reportsError;
+
+    const totalRevenue =
+      reports?.reduce(
+        (sum, report) =>
+          sum + (report.ride_share_income || 0) + (report.rental_income || 0),
+        0
+      ) || 0;
+    const totalEarnings =
+      reports?.reduce(
+        (sum, report) => sum + (report.driver_earnings || 0),
+        0
+      ) || 0;
+    const totalMileage =
+      reports?.reduce(
+        (sum, report) => sum + (report.end_mileage - report.start_mileage),
+        0
+      ) || 0;
+    const totalReports = reports?.length || 0;
+    const totalWeeks = totalReports || 1;
+
+    const submittedReports =
+      reports?.filter(
+        (report) =>
+          report.status === "submitted" || report.status === "approved"
+      ).length || 0;
+    const reportSubmissionRate =
+      totalWeeks > 0 ? (submittedReports / totalWeeks) * 100 : 0;
+
+    // Calculate car utilization
+    const activeCars = new Set(reports?.map((report) => report.car_id)).size;
+    const carUtilization =
+      allCarIds.length > 0 ? (activeCars / allCarIds.length) * 100 : 0;
+
+    // Get active drivers
+    const activeDrivers = new Set(reports?.map((report) => report.driver_id))
+      .size;
+
+    return {
+      totalEarnings,
+      totalRevenue,
+      totalMileage,
+      totalReports,
+      assignedCars: allCarIds.length,
+      totalCars: allCarIds.length,
+      averageWeeklyEarnings: totalWeeks > 0 ? totalRevenue / totalWeeks : 0,
+      averageWeeklyMileage: totalWeeks > 0 ? totalMileage / totalWeeks : 0,
+      earningsPerMile: totalMileage > 0 ? totalRevenue / totalMileage : 0,
+      carUtilization,
+      last30DaysEarnings: totalRevenue,
+      last30DaysMileage: totalMileage,
+      reportSubmissionRate,
+      activeDrivers,
+    };
+  },
 };
