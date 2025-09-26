@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import BasicInformation from "../components/BasicInformation";
 import DriverDetail from "../components/DriverDetail";
+import RewardsSection from "../components/RewardsSection";
 import SkeletonLoader from "../components/SkeletonLoader";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
@@ -17,7 +18,6 @@ import {
   DriverDetails,
   WeeklyReport,
 } from "../types";
-import RewardsSection from "../components/RewardsSection";
 
 const DriverDashboard: React.FC = () => {
   const { profile } = useUserContext();
@@ -273,6 +273,7 @@ const DriverDashboard: React.FC = () => {
         assignedCars={assignedCars}
         editingReport={null}
         mode="add"
+        existingReports={weeklyReports}
       />
     </Box>
   );

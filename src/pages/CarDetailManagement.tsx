@@ -666,6 +666,7 @@ const CarDetailManagement: React.FC = () => {
         assignedCars={car ? [car] : []}
         editingReport={editingReport}
         mode={editingReport ? "edit" : "add"}
+        existingReports={weeklyReports}
       />
 
       {/* Confirmation Dialog */}

@@ -777,6 +777,7 @@ const CarReports: React.FC = () => {
         assignedCars={car ? [car] : []}
         editingReport={null}
         mode="add"
+        existingReports={weeklyReports}
       />
 
       {/* Edit Report Dialog */}

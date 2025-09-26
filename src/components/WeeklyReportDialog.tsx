@@ -32,6 +32,7 @@ interface WeeklyReportDialogProps {
   assignedCars?: Car[];
   editingReport?: WeeklyReport | null;
   mode: "add" | "edit";
+  existingReports?: WeeklyReport[];
 }
 
 const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
@@ -41,6 +42,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
   assignedCars = [],
   editingReport = null,
   mode,
+  existingReports = [],
 }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -122,6 +124,37 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
   const [addDialogField, setAddDialogField] = useState<string>("");
   const [addDialogValue, setAddDialogValue] = useState<number>(0);
 
+  const calculateMileageForNewReport = useCallback(
+    (carId: string) => {
+      // Find the selected car
+      const selectedCar = assignedCars.find((car) => car.id === carId);
+      if (!selectedCar) {
+        return { startMileage: 0, endMileage: 1 };
+      }
+
+      // Get car's initial mileage
+      const initialMileage = selectedCar.initial_mileage || 0;
+
+      // Calculate sum of all previous reports' mileages for this car
+      const totalReportMileage = existingReports
+        .filter((report) => report.car_id === carId)
+        .reduce((sum, report) => {
+          const reportMileage =
+            (report.end_mileage || 0) - (report.start_mileage || 0);
+          return sum + reportMileage;
+        }, 0);
+
+      // Calculate start mileage: initial mileage + sum of all previous report mileages
+      const startMileage = initialMileage + totalReportMileage;
+
+      // End mileage is start mileage + 1
+      const endMileage = startMileage + 1;
+
+      return { startMileage, endMileage };
+    },
+    [assignedCars, existingReports]
+  );
+
   // Initialize form data when dialog opens or editing report changes
   useEffect(() => {
     if (open) {
@@ -148,12 +181,17 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
       } else {
         // Reset form for add mode with current week as default
         const currentWeek = getCurrentWeek();
+        const selectedCarId =
+          assignedCars.length === 1 ? assignedCars[0].id : "";
+        const { startMileage, endMileage } =
+          calculateMileageForNewReport(selectedCarId);
+
         setFormData({
-          car_id: assignedCars.length === 1 ? assignedCars[0].id : "",
+          car_id: selectedCarId,
           week_start_date: currentWeek.start,
           week_end_date: currentWeek.end,
-          start_mileage: 0,
-          end_mileage: 0,
+          start_mileage: startMileage,
+          end_mileage: endMileage,
           driver_earnings: 0,
           maintenance_expenses: 0,
           gas_expense: 0,
@@ -172,14 +210,30 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     mode,
     editingReport,
     assignedCars,
+    existingReports,
     getCurrentWeek,
     formatDateForInput,
+    calculateMileageForNewReport,
   ]);
 
   const handleInputChange =
     (field: string) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const value = e.target.value;
+
+      // If car_id is changing and we're in add mode, recalculate mileage
+      if (field === "car_id" && mode === "add") {
+        const { startMileage, endMileage } =
+          calculateMileageForNewReport(value);
+        setFormData((prev) => ({
+          ...prev,
+          [field]: value,
+          start_mileage: startMileage,
+          end_mileage: endMileage,
+        }));
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         [field]:
