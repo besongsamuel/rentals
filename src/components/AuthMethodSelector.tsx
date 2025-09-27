@@ -1,8 +1,12 @@
+import EmailIcon from "@mui/icons-material/Email";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import GoogleIcon from "@mui/icons-material/Google";
 import {
   Box,
   Button,
   Card,
   CardContent,
+  Divider,
   FormControl,
   FormControlLabel,
   Radio,
@@ -21,6 +25,9 @@ interface AuthMethodSelectorProps {
   onPhoneAuth: (phone: string) => Promise<void>;
   onVerifyOTP: (phone: string, otp: string) => Promise<void>;
   onResendOTP: (phone: string) => Promise<void>;
+  onGoogleLogin: () => Promise<void>;
+  onFacebookLogin: () => Promise<void>;
+  onMagicLinkLogin: (email: string) => Promise<void>;
   loading?: boolean;
   error?: string;
 }
@@ -33,6 +40,9 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
   onPhoneAuth,
   onVerifyOTP,
   onResendOTP,
+  onGoogleLogin,
+  onFacebookLogin,
+  onMagicLinkLogin,
   loading = false,
   error,
 }) => {
@@ -47,6 +57,11 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
   const [phone, setPhone] = useState("");
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [facebookLoading, setFacebookLoading] = useState(false);
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [magicLinkEmail, setMagicLinkEmail] = useState("");
+  const [magicLinkMessage, setMagicLinkMessage] = useState("");
 
   const handleMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAuthMethod(event.target.value as AuthMethod);
@@ -120,6 +135,49 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
       setAuthError(error.message || t("auth.resendError"));
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    setAuthError("");
+    try {
+      await onGoogleLogin();
+    } catch (error: any) {
+      setAuthError(error.message || t("auth.googleLoginError"));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    setFacebookLoading(true);
+    setAuthError("");
+    try {
+      await onFacebookLogin();
+    } catch (error: any) {
+      setAuthError(error.message || t("auth.facebookLoginError"));
+    } finally {
+      setFacebookLoading(false);
+    }
+  };
+
+  const handleMagicLinkLogin = async () => {
+    if (!magicLinkEmail.trim()) {
+      setAuthError(t("auth.enterEmailForMagicLink"));
+      return;
+    }
+
+    setMagicLinkLoading(true);
+    setAuthError("");
+    setMagicLinkMessage("");
+    try {
+      await onMagicLinkLogin(magicLinkEmail);
+      setMagicLinkMessage(t("auth.magicLinkSent"));
+    } catch (error: any) {
+      setAuthError(error.message || t("auth.magicLinkError"));
+    } finally {
+      setMagicLinkLoading(false);
     }
   };
 
@@ -237,6 +295,204 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                 />
               </RadioGroup>
             </FormControl>
+
+            {/* Social Authentication Options */}
+            <Box sx={{ mb: 4 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  textAlign: "center",
+                  color: "#86868b",
+                  mb: 3,
+                  fontSize: "0.875rem",
+                  fontWeight: 400,
+                }}
+              >
+                {t("auth.orContinueWith")}
+              </Typography>
+
+              {/* Google Login Button */}
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={handleGoogleLogin}
+                disabled={googleLoading || loading || facebookLoading || magicLinkLoading}
+                startIcon={<GoogleIcon />}
+                sx={{
+                  py: 2,
+                  mb: 2,
+                  fontSize: "0.875rem",
+                  fontWeight: 400,
+                  borderColor: "#dadce0",
+                  color: "#3c4043",
+                  borderRadius: 2,
+                  textTransform: "none",
+                  letterSpacing: "-0.01em",
+                  backgroundColor: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#f8f9fa",
+                    borderColor: "#dadce0",
+                    boxShadow:
+                      "0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15)",
+                  },
+                  "&:disabled": {
+                    backgroundColor: "#f8f9fa",
+                    borderColor: "#dadce0",
+                    color: "#9aa0a6",
+                  },
+                  "& .MuiSvgIcon-root": {
+                    color: "#4285f4",
+                  },
+                }}
+              >
+                {googleLoading ? t("common.loading") : t("auth.continueWithGoogle")}
+              </Button>
+
+              {/* Facebook Login Button */}
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={handleFacebookLogin}
+                disabled={facebookLoading || loading || googleLoading || magicLinkLoading}
+                startIcon={<FacebookIcon />}
+                sx={{
+                  py: 2,
+                  mb: 2,
+                  fontSize: "0.875rem",
+                  fontWeight: 400,
+                  borderColor: "#1877f2",
+                  color: "#1877f2",
+                  borderRadius: 2,
+                  textTransform: "none",
+                  letterSpacing: "-0.01em",
+                  backgroundColor: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#f0f2f5",
+                    borderColor: "#1877f2",
+                    boxShadow:
+                      "0 1px 2px 0 rgba(24,119,242,.3), 0 1px 3px 1px rgba(24,119,242,.15)",
+                  },
+                  "&:disabled": {
+                    backgroundColor: "#f8f9fa",
+                    borderColor: "#dadce0",
+                    color: "#9aa0a6",
+                  },
+                }}
+              >
+                {facebookLoading ? t("common.loading") : t("auth.continueWithFacebook")}
+              </Button>
+
+              {/* Magic Link Login Button */}
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => {
+                  setMagicLinkEmail("");
+                  setMagicLinkMessage("");
+                  setAuthError("");
+                }}
+                disabled={magicLinkLoading || loading || googleLoading || facebookLoading}
+                startIcon={<EmailIcon />}
+                sx={{
+                  py: 2,
+                  mb: 2,
+                  fontSize: "0.875rem",
+                  fontWeight: 400,
+                  borderColor: "#007AFF",
+                  color: "#007AFF",
+                  borderRadius: 2,
+                  textTransform: "none",
+                  letterSpacing: "-0.01em",
+                  backgroundColor: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 122, 255, 0.05)",
+                    borderColor: "#007AFF",
+                    boxShadow:
+                      "0 1px 2px 0 rgba(0,122,255,.3), 0 1px 3px 1px rgba(0,122,255,.15)",
+                  },
+                  "&:disabled": {
+                    backgroundColor: "#f8f9fa",
+                    borderColor: "#dadce0",
+                    color: "#9aa0a6",
+                  },
+                }}
+              >
+                {t("auth.continueWithMagicLink")}
+              </Button>
+
+              {/* Magic Link Email Input */}
+              {magicLinkEmail !== null && (
+                <Box sx={{ mt: 2 }}>
+                  <input
+                    type="email"
+                    placeholder={t("auth.enterEmailForMagicLink")}
+                    value={magicLinkEmail}
+                    onChange={(e) => setMagicLinkEmail(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "1px solid rgba(0, 0, 0, 0.23)",
+                      borderRadius: "8px",
+                      fontSize: "14px",
+                      outline: "none",
+                      transition: "border-color 0.2s ease-in-out",
+                      marginBottom: "12px",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#007AFF";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(0, 0, 0, 0.23)";
+                    }}
+                  />
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={handleMagicLinkLogin}
+                    disabled={magicLinkLoading || !magicLinkEmail.trim()}
+                    sx={{
+                      bgcolor: "#007AFF",
+                      color: "white",
+                      fontWeight: 600,
+                      py: 1.5,
+                      borderRadius: 2,
+                      textTransform: "none",
+                      fontSize: "0.875rem",
+                      boxShadow: "0 4px 12px rgba(0, 122, 255, 0.3)",
+                      "&:hover": {
+                        bgcolor: "#0056CC",
+                        boxShadow: "0 6px 16px rgba(0, 122, 255, 0.4)",
+                      },
+                      "&:disabled": {
+                        bgcolor: "rgba(0, 0, 0, 0.12)",
+                        color: "rgba(0, 0, 0, 0.26)",
+                      },
+                    }}
+                  >
+                    {magicLinkLoading ? t("auth.sendingMagicLink") : t("auth.sendMagicLink")}
+                  </Button>
+                </Box>
+              )}
+
+              {/* Magic Link Success Message */}
+              {magicLinkMessage && (
+                <Box sx={{ mt: 2 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      backgroundColor: "rgba(52, 199, 89, 0.1)",
+                      padding: 2,
+                      borderRadius: 2,
+                      border: "1px solid rgba(52, 199, 89, 0.2)",
+                      textAlign: "center",
+                      color: "#34c759",
+                    }}
+                  >
+                    {magicLinkMessage}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
 
             {currentError && (
               <Box sx={{ mb: 3 }}>

@@ -8,7 +8,7 @@ import { useUserContext } from "../contexts/UserContext";
 const EnhancedLoginForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn, signInWithPhoneOTP, verifyPhoneOTP } = useUserContext();
+  const { signIn, signInWithPhoneOTP, verifyPhoneOTP, signInWithGoogle, signInWithFacebook, signUpWithOtp } = useUserContext();
 
   const [error, setError] = useState("");
 
@@ -41,6 +41,30 @@ const EnhancedLoginForm: React.FC = () => {
   const handleResendOTP = async (phone: string) => {
     setError("");
     const { error } = await signInWithPhoneOTP(phone);
+    if (error) {
+      throw error;
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError("");
+    const { error } = await signInWithGoogle();
+    if (error) {
+      throw error;
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    setError("");
+    const { error } = await signInWithFacebook();
+    if (error) {
+      throw error;
+    }
+  };
+
+  const handleMagicLinkLogin = async (email: string) => {
+    setError("");
+    const { error } = await signUpWithOtp(email);
     if (error) {
       throw error;
     }
@@ -139,6 +163,9 @@ const EnhancedLoginForm: React.FC = () => {
           onPhoneAuth={handlePhoneAuth}
           onVerifyOTP={handleVerifyOTP}
           onResendOTP={handleResendOTP}
+          onGoogleLogin={handleGoogleLogin}
+          onFacebookLogin={handleFacebookLogin}
+          onMagicLinkLogin={handleMagicLinkLogin}
           error={error}
         />
 

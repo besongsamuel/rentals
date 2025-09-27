@@ -134,7 +134,20 @@
     "enterPhoneNumberSignup": "Entrez votre numéro de téléphone pour créer votre compte",
     "signingUp": "Création du Compte...",
     "signupError": "Échec de la création du compte. Veuillez réessayer.",
-    "phoneSignupError": "Échec de l'envoi du code de vérification. Veuillez réessayer."
+    "phoneSignupError": "Échec de l'envoi du code de vérification. Veuillez réessayer.",
+    "orContinueWith": "Ou continuer avec",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithFacebook": "Continuer avec Facebook",
+    "continueWithMagicLink": "Continuer avec Magic Link",
+    "enterEmailForMagicLink": "Entrez votre adresse email",
+    "sendMagicLink": "Envoyer Magic Link",
+    "sendingMagicLink": "Envoi de Magic Link...",
+    "magicLinkSent": "Magic link envoyé! Vérifiez votre email pour vous connecter.",
+    "magicLinkError": "Échec de l'envoi du magic link. Veuillez réessayer.",
+    "googleLoginError": "Échec de la connexion Google. Veuillez réessayer.",
+    "facebookLoginError": "Échec de la connexion Facebook. Veuillez réessayer.",
+    "googleSignupError": "Échec de l'inscription Google. Veuillez réessayer.",
+    "facebookSignupError": "Échec de l'inscription Facebook. Veuillez réessayer."
   },
   "profile": {
     "completeProfile": "Complétez Votre Profil",

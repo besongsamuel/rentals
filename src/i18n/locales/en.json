@@ -134,7 +134,20 @@
     "enterPhoneNumberSignup": "Enter your phone number to create your account",
     "signingUp": "Creating Account...",
     "signupError": "Account creation failed. Please try again.",
-    "phoneSignupError": "Failed to send verification code. Please try again."
+    "phoneSignupError": "Failed to send verification code. Please try again.",
+    "orContinueWith": "Or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
+    "continueWithMagicLink": "Continue with Magic Link",
+    "enterEmailForMagicLink": "Enter your email address",
+    "sendMagicLink": "Send Magic Link",
+    "sendingMagicLink": "Sending Magic Link...",
+    "magicLinkSent": "Magic link sent! Check your email to sign in.",
+    "magicLinkError": "Failed to send magic link. Please try again.",
+    "googleLoginError": "Google login failed. Please try again.",
+    "facebookLoginError": "Facebook login failed. Please try again.",
+    "googleSignupError": "Google signup failed. Please try again.",
+    "facebookSignupError": "Facebook signup failed. Please try again."
   },
   "profile": {
     "completeProfile": "Complete Your Profile",
