@@ -126,6 +126,16 @@ const DriverDetailsCompletion: React.FC = () => {
     }
   }, [user?.id]);
 
+  // Prefill emergency contact phone if user logged in with phone OTP
+  useEffect(() => {
+    if (user?.phone && !driverDetails.emergency_contact_phone) {
+      setDriverDetails((prev) => ({
+        ...prev,
+        emergency_contact_phone: user.phone || "",
+      }));
+    }
+  }, [user?.phone, driverDetails.emergency_contact_phone]);
+
   // Redirect if user is not a driver or doesn't have a profile
   useEffect(() => {
     if (profile && profile.user_type !== "driver") {

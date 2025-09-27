@@ -21,7 +21,7 @@ import {
 } from "../utils/userTypeColors";
 
 const ProfileCompletion: React.FC = () => {
-  const { createProfile, profile } = useUserContext();
+  const { createProfile, profile, user } = useUserContext();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -47,6 +47,16 @@ const ProfileCompletion: React.FC = () => {
       }
     }
   }, [profile, navigate]);
+
+  // Prefill phone number if user logged in with phone OTP
+  useEffect(() => {
+    if (user?.phone && !formData.phone) {
+      setFormData(prev => ({
+        ...prev,
+        phone: user.phone || ""
+      }));
+    }
+  }, [user?.phone, formData.phone]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

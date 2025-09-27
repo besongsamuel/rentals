@@ -30,7 +30,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
 import Rewards from "./pages/Rewards";
-import SignUpForm from "./pages/SignUpForm";
+import EnhancedSignUpForm from "./pages/EnhancedSignUpForm";
 import SignupComplete from "./pages/SignupComplete";
 import TermsOfUse from "./pages/TermsOfUse";
 import theme from "./theme";
@@ -255,7 +255,7 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<EnhancedLoginForm />} />
-                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/signup" element={<EnhancedSignUpForm />} />
                 <Route path="/signup-complete" element={<SignupComplete />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />

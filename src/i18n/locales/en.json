@@ -123,7 +123,18 @@
     "loginError": "Login failed. Please try again.",
     "phoneAuthError": "Failed to send verification code. Please try again.",
     "otpVerificationError": "Invalid verification code. Please try again.",
-    "resendError": "Failed to resend code. Please try again."
+    "resendError": "Failed to resend code. Please try again.",
+    "chooseSignupMethod": "Choose Signup Method",
+    "selectSignupMethodDescription": "Select how you'd like to create your account",
+    "emailPasswordSignupDescription": "Create account with email and password",
+    "phoneOTPSignupDescription": "Create account with phone number using SMS verification",
+    "emailSignup": "Email Signup",
+    "enterEmailPasswordSignup": "Enter your email and password to create your account",
+    "phoneSignup": "Phone Signup",
+    "enterPhoneNumberSignup": "Enter your phone number to create your account",
+    "signingUp": "Creating Account...",
+    "signupError": "Account creation failed. Please try again.",
+    "phoneSignupError": "Failed to send verification code. Please try again."
   },
   "profile": {
     "completeProfile": "Complete Your Profile",

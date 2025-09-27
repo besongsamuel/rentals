@@ -123,7 +123,18 @@
     "loginError": "Échec de la connexion. Veuillez réessayer.",
     "phoneAuthError": "Échec de l'envoi du code de vérification. Veuillez réessayer.",
     "otpVerificationError": "Code de vérification invalide. Veuillez réessayer.",
-    "resendError": "Échec du renvoi du code. Veuillez réessayer."
+    "resendError": "Échec du renvoi du code. Veuillez réessayer.",
+    "chooseSignupMethod": "Choisir la Méthode d'Inscription",
+    "selectSignupMethodDescription": "Sélectionnez comment vous souhaitez créer votre compte",
+    "emailPasswordSignupDescription": "Créer un compte avec email et mot de passe",
+    "phoneOTPSignupDescription": "Créer un compte avec numéro de téléphone en utilisant la vérification SMS",
+    "emailSignup": "Inscription par Email",
+    "enterEmailPasswordSignup": "Entrez votre email et mot de passe pour créer votre compte",
+    "phoneSignup": "Inscription par Téléphone",
+    "enterPhoneNumberSignup": "Entrez votre numéro de téléphone pour créer votre compte",
+    "signingUp": "Création du Compte...",
+    "signupError": "Échec de la création du compte. Veuillez réessayer.",
+    "phoneSignupError": "Échec de l'envoi du code de vérification. Veuillez réessayer."
   },
   "profile": {
     "completeProfile": "Complétez Votre Profil",
