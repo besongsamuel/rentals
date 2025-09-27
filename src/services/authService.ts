@@ -50,4 +50,39 @@ export const authService = {
       },
     });
   },
+
+  // Phone OTP Authentication
+  async signInWithPhoneOTP(phone: string) {
+    return await supabase.auth.signInWithOtp({
+      phone,
+    });
+  },
+
+  async verifyPhoneOTP(phone: string, token: string) {
+    return await supabase.auth.verifyOtp({
+      phone,
+      token,
+      type: "sms",
+    });
+  },
+
+  async signUpWithPhone(phone: string) {
+    return await supabase.auth.signInWithOtp({
+      phone,
+    });
+  },
+
+  async updateUserPhone(phone: string) {
+    return await supabase.auth.updateUser({
+      phone,
+    });
+  },
+
+  async verifyPhoneChange(phone: string, token: string) {
+    return await supabase.auth.verifyOtp({
+      phone,
+      token,
+      type: "phone_change",
+    });
+  },
 };

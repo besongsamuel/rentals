@@ -23,9 +23,9 @@ import DataDeletion from "./pages/DataDeletion";
 import DriverDetails from "./pages/DriverDetails";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
 import DriverSearch from "./pages/DriverSearch";
+import EnhancedLoginForm from "./pages/EnhancedLoginForm";
 import Home from "./pages/Home";
 import HowItWorks from "./pages/HowItWorks";
-import LoginForm from "./pages/LoginForm";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
@@ -254,7 +254,7 @@ function AppContent() {
             <Box sx={{ flexGrow: 1 }}>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/login" element={<LoginForm />} />
+                <Route path="/login" element={<EnhancedLoginForm />} />
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/signup-complete" element={<SignupComplete />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />

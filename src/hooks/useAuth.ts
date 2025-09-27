@@ -160,6 +160,32 @@ export const useAuth = () => {
     return { data, error };
   };
 
+  // Phone OTP Authentication Methods
+  const signInWithPhoneOTP = async (phone: string) => {
+    const { data, error } = await authService.signInWithPhoneOTP(phone);
+    return { data, error };
+  };
+
+  const verifyPhoneOTP = async (phone: string, token: string) => {
+    const { data, error } = await authService.verifyPhoneOTP(phone, token);
+    return { data, error };
+  };
+
+  const signUpWithPhone = async (phone: string) => {
+    const { data, error } = await authService.signUpWithPhone(phone);
+    return { data, error };
+  };
+
+  const updateUserPhone = async (phone: string) => {
+    const { data, error } = await authService.updateUserPhone(phone);
+    return { data, error };
+  };
+
+  const verifyPhoneChange = async (phone: string, token: string) => {
+    const { data, error } = await authService.verifyPhoneChange(phone, token);
+    return { data, error };
+  };
+
   return {
     user,
     session,
@@ -177,5 +203,10 @@ export const useAuth = () => {
     signInWithFacebook,
     signInWithOtp,
     signUpWithOtp,
+    signInWithPhoneOTP,
+    verifyPhoneOTP,
+    signUpWithPhone,
+    updateUserPhone,
+    verifyPhoneChange,
   };
 };

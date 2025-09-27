@@ -30,6 +30,17 @@ interface UserContextType {
   signInWithFacebook: () => Promise<{ data: any; error: any }>;
   signInWithOtp: (email: string) => Promise<{ data: any; error: any }>;
   signUpWithOtp: (email: string) => Promise<{ data: any; error: any }>;
+  signInWithPhoneOTP: (phone: string) => Promise<{ data: any; error: any }>;
+  verifyPhoneOTP: (
+    phone: string,
+    token: string
+  ) => Promise<{ data: any; error: any }>;
+  signUpWithPhone: (phone: string) => Promise<{ data: any; error: any }>;
+  updateUserPhone: (phone: string) => Promise<{ data: any; error: any }>;
+  verifyPhoneChange: (
+    phone: string,
+    token: string
+  ) => Promise<{ data: any; error: any }>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
