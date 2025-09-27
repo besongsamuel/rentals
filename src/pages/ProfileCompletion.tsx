@@ -51,9 +51,9 @@ const ProfileCompletion: React.FC = () => {
   // Prefill phone number if user logged in with phone OTP
   useEffect(() => {
     if (user?.phone && !formData.phone) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        phone: user.phone || ""
+        phone: user.phone || "",
       }));
     }
   }, [user?.phone, formData.phone]);
