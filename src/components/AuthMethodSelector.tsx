@@ -6,11 +6,16 @@ import {
   Button,
   Card,
   CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControl,
   FormControlLabel,
   Radio,
   RadioGroup,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -62,6 +67,7 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
   const [magicLinkLoading, setMagicLinkLoading] = useState(false);
   const [magicLinkEmail, setMagicLinkEmail] = useState("");
   const [magicLinkMessage, setMagicLinkMessage] = useState("");
+  const [magicLinkDialogOpen, setMagicLinkDialogOpen] = useState(false);
 
   const handleMethodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAuthMethod(event.target.value as AuthMethod);
@@ -390,6 +396,7 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                   setMagicLinkEmail("");
                   setMagicLinkMessage("");
                   setAuthError("");
+                  setMagicLinkDialogOpen(true);
                 }}
                 disabled={magicLinkLoading || loading || googleLoading || facebookLoading}
                 startIcon={<EmailIcon />}
@@ -420,59 +427,6 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                 {t("auth.continueWithMagicLink")}
               </Button>
 
-              {/* Magic Link Email Input */}
-              {magicLinkEmail !== null && (
-                <Box sx={{ mt: 2 }}>
-                  <input
-                    type="email"
-                    placeholder={t("auth.enterEmailForMagicLink")}
-                    value={magicLinkEmail}
-                    onChange={(e) => setMagicLinkEmail(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      border: "1px solid rgba(0, 0, 0, 0.23)",
-                      borderRadius: "8px",
-                      fontSize: "14px",
-                      outline: "none",
-                      transition: "border-color 0.2s ease-in-out",
-                      marginBottom: "12px",
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = "#007AFF";
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = "rgba(0, 0, 0, 0.23)";
-                    }}
-                  />
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    onClick={handleMagicLinkLogin}
-                    disabled={magicLinkLoading || !magicLinkEmail.trim()}
-                    sx={{
-                      bgcolor: "#007AFF",
-                      color: "white",
-                      fontWeight: 600,
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontSize: "0.875rem",
-                      boxShadow: "0 4px 12px rgba(0, 122, 255, 0.3)",
-                      "&:hover": {
-                        bgcolor: "#0056CC",
-                        boxShadow: "0 6px 16px rgba(0, 122, 255, 0.4)",
-                      },
-                      "&:disabled": {
-                        bgcolor: "rgba(0, 0, 0, 0.12)",
-                        color: "rgba(0, 0, 0, 0.26)",
-                      },
-                    }}
-                  >
-                    {magicLinkLoading ? t("auth.sendingMagicLink") : t("auth.sendMagicLink")}
-                  </Button>
-                </Box>
-              )}
 
               {/* Magic Link Success Message */}
               {magicLinkMessage && (
@@ -776,6 +730,160 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
             </Box>
           </Box>
         )}
+
+        {/* Magic Link Dialog */}
+        <Dialog
+          open={magicLinkDialogOpen}
+          onClose={() => setMagicLinkDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: 3,
+              p: 1,
+            },
+          }}
+        >
+          <DialogTitle
+            sx={{
+              textAlign: "center",
+              fontSize: "1.5rem",
+              fontWeight: 600,
+              color: "#1D1D1F",
+              pb: 1,
+            }}
+          >
+            {t("auth.continueWithMagicLink")}
+          </DialogTitle>
+          <DialogContent sx={{ px: 3, py: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                textAlign: "center",
+                color: "#86868b",
+                mb: 3,
+                fontSize: "0.875rem",
+              }}
+            >
+              {t("auth.enterEmailForMagicLink")}
+            </Typography>
+
+            {currentError && (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{
+                    backgroundColor: "rgba(211, 47, 47, 0.1)",
+                    padding: 2,
+                    borderRadius: 2,
+                    border: "1px solid rgba(211, 47, 47, 0.2)",
+                    textAlign: "center",
+                  }}
+                >
+                  {currentError}
+                </Typography>
+              </Box>
+            )}
+
+            <TextField
+              fullWidth
+              type="email"
+              placeholder={t("auth.email")}
+              value={magicLinkEmail}
+              onChange={(e) => setMagicLinkEmail(e.target.value)}
+              variant="outlined"
+              sx={{
+                mb: 3,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                  "& fieldset": {
+                    borderColor: "rgba(0, 0, 0, 0.23)",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "rgba(0, 0, 0, 0.5)",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#007AFF",
+                    borderWidth: "2px",
+                  },
+                },
+              }}
+            />
+
+            {magicLinkMessage && (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    backgroundColor: "rgba(52, 199, 89, 0.1)",
+                    padding: 2,
+                    borderRadius: 2,
+                    border: "1px solid rgba(52, 199, 89, 0.2)",
+                    textAlign: "center",
+                    color: "#34c759",
+                  }}
+                >
+                  {magicLinkMessage}
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 3, gap: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setMagicLinkDialogOpen(false);
+                setMagicLinkEmail("");
+                setMagicLinkMessage("");
+                setAuthError("");
+              }}
+              disabled={magicLinkLoading}
+              sx={{
+                flex: 1,
+                py: 2,
+                borderRadius: 2,
+                textTransform: "none",
+                fontSize: "1rem",
+                fontWeight: 600,
+                borderColor: "#86868b",
+                color: "#86868b",
+                "&:hover": {
+                  backgroundColor: "rgba(134, 134, 139, 0.05)",
+                  borderColor: "#6d6d70",
+                  color: "#6d6d70",
+                },
+              }}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleMagicLinkLogin}
+              disabled={magicLinkLoading || !magicLinkEmail.trim()}
+              sx={{
+                flex: 1,
+                py: 2,
+                borderRadius: 2,
+                textTransform: "none",
+                fontSize: "1rem",
+                fontWeight: 600,
+                backgroundColor: "#007AFF",
+                boxShadow: "0 4px 12px rgba(0, 122, 255, 0.3)",
+                "&:hover": {
+                  backgroundColor: "#0056CC",
+                  boxShadow: "0 6px 16px rgba(0, 122, 255, 0.4)",
+                },
+                "&:disabled": {
+                  bgcolor: "rgba(0, 0, 0, 0.12)",
+                  color: "rgba(0, 0, 0, 0.26)",
+                },
+              }}
+            >
+              {magicLinkLoading ? t("auth.sendingMagicLink") : t("auth.sendMagicLink")}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </CardContent>
     </Card>
   );

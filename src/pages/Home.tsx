@@ -136,6 +136,78 @@ const Home: React.FC = () => {
           </Box>
         </Box>
 
+        {/* Call to Action Buttons */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            width: "100%",
+            maxWidth: 400,
+            mb: 6,
+          }}
+        >
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => navigate("/signup")}
+            sx={{
+              py: 2.5,
+              fontSize: "1.1rem",
+              fontWeight: 600,
+              backgroundColor: "#007AFF",
+              borderRadius: 2,
+              textTransform: "none",
+              letterSpacing: "-0.01em",
+              boxShadow: "0 4px 12px rgba(0, 122, 255, 0.3)",
+              "&:hover": {
+                backgroundColor: "#0056CC",
+                boxShadow: "0 6px 16px rgba(0, 122, 255, 0.4)",
+              },
+            }}
+          >
+            {t("auth.homeGetStarted")}
+          </Button>
+
+          <Box sx={{ textAlign: "center", mt: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#86868b",
+                fontSize: "0.875rem",
+                mb: 2,
+              }}
+            >
+              {t("auth.homeAlreadyHaveAccount")}
+            </Typography>
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={() => navigate("/login")}
+              sx={{
+                py: 2.5,
+                fontSize: "1.1rem",
+                fontWeight: 600,
+                borderColor: "#007AFF",
+                color: "#007AFF",
+                borderRadius: 2,
+                textTransform: "none",
+                letterSpacing: "-0.01em",
+                borderWidth: "2px",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 122, 255, 0.05)",
+                  borderColor: "#0056CC",
+                  color: "#0056CC",
+                  borderWidth: "2px",
+                },
+              }}
+            >
+              {t("auth.signIn")}
+            </Button>
+          </Box>
+        </Box>
+
         {/* Service Description */}
         <Box sx={{ mb: 6, maxWidth: 600, textAlign: "center" }}>
           <Typography
@@ -865,71 +937,6 @@ const Home: React.FC = () => {
               </Card>
             </Grid>
           </Grid>
-        </Box>
-
-        {/* Call to Action Buttons */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", sm: "row" },
-            gap: 2,
-            width: "100%",
-            maxWidth: 400,
-            mb: 4,
-          }}
-        >
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => navigate("/signup")}
-            sx={{
-              py: 2,
-              fontSize: "1rem",
-              fontWeight: 400,
-              backgroundColor: "#007AFF",
-              borderRadius: 2,
-              textTransform: "none",
-              letterSpacing: "-0.01em",
-              "&:hover": {
-                backgroundColor: "#0056CC",
-              },
-            }}
-          >
-            {t("auth.homeGetStarted")}
-          </Button>
-        </Box>
-
-        {/* Login Link */}
-        <Box sx={{ textAlign: "center" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              color: "#86868b",
-              fontSize: "0.875rem",
-              mb: 1,
-            }}
-          >
-            {t("auth.homeAlreadyHaveAccount")}
-          </Typography>
-          <Button
-            variant="text"
-            onClick={() => navigate("/login")}
-            sx={{
-              color: "#007AFF",
-              fontWeight: 400,
-              fontSize: "0.875rem",
-              textTransform: "none",
-              letterSpacing: "-0.01em",
-              p: 0,
-              minWidth: "auto",
-              "&:hover": {
-                backgroundColor: "transparent",
-                color: "#0056CC",
-              },
-            }}
-          >
-            {t("auth.signIn")}
-          </Button>
         </Box>
       </Container>
     </Box>

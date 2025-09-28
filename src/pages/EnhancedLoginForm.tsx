@@ -8,7 +8,14 @@ import { useUserContext } from "../contexts/UserContext";
 const EnhancedLoginForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signIn, signInWithPhoneOTP, verifyPhoneOTP, signInWithGoogle, signInWithFacebook, signUpWithOtp } = useUserContext();
+  const {
+    signIn,
+    signInWithPhoneOTP,
+    verifyPhoneOTP,
+    signInWithGoogle,
+    signInWithFacebook,
+    signUpWithOtp,
+  } = useUserContext();
 
   const [error, setError] = useState("");
 
