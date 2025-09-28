@@ -10,7 +10,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
   FormControl,
   FormControlLabel,
   Radio,
@@ -302,6 +301,29 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
               </RadioGroup>
             </FormControl>
 
+            <Button
+              fullWidth
+              variant="contained"
+              onClick={handleContinue}
+              sx={{
+                bgcolor: "#007AFF",
+                color: "white",
+                fontWeight: 600,
+                py: 2,
+                borderRadius: 2,
+                textTransform: "none",
+                fontSize: "1rem",
+                boxShadow: "0 4px 12px rgba(0, 122, 255, 0.3)",
+                mb: 4,
+                "&:hover": {
+                  bgcolor: "#0056CC",
+                  boxShadow: "0 6px 16px rgba(0, 122, 255, 0.4)",
+                },
+              }}
+            >
+              {t("auth.continue")}
+            </Button>
+
             {/* Social Authentication Options */}
             <Box sx={{ mb: 4 }}>
               <Typography
@@ -322,7 +344,12 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                 fullWidth
                 variant="outlined"
                 onClick={handleGoogleLogin}
-                disabled={googleLoading || loading || facebookLoading || magicLinkLoading}
+                disabled={
+                  googleLoading ||
+                  loading ||
+                  facebookLoading ||
+                  magicLinkLoading
+                }
                 startIcon={<GoogleIcon />}
                 sx={{
                   py: 2,
@@ -351,7 +378,9 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                   },
                 }}
               >
-                {googleLoading ? t("common.loading") : t("auth.continueWithGoogle")}
+                {googleLoading
+                  ? t("common.loading")
+                  : t("auth.continueWithGoogle")}
               </Button>
 
               {/* Facebook Login Button */}
@@ -359,7 +388,12 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                 fullWidth
                 variant="outlined"
                 onClick={handleFacebookLogin}
-                disabled={facebookLoading || loading || googleLoading || magicLinkLoading}
+                disabled={
+                  facebookLoading ||
+                  loading ||
+                  googleLoading ||
+                  magicLinkLoading
+                }
                 startIcon={<FacebookIcon />}
                 sx={{
                   py: 2,
@@ -385,7 +419,9 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                   },
                 }}
               >
-                {facebookLoading ? t("common.loading") : t("auth.continueWithFacebook")}
+                {facebookLoading
+                  ? t("common.loading")
+                  : t("auth.continueWithFacebook")}
               </Button>
 
               {/* Magic Link Login Button */}
@@ -398,7 +434,12 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                   setAuthError("");
                   setMagicLinkDialogOpen(true);
                 }}
-                disabled={magicLinkLoading || loading || googleLoading || facebookLoading}
+                disabled={
+                  magicLinkLoading ||
+                  loading ||
+                  googleLoading ||
+                  facebookLoading
+                }
                 startIcon={<EmailIcon />}
                 sx={{
                   py: 2,
@@ -426,7 +467,6 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
               >
                 {t("auth.continueWithMagicLink")}
               </Button>
-
 
               {/* Magic Link Success Message */}
               {magicLinkMessage && (
@@ -465,28 +505,6 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                 </Typography>
               </Box>
             )}
-
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={handleContinue}
-              sx={{
-                bgcolor: "#007AFF",
-                color: "white",
-                fontWeight: 600,
-                py: 2,
-                borderRadius: 2,
-                textTransform: "none",
-                fontSize: "1rem",
-                boxShadow: "0 4px 12px rgba(0, 122, 255, 0.3)",
-                "&:hover": {
-                  bgcolor: "#0056CC",
-                  boxShadow: "0 6px 16px rgba(0, 122, 255, 0.4)",
-                },
-              }}
-            >
-              {t("auth.continue")}
-            </Button>
           </>
         )}
 
@@ -880,7 +898,9 @@ const AuthMethodSelector: React.FC<AuthMethodSelectorProps> = ({
                 },
               }}
             >
-              {magicLinkLoading ? t("auth.sendingMagicLink") : t("auth.sendMagicLink")}
+              {magicLinkLoading
+                ? t("auth.sendingMagicLink")
+                : t("auth.sendMagicLink")}
             </Button>
           </DialogActions>
         </Dialog>
