@@ -1,4 +1,5 @@
 import {
+  Edit,
   LocationOn,
   School,
   Work,
@@ -6,6 +7,7 @@ import {
 import {
   Avatar,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -122,7 +124,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
                 )}
 
               {driverDetails.city && (
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <LocationOn
                     sx={{
                       mr: 1,
@@ -144,6 +146,31 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
                   </Typography>
                 </Box>
               )}
+
+              {/* Update Button */}
+              <Box sx={{ mt: 2, pt: 2, borderTop: "1px solid rgba(0, 0, 0, 0.1)" }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<Edit />}
+                  component={Link}
+                  to="/profile"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    borderColor: "#007AFF",
+                    color: "#007AFF",
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 122, 255, 0.05)",
+                      borderColor: "#0056CC",
+                      color: "#0056CC",
+                    },
+                  }}
+                >
+                  {t("dashboard.updateDriverDetails")}
+                </Button>
+              </Box>
             </>
           ) : (
             <Box sx={{ textAlign: "center", py: 2 }}>

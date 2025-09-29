@@ -2,20 +2,25 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   Chip,
   Container,
   Divider,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   Grid,
   InputLabel,
   MenuItem,
-  OutlinedInput,
   Paper,
   Select,
   SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { City, Country, State } from "country-state-city";
 import React, { useCallback, useEffect, useState } from "react";
 import ReactFlagsSelect from "react-flags-select";
@@ -78,23 +83,7 @@ const ProfilePage: React.FC = () => {
   const [availableCities, setAvailableCities] = useState<any[]>([]);
 
   // Language options
-  const languageOptions = [
-    "English",
-    "French",
-    "Lingala",
-    "Swahili",
-    "Arabic",
-    "Portuguese",
-    "Spanish",
-    "German",
-    "Italian",
-    "Chinese",
-    "Japanese",
-    "Korean",
-    "Russian",
-    "Hindi",
-    "Other",
-  ];
+  const languageOptions = ["English", "French"];
 
   // Emergency contact relationship options
   const relationshipOptions = [
@@ -181,7 +170,7 @@ const ProfilePage: React.FC = () => {
     } finally {
       setDriverDetailsLoading(false);
     }
-  }, [profile?.id]);
+  }, [profile?.id, t]);
 
   useEffect(() => {
     if (profile) {
@@ -313,11 +302,25 @@ const ProfilePage: React.FC = () => {
       }));
     };
 
-  const handleLanguageChange = (event: SelectChangeEvent<string[]>) => {
-    setDriverDetails((prev) => ({
-      ...prev,
-      languages: event.target.value as string[],
-    }));
+  const handleLanguageChange = (language: string) => {
+    setDriverDetails((prev) => {
+      const currentLanguages = prev.languages || [];
+      const isSelected = currentLanguages.includes(language);
+
+      if (isSelected) {
+        // Remove language if already selected
+        return {
+          ...prev,
+          languages: currentLanguages.filter((lang) => lang !== language),
+        };
+      } else {
+        // Add language if not selected
+        return {
+          ...prev,
+          languages: [...currentLanguages, language],
+        };
+      }
+    });
   };
 
   const handleCountryChange = (event: SelectChangeEvent) => {
@@ -357,9 +360,10 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <Container component="main" maxWidth="md" sx={{ py: 4 }}>
-      {/* Custom styles for react-flags-select */}
-      <style>{`
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+        {/* Custom styles for react-flags-select */}
+        <style>{`
         .country-selector-button {
           width: 100% !important;
           height: 56px !important;
@@ -401,618 +405,731 @@ const ProfilePage: React.FC = () => {
           background-color: rgba(0, 122, 255, 0.1) !important;
         }
       `}</style>
-      <Typography component="h1" variant="h4" gutterBottom>
-        {t("profile.myProfile")}
-      </Typography>
-
-      {/* Profile Information */}
-      <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
-        <Typography
-          variant="h6"
-          sx={{ mb: 3, fontWeight: 600, color: "primary.main" }}
-        >
-          {t("profile.profileInformation")}
+        <Typography component="h1" variant="h4" gutterBottom>
+          {t("profile.myProfile")}
         </Typography>
 
-        <Box
-          component="form"
-          onSubmit={handleProfileSubmit}
-          sx={{ width: "100%" }}
-        >
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          {success && (
-            <Alert severity="success" sx={{ mb: 2 }}>
-              {success}
-            </Alert>
-          )}
-
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("profile.fullName")}
-                value={profileData.full_name}
-                onChange={handleProfileChange("full_name")}
-                required
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("profile.email")}
-                value={profile.email || ""}
-                disabled
-                helperText={t("profile.emailCannotBeChanged")}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("profile.phoneNumber")}
-                value={profileData.phone}
-                onChange={handleProfileChange("phone")}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    mb: 1,
-                    color: "#1d1d1f",
-                    fontSize: "0.875rem",
-                    fontWeight: 400,
-                  }}
-                >
-                  {t("profile.country")}
-                </Typography>
-                <Box sx={{ flexGrow: 1 }}>
-                  <ReactFlagsSelect
-                    selected={profileData.country}
-                    onSelect={handleProfileCountryChange}
-                    placeholder={t("profile.countryHelper")}
-                    searchable
-                    searchPlaceholder="Search countries..."
-                    className="country-selector"
-                    selectButtonClassName="country-selector-button"
-                    selectedSize={20}
-                    optionsSize={16}
-                    showSelectedLabel={true}
-                    showOptionLabel={true}
-                    showSecondarySelectedLabel={true}
-                    fullWidth
-                  />
-                </Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: "#86868b",
-                    fontSize: "0.75rem",
-                    mt: 0.5,
-                    display: "block",
-                  }}
-                >
-                  {t("profile.countryHelper")}
-                </Typography>
-              </Box>
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                fullWidth
-                label={t("profile.userType")}
-                value={
-                  profile.user_type === "driver"
-                    ? t("profile.driver")
-                    : t("profile.owner")
-                }
-                disabled
-                helperText={t("profile.userTypeCannotBeChanged")}
-              />
-            </Grid>
-          </Grid>
-
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ mt: 3 }}
-            disabled={loading}
-          >
-            {loading ? t("profile.updating") : t("profile.updateProfile")}
-          </Button>
-        </Box>
-      </Paper>
-
-      {/* Driver Details - Only show for drivers */}
-      {profile.user_type === "driver" && (
-        <Paper elevation={3} sx={{ p: 4 }}>
+        {/* Profile Information */}
+        <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
           <Typography
             variant="h6"
             sx={{ mb: 3, fontWeight: 600, color: "primary.main" }}
           >
-            {t("profile.completeDriverDetails")}
+            {t("profile.profileInformation")}
           </Typography>
 
-          {/* Driver Details Encouragement Message */}
-          <Alert
-            severity="info"
-            sx={{
-              mb: 3,
-              backgroundColor: "rgba(33, 150, 243, 0.1)",
-              border: "1px solid rgba(33, 150, 243, 0.3)",
-              "& .MuiAlert-message": {
-                width: "100%",
-              },
-            }}
+          <Box
+            component="form"
+            onSubmit={handleProfileSubmit}
+            sx={{ width: "100%" }}
           >
-            <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
-              {t("profile.driverDetailsEncouragement")}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t("profile.driverDetailsEncouragementSubtitle")}
-            </Typography>
-          </Alert>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
 
-          {driverDetailsLoading ? (
-            <Typography>{t("profile.loadingDriverDetails")}</Typography>
-          ) : (
-            <Box
-              component="form"
-              onSubmit={handleDriverDetailsSubmit}
-              sx={{ width: "100%" }}
-            >
-              {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
-                  {error}
-                </Alert>
-              )}
+            {success && (
+              <Alert severity="success" sx={{ mb: 2 }}>
+                {success}
+              </Alert>
+            )}
 
-              <Grid container spacing={2}>
-                {/* Personal Information */}
-                <Grid size={{ xs: 12 }}>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 2, fontWeight: 600 }}
-                  >
-                    {t("profile.personalInformation")}
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label={t("profile.dateOfBirth")}
-                    value={driverDetails.date_of_birth}
-                    onChange={handleDriverDetailsChange("date_of_birth")}
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.gender")}</InputLabel>
-                    <Select
-                      value={driverDetails.gender}
-                      onChange={handleDriverDetailsChange("gender")}
-                      label={t("profile.gender")}
-                    >
-                      <MenuItem value="male">{t("profile.male")}</MenuItem>
-                      <MenuItem value="female">{t("profile.female")}</MenuItem>
-                      <MenuItem value="other">{t("profile.other")}</MenuItem>
-                      <MenuItem value="prefer_not_to_say">
-                        {t("profile.preferNotToSay")}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.nationality")}</InputLabel>
-                    <Select
-                      value={driverDetails.nationality}
-                      onChange={handleDriverDetailsChange("nationality")}
-                      label={t("profile.nationality")}
-                    >
-                      {Country.getAllCountries().map((country) => (
-                        <MenuItem key={country.isoCode} value={country.isoCode}>
-                          {country.flag} {country.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.languagesSpoken")}</InputLabel>
-                    <Select
-                      multiple
-                      value={driverDetails.languages}
-                      onChange={handleLanguageChange}
-                      input={
-                        <OutlinedInput label={t("profile.languagesSpoken")} />
-                      }
-                      renderValue={(selected) => (
-                        <Box
-                          sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
-                        >
-                          {(selected as string[]).map((value) => (
-                            <Chip key={value} label={value} size="small" />
-                          ))}
-                        </Box>
-                      )}
-                    >
-                      {languageOptions.map((language) => (
-                        <MenuItem key={language} value={language}>
-                          {language}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                {/* Contact Information */}
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 2, fontWeight: 600 }}
-                  >
-                    {t("profile.contactInformation")}
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.address")}
-                    value={driverDetails.address}
-                    onChange={handleDriverDetailsChange("address")}
-                    multiline
-                    rows={2}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.country")}</InputLabel>
-                    <Select
-                      value={selectedCountry}
-                      onChange={handleCountryChange}
-                      label={t("profile.country")}
-                    >
-                      {Country.getAllCountries().map((country) => (
-                        <MenuItem key={country.isoCode} value={country.isoCode}>
-                          {country.flag} {country.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.stateProvince")}</InputLabel>
-                    <Select
-                      value={selectedState}
-                      onChange={handleStateChange}
-                      label={t("profile.stateProvince")}
-                      disabled={!selectedCountry}
-                    >
-                      {availableStates.map((state) => (
-                        <MenuItem key={state.isoCode} value={state.isoCode}>
-                          {state.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.city")}</InputLabel>
-                    <Select
-                      value={driverDetails.city}
-                      onChange={handleCityChange}
-                      label={t("profile.city")}
-                      disabled={!selectedState}
-                    >
-                      {availableCities.map((city) => (
-                        <MenuItem key={city.name} value={city.name}>
-                          {city.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.postalCode")}
-                    value={driverDetails.postal_code}
-                    onChange={handleDriverDetailsChange("postal_code")}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>
-                      {t("profile.communicationPreference")}
-                    </InputLabel>
-                    <Select
-                      value={driverDetails.communication_preference}
-                      onChange={handleDriverDetailsChange(
-                        "communication_preference"
-                      )}
-                      label={t("profile.communicationPreference")}
-                    >
-                      <MenuItem value="phone">{t("profile.phone")}</MenuItem>
-                      <MenuItem value="email">{t("profile.email")}</MenuItem>
-                      <MenuItem value="sms">{t("profile.sms")}</MenuItem>
-                      <MenuItem value="whatsapp">
-                        {t("profile.whatsapp")}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                {/* Emergency Contact */}
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 2, fontWeight: 600 }}
-                  >
-                    {t("profile.emergencyContact")}
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.emergencyContactName")}
-                    value={driverDetails.emergency_contact_name}
-                    onChange={handleDriverDetailsChange(
-                      "emergency_contact_name"
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.emergencyContactPhone")}
-                    value={driverDetails.emergency_contact_phone}
-                    onChange={handleDriverDetailsChange(
-                      "emergency_contact_phone"
-                    )}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.relationship")}</InputLabel>
-                    <Select
-                      value={driverDetails.emergency_contact_relationship}
-                      onChange={handleDriverDetailsChange(
-                        "emergency_contact_relationship"
-                      )}
-                      label={t("profile.relationship")}
-                    >
-                      {relationshipOptions.map((relationship) => (
-                        <MenuItem key={relationship} value={relationship}>
-                          {relationship}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                {/* Driver License Information */}
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 2, fontWeight: 600 }}
-                  >
-                    {t("profile.driverLicenseInformation")}
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.licenseNumber")}
-                    value={driverDetails.license_number}
-                    onChange={handleDriverDetailsChange("license_number")}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.licenseClass")}
-                    value={driverDetails.license_class}
-                    onChange={handleDriverDetailsChange("license_class")}
-                    placeholder={t("profile.licenseClassPlaceholder")}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label={t("profile.licenseIssueDate")}
-                    value={driverDetails.license_issue_date}
-                    onChange={handleDriverDetailsChange("license_issue_date")}
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label={t("profile.licenseExpiryDate")}
-                    value={driverDetails.license_expiry_date}
-                    onChange={handleDriverDetailsChange("license_expiry_date")}
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.issuingAuthority")}
-                    value={driverDetails.license_issuing_authority}
-                    onChange={handleDriverDetailsChange(
-                      "license_issuing_authority"
-                    )}
-                    placeholder={t("profile.issuingAuthorityPlaceholder")}
-                  />
-                </Grid>
-
-                {/* Professional Information */}
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 2, fontWeight: 600 }}
-                  >
-                    {t("profile.professionalInformation")}
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    type="number"
-                    label={t("profile.yearsOfExperience")}
-                    value={driverDetails.years_of_experience}
-                    onChange={handleDriverDetailsChange("years_of_experience")}
-                    inputProps={{ min: 0, max: 50 }}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>
-                      {t("profile.preferredTransmission")}
-                    </InputLabel>
-                    <Select
-                      value={driverDetails.preferred_transmission}
-                      onChange={handleDriverDetailsChange(
-                        "preferred_transmission"
-                      )}
-                      label={t("profile.preferredTransmission")}
-                    >
-                      <MenuItem value="manual">
-                        {t("profile.transmissions.manual")}
-                      </MenuItem>
-                      <MenuItem value="automatic">
-                        {t("profile.transmissions.automatic")}
-                      </MenuItem>
-                      <MenuItem value="both">
-                        {t("profile.transmissions.both")}
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                {/* ID Card Information */}
-                <Grid size={{ xs: 12 }}>
-                  <Divider sx={{ my: 2 }} />
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mb: 2, fontWeight: 600 }}
-                  >
-                    {t("profile.idCardType")} (Optional)
-                  </Typography>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <InputLabel>{t("profile.idCardType")}</InputLabel>
-                    <Select
-                      value={driverDetails.id_card_type || "national_id"}
-                      onChange={handleDriverDetailsChange("id_card_type")}
-                      label={t("profile.idCardType")}
-                    >
-                      <MenuItem value="">
-                        <em>{t("profile.noneSelected")}</em>
-                      </MenuItem>
-                      <MenuItem value="passport">Passport</MenuItem>
-                      <MenuItem value="national_id">National ID Card</MenuItem>
-                      <MenuItem value="residency_card">Residency Card</MenuItem>
-                      <MenuItem value="drivers_license">
-                        Driver's License
-                      </MenuItem>
-                      <MenuItem value="military_id">Military ID</MenuItem>
-                      <MenuItem value="student_id">Student ID</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label={t("profile.idCardNumber")}
-                    value={driverDetails.id_card_number || ""}
-                    onChange={handleDriverDetailsChange("id_card_number")}
-                    helperText={t("profile.idCardNumberHelper")}
-                  />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label={t("profile.idCardExpiryDate")}
-                    value={driverDetails.id_card_expiry_date || ""}
-                    onChange={handleDriverDetailsChange("id_card_expiry_date")}
-                    InputLabelProps={{ shrink: true }}
-                    helperText={t("profile.idCardExpiryHelper")}
-                  />
-                </Grid>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label={t("profile.fullName")}
+                  value={profileData.full_name}
+                  onChange={handleProfileChange("full_name")}
+                  required
+                />
               </Grid>
 
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ mt: 3 }}
-                disabled={loading}
-              >
-                {loading ? t("profile.saving") : t("profile.saveDriverDetails")}
-              </Button>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label={t("profile.email")}
+                  value={profile.email || ""}
+                  disabled
+                  helperText={t("profile.emailCannotBeChanged")}
+                />
+              </Grid>
 
-              {success && (
-                <Alert severity="success" sx={{ mt: 2 }}>
-                  {success}
-                </Alert>
-              )}
-            </Box>
-          )}
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label={t("profile.phoneNumber")}
+                  value={profileData.phone}
+                  onChange={handleProfileChange("phone")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mb: 1,
+                      color: "#1d1d1f",
+                      fontSize: "0.875rem",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {t("profile.country")}
+                  </Typography>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <ReactFlagsSelect
+                      selected={profileData.country}
+                      onSelect={handleProfileCountryChange}
+                      placeholder={t("profile.countryHelper")}
+                      searchable
+                      searchPlaceholder="Search countries..."
+                      className="country-selector"
+                      selectButtonClassName="country-selector-button"
+                      selectedSize={20}
+                      optionsSize={16}
+                      showSelectedLabel={true}
+                      showOptionLabel={true}
+                      showSecondarySelectedLabel={true}
+                      fullWidth
+                    />
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "#86868b",
+                      fontSize: "0.75rem",
+                      mt: 0.5,
+                      display: "block",
+                    }}
+                  >
+                    {t("profile.countryHelper")}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label={t("profile.userType")}
+                  value={
+                    profile.user_type === "driver"
+                      ? t("profile.driver")
+                      : t("profile.owner")
+                  }
+                  disabled
+                  helperText={t("profile.userTypeCannotBeChanged")}
+                />
+              </Grid>
+            </Grid>
+
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ mt: 3 }}
+              disabled={loading}
+            >
+              {loading ? t("profile.updating") : t("profile.updateProfile")}
+            </Button>
+          </Box>
         </Paper>
-      )}
-    </Container>
+
+        {/* Driver Details - Only show for drivers */}
+        {profile.user_type === "driver" && (
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Typography
+              variant="h6"
+              sx={{ mb: 3, fontWeight: 600, color: "primary.main" }}
+            >
+              {t("profile.completeDriverDetails")}
+            </Typography>
+
+            {/* Driver Details Encouragement Message */}
+            <Alert
+              severity="info"
+              sx={{
+                mb: 3,
+                backgroundColor: "rgba(33, 150, 243, 0.1)",
+                border: "1px solid rgba(33, 150, 243, 0.3)",
+                "& .MuiAlert-message": {
+                  width: "100%",
+                },
+              }}
+            >
+              <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+                {t("profile.driverDetailsEncouragement")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t("profile.driverDetailsEncouragementSubtitle")}
+              </Typography>
+            </Alert>
+
+            {driverDetailsLoading ? (
+              <Typography>{t("profile.loadingDriverDetails")}</Typography>
+            ) : (
+              <Box
+                component="form"
+                onSubmit={handleDriverDetailsSubmit}
+                sx={{ width: "100%" }}
+              >
+                {error && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                  </Alert>
+                )}
+
+                <Grid container spacing={2}>
+                  {/* Personal Information */}
+                  <Grid size={{ xs: 12 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mb: 2, fontWeight: 600 }}
+                    >
+                      {t("profile.personalInformation")}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <DatePicker
+                      label={t("profile.dateOfBirth")}
+                      value={
+                        driverDetails.date_of_birth
+                          ? new Date(driverDetails.date_of_birth)
+                          : null
+                      }
+                      onChange={(date) => {
+                        const dateString = date
+                          ? date.toISOString().split("T")[0]
+                          : "";
+                        handleDriverDetailsChange("date_of_birth")({
+                          target: { value: dateString },
+                        } as any);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: false,
+                        },
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.gender")}</InputLabel>
+                      <Select
+                        value={driverDetails.gender}
+                        onChange={handleDriverDetailsChange("gender")}
+                        label={t("profile.gender")}
+                      >
+                        <MenuItem value="male">{t("profile.male")}</MenuItem>
+                        <MenuItem value="female">
+                          {t("profile.female")}
+                        </MenuItem>
+                        <MenuItem value="other">{t("profile.other")}</MenuItem>
+                        <MenuItem value="prefer_not_to_say">
+                          {t("profile.preferNotToSay")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.nationality")}</InputLabel>
+                      <Select
+                        value={driverDetails.nationality}
+                        onChange={handleDriverDetailsChange("nationality")}
+                        label={t("profile.nationality")}
+                      >
+                        {Country.getAllCountries().map((country) => (
+                          <MenuItem
+                            key={country.isoCode}
+                            value={country.isoCode}
+                          >
+                            {country.flag} {country.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          mb: 1,
+                          color: "rgba(0, 0, 0, 0.6)",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {t("profile.languagesSpoken")}
+                      </Typography>
+                      <FormGroup>
+                        {languageOptions.map((language) => (
+                          <FormControlLabel
+                            key={language}
+                            control={
+                              <Checkbox
+                                checked={
+                                  driverDetails.languages?.includes(language) ||
+                                  false
+                                }
+                                onChange={() => handleLanguageChange(language)}
+                                sx={{
+                                  color: "#007AFF",
+                                  "&.Mui-checked": {
+                                    color: "#007AFF",
+                                  },
+                                }}
+                              />
+                            }
+                            label={language}
+                            sx={{
+                              "& .MuiFormControlLabel-label": {
+                                fontSize: "0.875rem",
+                                color: "#1D1D1F",
+                              },
+                            }}
+                          />
+                        ))}
+                      </FormGroup>
+                      {/* Display selected languages as chips */}
+                      {driverDetails.languages &&
+                        driverDetails.languages.length > 0 && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              gap: 0.5,
+                              mt: 1,
+                            }}
+                          >
+                            {driverDetails.languages.map((language) => (
+                              <Chip
+                                key={language}
+                                label={language}
+                                size="small"
+                                sx={{
+                                  backgroundColor: "#E3F2FD",
+                                  color: "#1976D2",
+                                  fontSize: "0.75rem",
+                                }}
+                              />
+                            ))}
+                          </Box>
+                        )}
+                    </FormControl>
+                  </Grid>
+
+                  {/* Contact Information */}
+                  <Grid size={{ xs: 12 }}>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mb: 2, fontWeight: 600 }}
+                    >
+                      {t("profile.contactInformation")}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.address")}
+                      value={driverDetails.address}
+                      onChange={handleDriverDetailsChange("address")}
+                      multiline
+                      rows={2}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.country")}</InputLabel>
+                      <Select
+                        value={selectedCountry}
+                        onChange={handleCountryChange}
+                        label={t("profile.country")}
+                      >
+                        {Country.getAllCountries().map((country) => (
+                          <MenuItem
+                            key={country.isoCode}
+                            value={country.isoCode}
+                          >
+                            {country.flag} {country.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.stateProvince")}</InputLabel>
+                      <Select
+                        value={selectedState}
+                        onChange={handleStateChange}
+                        label={t("profile.stateProvince")}
+                        disabled={!selectedCountry}
+                      >
+                        {availableStates.map((state) => (
+                          <MenuItem key={state.isoCode} value={state.isoCode}>
+                            {state.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.city")}</InputLabel>
+                      <Select
+                        value={driverDetails.city}
+                        onChange={handleCityChange}
+                        label={t("profile.city")}
+                        disabled={!selectedState}
+                      >
+                        {availableCities.map((city) => (
+                          <MenuItem key={city.name} value={city.name}>
+                            {city.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.postalCode")}
+                      value={driverDetails.postal_code}
+                      onChange={handleDriverDetailsChange("postal_code")}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>
+                        {t("profile.communicationPreference")}
+                      </InputLabel>
+                      <Select
+                        value={driverDetails.communication_preference}
+                        onChange={handleDriverDetailsChange(
+                          "communication_preference"
+                        )}
+                        label={t("profile.communicationPreference")}
+                      >
+                        <MenuItem value="phone">{t("profile.phone")}</MenuItem>
+                        <MenuItem value="email">{t("profile.email")}</MenuItem>
+                        <MenuItem value="sms">{t("profile.sms")}</MenuItem>
+                        <MenuItem value="whatsapp">
+                          {t("profile.whatsapp")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  {/* Emergency Contact */}
+                  <Grid size={{ xs: 12 }}>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mb: 2, fontWeight: 600 }}
+                    >
+                      {t("profile.emergencyContact")}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.emergencyContactName")}
+                      value={driverDetails.emergency_contact_name}
+                      onChange={handleDriverDetailsChange(
+                        "emergency_contact_name"
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.emergencyContactPhone")}
+                      value={driverDetails.emergency_contact_phone}
+                      onChange={handleDriverDetailsChange(
+                        "emergency_contact_phone"
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.relationship")}</InputLabel>
+                      <Select
+                        value={driverDetails.emergency_contact_relationship}
+                        onChange={handleDriverDetailsChange(
+                          "emergency_contact_relationship"
+                        )}
+                        label={t("profile.relationship")}
+                      >
+                        {relationshipOptions.map((relationship) => (
+                          <MenuItem key={relationship} value={relationship}>
+                            {relationship}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  {/* Driver License Information */}
+                  <Grid size={{ xs: 12 }}>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mb: 2, fontWeight: 600 }}
+                    >
+                      {t("profile.driverLicenseInformation")}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.licenseNumber")}
+                      value={driverDetails.license_number}
+                      onChange={handleDriverDetailsChange("license_number")}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.licenseClass")}
+                      value={driverDetails.license_class}
+                      onChange={handleDriverDetailsChange("license_class")}
+                      placeholder={t("profile.licenseClassPlaceholder")}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <DatePicker
+                      label={t("profile.licenseIssueDate")}
+                      value={
+                        driverDetails.license_issue_date
+                          ? new Date(driverDetails.license_issue_date)
+                          : null
+                      }
+                      onChange={(date) => {
+                        const dateString = date
+                          ? date.toISOString().split("T")[0]
+                          : "";
+                        handleDriverDetailsChange("license_issue_date")({
+                          target: { value: dateString },
+                        } as any);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: false,
+                        },
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <DatePicker
+                      label={t("profile.licenseExpiryDate")}
+                      value={
+                        driverDetails.license_expiry_date
+                          ? new Date(driverDetails.license_expiry_date)
+                          : null
+                      }
+                      onChange={(date) => {
+                        const dateString = date
+                          ? date.toISOString().split("T")[0]
+                          : "";
+                        handleDriverDetailsChange("license_expiry_date")({
+                          target: { value: dateString },
+                        } as any);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: false,
+                        },
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.issuingAuthority")}
+                      value={driverDetails.license_issuing_authority}
+                      onChange={handleDriverDetailsChange(
+                        "license_issuing_authority"
+                      )}
+                      placeholder={t("profile.issuingAuthorityPlaceholder")}
+                    />
+                  </Grid>
+
+                  {/* Professional Information */}
+                  <Grid size={{ xs: 12 }}>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mb: 2, fontWeight: 600 }}
+                    >
+                      {t("profile.professionalInformation")}
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label={t("profile.yearsOfExperience")}
+                      value={driverDetails.years_of_experience}
+                      onChange={handleDriverDetailsChange(
+                        "years_of_experience"
+                      )}
+                      inputProps={{ min: 0, max: 50 }}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>
+                        {t("profile.preferredTransmission")}
+                      </InputLabel>
+                      <Select
+                        value={driverDetails.preferred_transmission}
+                        onChange={handleDriverDetailsChange(
+                          "preferred_transmission"
+                        )}
+                        label={t("profile.preferredTransmission")}
+                      >
+                        <MenuItem value="manual">
+                          {t("profile.transmissions.manual")}
+                        </MenuItem>
+                        <MenuItem value="automatic">
+                          {t("profile.transmissions.automatic")}
+                        </MenuItem>
+                        <MenuItem value="both">
+                          {t("profile.transmissions.both")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  {/* ID Card Information */}
+                  <Grid size={{ xs: 12 }}>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mb: 2, fontWeight: 600 }}
+                    >
+                      {t("profile.idCardType")} (Optional)
+                    </Typography>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>{t("profile.idCardType")}</InputLabel>
+                      <Select
+                        value={driverDetails.id_card_type || "national_id"}
+                        onChange={handleDriverDetailsChange("id_card_type")}
+                        label={t("profile.idCardType")}
+                      >
+                        <MenuItem value="">
+                          <em>{t("profile.noneSelected")}</em>
+                        </MenuItem>
+                        <MenuItem value="passport">Passport</MenuItem>
+                        <MenuItem value="national_id">
+                          National ID Card
+                        </MenuItem>
+                        <MenuItem value="residency_card">
+                          Residency Card
+                        </MenuItem>
+                        <MenuItem value="drivers_license">
+                          Driver's License
+                        </MenuItem>
+                        <MenuItem value="military_id">Military ID</MenuItem>
+                        <MenuItem value="student_id">Student ID</MenuItem>
+                        <MenuItem value="other">Other</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      fullWidth
+                      label={t("profile.idCardNumber")}
+                      value={driverDetails.id_card_number || ""}
+                      onChange={handleDriverDetailsChange("id_card_number")}
+                      helperText={t("profile.idCardNumberHelper")}
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <DatePicker
+                      label={t("profile.idCardExpiryDate")}
+                      value={
+                        driverDetails.id_card_expiry_date
+                          ? new Date(driverDetails.id_card_expiry_date)
+                          : null
+                      }
+                      onChange={(date) => {
+                        const dateString = date
+                          ? date.toISOString().split("T")[0]
+                          : "";
+                        handleDriverDetailsChange("id_card_expiry_date")({
+                          target: { value: dateString },
+                        } as any);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          error: false,
+                          helperText: t("profile.idCardExpiryHelper"),
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 3 }}
+                  disabled={loading}
+                >
+                  {loading
+                    ? t("profile.saving")
+                    : t("profile.saveDriverDetails")}
+                </Button>
+
+                {success && (
+                  <Alert severity="success" sx={{ mt: 2 }}>
+                    {success}
+                  </Alert>
+                )}
+              </Box>
+            )}
+          </Paper>
+        )}
+      </Container>
+    </LocalizationProvider>
   );
 };
 
