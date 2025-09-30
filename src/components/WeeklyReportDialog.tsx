@@ -33,6 +33,8 @@ interface WeeklyReportDialogProps {
   editingReport?: WeeklyReport | null;
   mode: "add" | "edit";
   existingReports?: WeeklyReport[];
+  userType?: "driver" | "owner";
+  currentUserId?: string;
 }
 
 const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
@@ -43,6 +45,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
   editingReport = null,
   mode,
   existingReports = [],
+  userType = "driver",
+  currentUserId = "",
 }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -51,6 +55,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
   // Entry mode: weekly or daily
   const [entryMode, setEntryMode] = useState<"weekly" | "daily">("weekly");
   const [dailyDate, setDailyDate] = useState<string>("");
+  // Selected driver (for owners creating reports)
+  const [selectedDriverId, setSelectedDriverId] = useState<string>("");
 
   // Helper function to get the start of the week (Sunday)
   const getWeekStart = useCallback((date: Date): Date => {
@@ -173,6 +179,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           taxi_income: (editingReport as any).taxi_income || 0,
           currency: (editingReport as any).currency || "XAF",
         });
+        setSelectedDriverId(editingReport.driver_id);
         // Determine entry mode from existing dates
         const isDaily =
           editingReport.week_start_date === editingReport.week_end_date;
@@ -185,6 +192,14 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           assignedCars.length === 1 ? assignedCars[0].id : "";
         const { startMileage, endMileage } =
           calculateMileageForNewReport(selectedCarId);
+
+        // For owners, default to the assigned driver or self
+        const initialDriverId =
+          userType === "owner" &&
+          assignedCars.length === 1 &&
+          assignedCars[0].driver_id
+            ? assignedCars[0].driver_id
+            : currentUserId;
 
         setFormData({
           car_id: selectedCarId,
@@ -200,6 +215,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
           taxi_income: 0,
           currency: "XAF",
         });
+        setSelectedDriverId(initialDriverId);
         setEntryMode("weekly");
         setDailyDate(formatDateForInput(new Date()));
       }
@@ -214,6 +230,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     getCurrentWeek,
     formatDateForInput,
     calculateMileageForNewReport,
+    userType,
+    currentUserId,
   ]);
 
   const handleInputChange =
@@ -338,9 +356,13 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
               ...formData,
               week_start_date: dailyDate,
               week_end_date: dailyDate,
+              driver_id: selectedDriverId,
             }
-          : formData;
-      onSubmit(payload);
+          : {
+              ...formData,
+              driver_id: selectedDriverId,
+            };
+      onSubmit(payload as CreateWeeklyReportData);
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Failed to save report"
@@ -445,6 +467,39 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                 </Select>
               </FormControl>
             </Grid>
+
+            {/* Driver Selector (for owners) */}
+            {userType === "owner" &&
+              mode === "add" &&
+              assignedCars.length > 0 && (
+                <Grid size={12}>
+                  <FormControl fullWidth required>
+                    <InputLabel>{t("reports.reportFor")}</InputLabel>
+                    <Select
+                      value={selectedDriverId}
+                      onChange={(e) => setSelectedDriverId(e.target.value)}
+                      label={t("reports.reportFor")}
+                    >
+                      <MenuItem value={currentUserId}>
+                        {t("reports.myself")} ({t("profile.owner")})
+                      </MenuItem>
+                      {assignedCars
+                        .filter((car) => car.driver_id)
+                        .map((car) => (
+                          <MenuItem key={car.driver_id!} value={car.driver_id!}>
+                            {t("reports.assignedDriver")} - {car.year}{" "}
+                            {car.make} {car.model}
+                          </MenuItem>
+                        ))
+                        .filter(
+                          (item, index, self) =>
+                            index === self.findIndex((t) => t.key === item.key)
+                        )}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )}
+
             {assignedCars.length > 1 && (
               <Grid size={12}>
                 <FormControl fullWidth required>

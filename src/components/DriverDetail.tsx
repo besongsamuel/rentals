@@ -1,9 +1,4 @@
-import {
-  Edit,
-  LocationOn,
-  School,
-  Work,
-} from "@mui/icons-material";
+import { Edit, LocationOn, School, Work } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -32,9 +27,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
           <Avatar sx={{ bgcolor: "secondary.main", mr: 2 }}>
             <School />
           </Avatar>
-          <Typography variant="h6">
-            {t("dashboard.driverDetails")}
-          </Typography>
+          <Typography variant="h6">{t("dashboard.driverDetails")}</Typography>
         </Box>
 
         <Box sx={{ pl: 7 }}>
@@ -80,8 +73,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
                 <Typography variant="body2" color="text.secondary">
                   {t("dashboard.licenseNumber")}:{" "}
                   <strong>
-                    {driverDetails.license_number ||
-                      t("dashboard.notProvided")}
+                    {driverDetails.license_number || t("dashboard.notProvided")}
                   </strong>
                 </Typography>
               </Box>
@@ -109,16 +101,14 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
                         gap: 0.5,
                       }}
                     >
-                      {driverDetails.languages.map(
-                        (lang, index) => (
-                          <Chip
-                            key={index}
-                            label={lang}
-                            size="small"
-                            variant="outlined"
-                          />
-                        )
-                      )}
+                      {driverDetails.languages.map((lang, index) => (
+                        <Chip
+                          key={index}
+                          label={lang}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ))}
                     </Box>
                   </Box>
                 )}
@@ -132,10 +122,7 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
                       color: "text.secondary",
                     }}
                   />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     Location:{" "}
                     <strong>
                       {driverDetails.city}
@@ -148,7 +135,9 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
               )}
 
               {/* Update Button */}
-              <Box sx={{ mt: 2, pt: 2, borderTop: "1px solid rgba(0, 0, 0, 0.1)" }}>
+              <Box
+                sx={{ mt: 2, pt: 2, borderTop: "1px solid rgba(0, 0, 0, 0.1)" }}
+              >
                 <Button
                   variant="outlined"
                   size="small"
@@ -174,14 +163,10 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
             </>
           ) : (
             <Box sx={{ textAlign: "center", py: 2 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mb: 2 }}
-              >
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 {t("dashboard.driverDetailsNotCompleted")}
               </Typography>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Typography
                   variant="body2"
@@ -224,4 +209,3 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
 };
 
 export default DriverDetail;
-

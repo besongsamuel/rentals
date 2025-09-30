@@ -778,6 +778,8 @@ const CarReports: React.FC = () => {
         editingReport={null}
         mode="add"
         existingReports={weeklyReports}
+        userType={profile?.user_type}
+        currentUserId={profile?.id}
       />
 
       {/* Edit Report Dialog */}

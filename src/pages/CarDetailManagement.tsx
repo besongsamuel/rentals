@@ -667,6 +667,8 @@ const CarDetailManagement: React.FC = () => {
         editingReport={editingReport}
         mode={editingReport ? "edit" : "add"}
         existingReports={weeklyReports}
+        userType={profile?.user_type}
+        currentUserId={profile?.id}
       />
 
       {/* Confirmation Dialog */}

@@ -29,7 +29,9 @@ const DriverDashboard: React.FC = () => {
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
-  const [showAddReportDialog, setShowAddReportDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
+  const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
@@ -83,7 +85,7 @@ const DriverDashboard: React.FC = () => {
         ...reportData,
         driver_id: profile.id,
       });
-      setShowAddReportDialog(false);
+      setShowReportDialog(false);
       // Reload data to show the new report
       await loadData();
     } catch (error) {
@@ -91,9 +93,36 @@ const DriverDashboard: React.FC = () => {
     }
   };
 
-  const handleEditReport = async (report: WeeklyReport) => {
-    // For now, just close the dialog - edit functionality can be added later
-    console.log("Edit report:", report);
+  const handleEditReport = (report: WeeklyReport) => {
+    setEditingReport(report);
+    setDialogMode("edit");
+    setShowReportDialog(true);
+  };
+
+  const handleUpdateReport = async (reportData: CreateWeeklyReportData) => {
+    if (!editingReport) return;
+    try {
+      await weeklyReportService.updateReport(editingReport.id, {
+        car_id: reportData.car_id,
+        week_start_date: reportData.week_start_date,
+        week_end_date: reportData.week_end_date,
+        start_mileage: reportData.start_mileage,
+        end_mileage: reportData.end_mileage,
+        driver_earnings: reportData.driver_earnings,
+        maintenance_expenses: reportData.maintenance_expenses,
+        gas_expense: (reportData as any).gas_expense ?? 0,
+        // Additional optional incomes if provided
+        ride_share_income: (reportData as any).ride_share_income ?? 0,
+        rental_income: (reportData as any).rental_income ?? 0,
+        taxi_income: (reportData as any).taxi_income ?? 0,
+        currency: (reportData as any).currency ?? "XAF",
+      } as Partial<WeeklyReport>);
+      setShowReportDialog(false);
+      setEditingReport(null);
+      await loadData();
+    } catch (error) {
+      console.error("Error updating report:", error);
+    }
   };
 
   const handleSubmitReport = async (reportId: string) => {
@@ -222,7 +251,11 @@ const DriverDashboard: React.FC = () => {
               <Button
                 variant="contained"
                 startIcon={<Add />}
-                onClick={() => setShowAddReportDialog(true)}
+                onClick={() => {
+                  setDialogMode("add");
+                  setEditingReport(null);
+                  setShowReportDialog(true);
+                }}
                 sx={{
                   minWidth: { xs: "100%", sm: "auto" },
                   order: { xs: -1, sm: 0 },
@@ -244,7 +277,11 @@ const DriverDashboard: React.FC = () => {
                 <Button
                   variant="outlined"
                   startIcon={<Add />}
-                  onClick={() => setShowAddReportDialog(true)}
+                  onClick={() => {
+                    setDialogMode("add");
+                    setEditingReport(null);
+                    setShowReportDialog(true);
+                  }}
                 >
                   {t("reports.addFirstReport")}
                 </Button>
@@ -265,13 +302,19 @@ const DriverDashboard: React.FC = () => {
 
       {/* Weekly Report Dialog */}
       <WeeklyReportDialog
-        open={showAddReportDialog}
-        onClose={() => setShowAddReportDialog(false)}
-        onSubmit={handleAddReport}
+        open={showReportDialog}
+        onClose={() => {
+          setShowReportDialog(false);
+          setEditingReport(null);
+          setDialogMode("add");
+        }}
+        onSubmit={dialogMode === "add" ? handleAddReport : handleUpdateReport}
         assignedCars={assignedCars}
-        editingReport={null}
-        mode="add"
+        editingReport={editingReport}
+        mode={dialogMode}
         existingReports={weeklyReports}
+        userType={profile?.user_type}
+        currentUserId={profile?.id}
       />
     </Box>
   );
