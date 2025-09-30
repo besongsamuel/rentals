@@ -266,3 +266,134 @@ Includes:
 
 **Implementation Date:** September 30, 2025
 **Status:** ✅ Complete and Ready for Testing
+
+---
+
+## Messaging Feature (Added)
+
+### Overview
+Added real-time messaging functionality to drive requests, allowing drivers and car owners to communicate about requests directly within the application.
+
+### Components Created
+
+#### DriveRequestMessaging Component
+**Path**: `src/components/DriveRequestMessaging.tsx`
+
+**Features**:
+- ✅ Real-time message loading and display
+- ✅ Send messages with Enter key support
+- ✅ User avatars with initials
+- ✅ Message timestamps
+- ✅ Different message styling for current user vs other user
+- ✅ Auto-scroll to latest messages
+- ✅ Loading states for messages and sending
+- ✅ Empty state with helpful message
+- ✅ Error handling and display
+- ✅ Mobile-responsive design
+- ✅ Full-screen on mobile, dialog on desktop
+
+**UI Components**:
+- Dialog with chat interface
+- Message bubbles (primary color for current user, default for others)
+- Avatar initials for message senders
+- Message input with send icon button
+- Keyboard shortcut (Enter to send)
+
+### Integration Points
+
+#### Driver Drive Requests Page
+- Added "View Messages" button to each request card
+- Opens messaging dialog when clicked
+- State management for dialog open/close
+
+#### Owner Drive Requests Page  
+- Added "View Messages" button to each request card
+- Opens messaging dialog when clicked
+- State management for dialog open/close
+
+#### Drive Request Card
+- Updated "View Details" button label to "View Messages"
+- Passes request to messaging dialog via callback
+
+### Database Integration
+
+Uses existing database schema:
+- `assignment_request_messages` table for storing messages
+- Foreign key relationship to `car_assignment_requests`
+- User identification via `user_id`
+- Profile join for displaying sender names
+
+### Service Layer
+
+Uses `assignmentRequestService` methods:
+- `getRequestMessages(requestId)` - Fetch all messages for a request
+- `addMessage(messageData)` - Send a new message
+
+### Translations
+
+Added messaging translations in English and French:
+- `driveRequests.messaging.title` - "Messages" / "Messages"
+- `driveRequests.messaging.noMessages` - "No messages yet" / "Aucun message pour le moment"
+- `driveRequests.messaging.startConversation` - "Start the conversation..." / "Commencez la conversation..."
+- `driveRequests.messaging.typePlaceholder` - "Type your message..." / "Tapez votre message..."
+- `driveRequests.messaging.loadError` - Error message for loading failure
+- `driveRequests.messaging.sendError` - Error message for sending failure
+- `driveRequests.viewMessages` - "View Messages" / "Voir les Messages"
+
+### User Experience Flow
+
+**For Drivers**:
+1. View drive requests on "Drive Requests" page
+2. Click "View Messages" button on any request
+3. See conversation history
+4. Send messages to car owner
+5. Receive responses in real-time
+
+**For Owners**:
+1. View received requests on "Drive Requests" page
+2. Click "View Messages" button on any request  
+3. See conversation history
+4. Send messages to driver
+5. Communicate about request details
+
+### Key Features
+
+✅ **Real-time Communication**: Messages load instantly
+✅ **User Identification**: Clear distinction between sender and receiver
+✅ **Mobile-Optimized**: Full-screen messaging on mobile devices
+✅ **Keyboard Shortcuts**: Enter to send, Shift+Enter for new line
+✅ **Visual Feedback**: Loading states, success/error messages
+✅ **Accessibility**: Proper labels, ARIA attributes
+✅ **Bilingual**: Full support for English and French
+
+### Technical Highlights
+
+- **Component Isolation**: Messaging is a standalone, reusable component
+- **State Management**: Proper loading, error, and success states
+- **Performance**: Efficient message rendering with proper keys
+- **Security**: Uses RLS policies from database layer
+- **UX Polish**: Smooth animations, proper spacing, clear visual hierarchy
+
+### Testing Checklist
+
+- [ ] Driver can send messages on their requests
+- [ ] Owner can send messages on received requests
+- [ ] Messages display in correct order (oldest first)
+- [ ] User avatars show correct initials
+- [ ] Current user messages appear on right side
+- [ ] Other user messages appear on left side
+- [ ] Timestamps display correctly
+- [ ] Enter key sends message
+- [ ] Shift+Enter creates new line
+- [ ] Loading state shows while fetching/sending
+- [ ] Error messages display on failure
+- [ ] Empty state shows when no messages
+- [ ] Mobile layout is full-screen
+- [ ] Desktop layout is centered dialog
+- [ ] Messages auto-refresh after sending
+- [ ] All translations work correctly
+
+---
+
+**Messaging Feature Completed**: September 30, 2025
+**Status**: ✅ Ready for Testing

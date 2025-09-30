@@ -393,6 +393,7 @@ export interface AssignmentRequestMessageWithProfile
 
 export interface CreateAssignmentRequestMessage {
   request_id: string;
+  user_id: string;
   content: string;
   parent_message_id?: string;
   is_internal?: boolean;

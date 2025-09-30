@@ -17,6 +17,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DriveRequestCard from "../components/DriveRequestCard";
+import DriveRequestMessaging from "../components/DriveRequestMessaging";
 import { useUserContext } from "../contexts/UserContext";
 import { assignmentRequestService } from "../services/assignmentRequestService";
 import { CarAssignmentRequest } from "../types";
@@ -32,8 +33,14 @@ const DriverDriveRequests: React.FC = () => {
 
   // Withdraw dialog
   const [withdrawDialog, setWithdrawDialog] = useState(false);
-  const [withdrawingRequest, setWithdrawingRequest] = useState<CarAssignmentRequest | null>(null);
+  const [withdrawingRequest, setWithdrawingRequest] =
+    useState<CarAssignmentRequest | null>(null);
   const [withdrawing, setWithdrawing] = useState(false);
+
+  // Messaging dialog
+  const [messagingDialog, setMessagingDialog] = useState(false);
+  const [messagingRequest, setMessagingRequest] =
+    useState<CarAssignmentRequest | null>(null);
 
   useEffect(() => {
     loadRequests();
@@ -92,6 +99,11 @@ const DriverDriveRequests: React.FC = () => {
     setWithdrawDialog(true);
   };
 
+  const openMessagingDialog = (request: CarAssignmentRequest) => {
+    setMessagingRequest(request);
+    setMessagingDialog(true);
+  };
+
   // Filter requests by status
   const pendingRequests = requests.filter((r) => r.status === "pending");
   const approvedRequests = requests.filter((r) => r.status === "approved");
@@ -143,13 +155,18 @@ const DriverDriveRequests: React.FC = () => {
 
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
-        <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)}>
+        <Tabs
+          value={tabValue}
+          onChange={(_, newValue) => setTabValue(newValue)}
+        >
           <Tab
             label={`${t("driveRequests.pending")} (${pendingRequests.length})`}
             sx={{ textTransform: "none", fontWeight: 600 }}
           />
           <Tab
-            label={`${t("driveRequests.approved")} (${approvedRequests.length})`}
+            label={`${t("driveRequests.approved")} (${
+              approvedRequests.length
+            })`}
             sx={{ textTransform: "none", fontWeight: 600 }}
           />
           <Tab
@@ -164,7 +181,11 @@ const DriverDriveRequests: React.FC = () => {
         <Grid container spacing={3}>
           {Array.from({ length: 3 }).map((_, index) => (
             <Grid size={12} key={index}>
-              <Skeleton variant="rectangular" height={250} sx={{ borderRadius: 3 }} />
+              <Skeleton
+                variant="rectangular"
+                height={250}
+                sx={{ borderRadius: 3 }}
+              />
             </Grid>
           ))}
         </Grid>
@@ -191,6 +212,7 @@ const DriverDriveRequests: React.FC = () => {
                 onWithdraw={
                   request.status === "pending" ? openWithdrawDialog : undefined
                 }
+                onViewDetails={openMessagingDialog}
               />
             </Grid>
           ))}
@@ -229,6 +251,15 @@ const DriverDriveRequests: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Messaging Dialog */}
+      {messagingRequest && (
+        <DriveRequestMessaging
+          open={messagingDialog}
+          onClose={() => setMessagingDialog(false)}
+          request={messagingRequest}
+        />
+      )}
     </Container>
   );
 };

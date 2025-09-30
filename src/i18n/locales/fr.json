@@ -863,7 +863,16 @@
     "rejectionReasonHelper": "Optionnel: Fournir des commentaires pour aider le conducteur",
     "submitted": "Soumis",
     "viewDetails": "Voir les Détails",
+    "viewMessages": "Voir les Messages",
     "noRequests": "Aucune Demande",
+    "messaging": {
+      "title": "Messages",
+      "noMessages": "Aucun message pour le moment",
+      "startConversation": "Commencez la conversation en envoyant un message",
+      "typePlaceholder": "Tapez votre message...",
+      "loadError": "Échec du chargement des messages. Veuillez réessayer.",
+      "sendError": "Échec de l'envoi du message. Veuillez réessayer."
+    },
     "noPendingRequests": "Vous n'avez pas encore envoyé de demandes en attente",
     "noApprovedRequests": "Vous n'avez pas de demandes approuvées",
     "noOtherRequests": "Aucune autre demande à afficher",

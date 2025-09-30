@@ -17,6 +17,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DriveRequestCard from "../components/DriveRequestCard";
+import DriveRequestMessaging from "../components/DriveRequestMessaging";
 import { useUserContext } from "../contexts/UserContext";
 import { assignmentRequestService } from "../services/assignmentRequestService";
 import { CarAssignmentRequest } from "../types";
@@ -42,6 +43,11 @@ const OwnerDriveRequests: React.FC = () => {
   const [approvingRequest, setApprovingRequest] =
     useState<CarAssignmentRequest | null>(null);
   const [approving, setApproving] = useState(false);
+
+  // Messaging dialog
+  const [messagingDialog, setMessagingDialog] = useState(false);
+  const [messagingRequest, setMessagingRequest] =
+    useState<CarAssignmentRequest | null>(null);
 
   useEffect(() => {
     loadRequests();
@@ -132,6 +138,11 @@ const OwnerDriveRequests: React.FC = () => {
   const openRejectDialog = (request: CarAssignmentRequest) => {
     setRejectingRequest(request);
     setRejectDialog(true);
+  };
+
+  const openMessagingDialog = (request: CarAssignmentRequest) => {
+    setMessagingRequest(request);
+    setMessagingDialog(true);
   };
 
   // Filter requests by status
@@ -245,6 +256,7 @@ const OwnerDriveRequests: React.FC = () => {
                 onReject={
                   request.status === "pending" ? openRejectDialog : undefined
                 }
+                onViewDetails={openMessagingDialog}
               />
             </Grid>
           ))}
@@ -344,6 +356,15 @@ const OwnerDriveRequests: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Messaging Dialog */}
+      {messagingRequest && (
+        <DriveRequestMessaging
+          open={messagingDialog}
+          onClose={() => setMessagingDialog(false)}
+          request={messagingRequest}
+        />
+      )}
     </Container>
   );
 };

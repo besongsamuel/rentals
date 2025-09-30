@@ -15,7 +15,6 @@ import {
   CardContent,
   Chip,
   Grid,
-  IconButton,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -129,7 +128,9 @@ const DriveRequestCard: React.FC<DriveRequestCardProps> = ({
         {/* Availability Dates */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid size={request.available_end_date ? 6 : 12}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
+            >
               <CalendarToday sx={{ fontSize: 18, color: "text.secondary" }} />
               <Typography variant="body2" color="text.secondary">
                 {t("driveRequests.startDate")}
@@ -160,7 +161,9 @@ const DriveRequestCard: React.FC<DriveRequestCardProps> = ({
         {/* Max Hours */}
         {request.max_hours_per_week && (
           <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}
+            >
               <AccessTime sx={{ fontSize: 18, color: "text.secondary" }} />
               <Typography variant="body2" color="text.secondary">
                 {t("driveRequests.maxHoursPerWeek")}
@@ -287,7 +290,7 @@ const DriveRequestCard: React.FC<DriveRequestCardProps> = ({
             </>
           )}
 
-          {/* View Details (for messaging) */}
+          {/* View Messages */}
           {onViewDetails && (
             <Button
               size="small"
@@ -295,7 +298,7 @@ const DriveRequestCard: React.FC<DriveRequestCardProps> = ({
               onClick={() => onViewDetails(request)}
               sx={{ textTransform: "none", ml: "auto" }}
             >
-              {t("driveRequests.viewDetails")}
+              {t("driveRequests.viewMessages")}
             </Button>
           )}
         </Box>

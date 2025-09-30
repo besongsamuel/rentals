@@ -929,7 +929,16 @@
     "rejectionReasonHelper": "Optional: Provide feedback to help the driver",
     "submitted": "Submitted",
     "viewDetails": "View Details",
+    "viewMessages": "View Messages",
     "noRequests": "No Requests",
+    "messaging": {
+      "title": "Messages",
+      "noMessages": "No messages yet",
+      "startConversation": "Start the conversation by sending a message",
+      "typePlaceholder": "Type your message...",
+      "loadError": "Failed to load messages. Please try again.",
+      "sendError": "Failed to send message. Please try again."
+    },
     "noPendingRequests": "You haven't sent any pending requests yet",
     "noApprovedRequests": "You don't have any approved requests",
     "noOtherRequests": "No other requests to display",
