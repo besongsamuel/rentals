@@ -228,13 +228,13 @@ export const assignmentRequestService = {
             id,
             full_name,
             phone,
-            email
-          ),
-          driver_details!inner (
-            years_of_experience,
-            preferred_transmission,
-            license_number,
-            license_expiry_date
+            email,
+            driver_details (
+              years_of_experience,
+              preferred_transmission,
+              license_number,
+              license_expiry_date
+            )
           )
         `
         )

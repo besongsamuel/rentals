@@ -8,7 +8,14 @@ import { useUserContext } from "../contexts/UserContext";
 const EnhancedSignUpForm: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { signUp, signUpWithPhone, verifyPhoneOTP, signInWithGoogle, signInWithFacebook, signUpWithOtp } = useUserContext();
+  const {
+    signUp,
+    signUpWithPhone,
+    verifyPhoneOTP,
+    signInWithGoogle,
+    signInWithFacebook,
+    signUpWithOtp,
+  } = useUserContext();
 
   const [error, setError] = useState("");
 
@@ -18,7 +25,8 @@ const EnhancedSignUpForm: React.FC = () => {
     if (error) {
       throw error;
     }
-    // If successful, user will be redirected by the auth state change
+    // Redirect to signup complete screen
+    navigate("/signup-complete");
   };
 
   const handlePhoneSignup = async (phone: string) => {
@@ -35,7 +43,8 @@ const EnhancedSignUpForm: React.FC = () => {
     if (error) {
       throw error;
     }
-    // If successful, user will be redirected by the auth state change
+    // Redirect to signup complete screen
+    navigate("/signup-complete");
   };
 
   const handleResendPhoneOTP = async (phone: string) => {
