@@ -233,11 +233,22 @@
     "currentMileage": "Kilométrage actuel",
     "owner": "Propriétaire",
     "driver": "Conducteur",
-    "status": "Statut",
-    "available": "Disponible",
-    "assigned": "Assigné",
-    "maintenance": "Maintenance",
-    "retired": "Retiré",
+    "status": {
+      "available": "Disponible",
+      "assigned": "Assigné",
+      "maintenance": "Maintenance",
+      "retired": "Retiré"
+    },
+    "transmissionType": {
+      "manual": "Manuel",
+      "automatic": "Automatique"
+    },
+    "fuel": {
+      "gasoline": "Essence",
+      "diesel": "Diesel",
+      "hybrid": "Hybride",
+      "electric": "Électrique"
+    },
     "noCars": "Aucun véhicule trouvé",
     "save": "Enregistrer le véhicule",
     "cancel": "Annuler",
@@ -269,7 +280,20 @@
     "failedToLoadData": "Échec du chargement des données. Veuillez réessayer.",
     "failedToLoadModels": "Échec du chargement des modèles de véhicules. Veuillez réessayer.",
     "failedToUpdateCar": "Échec de la mise à jour du véhicule. Veuillez réessayer.",
-    "failedToCreateCar": "Échec de la création du véhicule. Veuillez réessayer."
+    "failedToCreateCar": "Échec de la création du véhicule. Veuillez réessayer.",
+    "search": {
+      "menuTitle": "Rechercher des Véhicules",
+      "title": "Rechercher des Véhicules Disponibles",
+      "subtitle": "Parcourez les véhicules disponibles et trouvez le véhicule parfait pour vous",
+      "searchPlaceholder": "Rechercher par marque ou modèle...",
+      "transmissionFilter": "Type de Transmission",
+      "allTransmissions": "Toutes les Transmissions",
+      "noResults": "Aucun véhicule ne correspond à vos critères de recherche",
+      "resultsCount": "{{count}} véhicule(s) trouvé(s)",
+      "errorFetchingCars": "Échec du chargement des véhicules disponibles. Veuillez réessayer.",
+      "emptyState": "Aucun Véhicule Disponible",
+      "emptyStateSubtitle": "Revenez plus tard pour de nouvelles annonces"
+    }
   },
   "reports": {
     "entryMode": "Mode de saisie",

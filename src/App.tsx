@@ -18,6 +18,7 @@ import Analytics from "./pages/Analytics";
 import AssignedCars from "./pages/AssignedCars";
 import CarDetailManagement from "./pages/CarDetailManagement";
 import CarForm from "./pages/CarForm";
+import CarSearch from "./pages/CarSearch";
 import Dashboard from "./pages/Dashboard";
 import DataDeletion from "./pages/DataDeletion";
 import DriverDetails from "./pages/DriverDetails";
@@ -84,6 +85,9 @@ function DocumentTitle() {
         break;
       case "/assigned-cars":
         pageTitle = `${baseTitle} - Assigned Cars`;
+        break;
+      case "/search-cars":
+        pageTitle = `${baseTitle} - Search Cars`;
         break;
       case "/cars/new":
         pageTitle = `${baseTitle} - Add New Car`;
@@ -195,6 +199,10 @@ function AppContent() {
                               element={<DataDeletion />}
                             />
                             <Route path="/rewards" element={<Rewards />} />
+                            <Route
+                              path="/search-cars"
+                              element={<CarSearch />}
+                            />
                             <Route path="/cars/new" element={<CarForm />} />
                             <Route
                               path="/cars/:carId"

@@ -9,6 +9,7 @@ import {
   Menu as MenuIcon,
   MoreVert,
   Person,
+  Search,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -110,6 +111,11 @@ const Header: React.FC = () => {
           label: "Assigned Cars",
           path: "/assigned-cars",
           icon: <DirectionsCar />,
+        },
+        {
+          label: t("cars.search.menuTitle"),
+          path: "/search-cars",
+          icon: <Search />,
         },
       ];
     }

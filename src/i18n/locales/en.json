@@ -298,11 +298,22 @@
     "currentMileage": "Current Mileage",
     "owner": "Owner",
     "driver": "Driver",
-    "status": "Status",
-    "available": "Available",
-    "assigned": "Assigned",
-    "maintenance": "Maintenance",
-    "retired": "Retired",
+    "status": {
+      "available": "Available",
+      "assigned": "Assigned",
+      "maintenance": "Maintenance",
+      "retired": "Retired"
+    },
+    "transmissionType": {
+      "manual": "Manual",
+      "automatic": "Automatic"
+    },
+    "fuel": {
+      "gasoline": "Gasoline",
+      "diesel": "Diesel",
+      "hybrid": "Hybrid",
+      "electric": "Electric"
+    },
     "noCars": "No cars found",
     "save": "Save Car",
     "cancel": "Cancel",
@@ -334,7 +345,20 @@
     "failedToLoadData": "Failed to load data. Please try again.",
     "failedToLoadModels": "Failed to load car models. Please try again.",
     "failedToUpdateCar": "Failed to update car. Please try again.",
-    "failedToCreateCar": "Failed to create car. Please try again."
+    "failedToCreateCar": "Failed to create car. Please try again.",
+    "search": {
+      "menuTitle": "Search Cars",
+      "title": "Search Available Cars",
+      "subtitle": "Browse available cars and find the perfect vehicle for you",
+      "searchPlaceholder": "Search by make or model...",
+      "transmissionFilter": "Transmission Type",
+      "allTransmissions": "All Transmissions",
+      "noResults": "No cars match your search criteria",
+      "resultsCount": "{{count}} car(s) found",
+      "errorFetchingCars": "Failed to load available cars. Please try again.",
+      "emptyState": "No Available Cars",
+      "emptyStateSubtitle": "Check back later for new listings"
+    }
   },
   "reports": {
     "entryMode": "Entry Mode",

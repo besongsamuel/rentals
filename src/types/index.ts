@@ -62,6 +62,7 @@ export interface Car {
   status: "available" | "assigned" | "maintenance" | "retired";
   fuel_type: "gasoline" | "diesel" | "hybrid" | "electric" | null;
   transmission_type: "manual" | "automatic" | null;
+  is_available: boolean; // When true, car is publicly visible to all authenticated users
   created_at: string;
   updated_at: string;
 }
@@ -143,6 +144,7 @@ export interface CreateCarData {
   owner_id: string; // Required - main owner of the car
   fuel_type?: "gasoline" | "diesel" | "hybrid" | "electric";
   transmission_type?: "manual" | "automatic";
+  is_available?: boolean; // When true, car is publicly visible to all authenticated users (default: true)
 }
 
 export interface CreateWeeklyReportData {

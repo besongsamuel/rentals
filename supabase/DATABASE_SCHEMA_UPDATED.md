@@ -90,10 +90,18 @@ CREATE TABLE cars (
   status TEXT DEFAULT 'available' CHECK (status IN ('available', 'assigned', 'maintenance', 'retired')),
   fuel_type TEXT CHECK (fuel_type IN ('gasoline', 'diesel', 'hybrid', 'electric')),
   transmission_type TEXT CHECK (transmission_type IN ('manual', 'automatic')),
+  is_available BOOLEAN NOT NULL DEFAULT true, -- When true, car is publicly visible to all authenticated users
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
+
+**Purpose**: Stores car information with public visibility control
+**Features**:
+
+- `is_available` flag controls whether authenticated users can view the car
+- When `is_available = true`, any authenticated user can see the car details
+- Owners and assigned drivers can always view the car regardless of `is_available` status
 
 ### 5. `car_owners` (Additional car owners)
 
