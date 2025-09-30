@@ -4,29 +4,40 @@ import {
   DirectionsCar,
   DriveEta,
   LocalGasStation,
+  Send,
   Settings,
   Speed,
 } from "@mui/icons-material";
 import {
   Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
   Chip,
   Grid,
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Car } from "../types";
+import DriveRequestDialog from "./DriveRequestDialog";
 
 interface CarCardProps {
   car: Car;
+  canSendRequest?: boolean;
+  hasExistingRequest?: boolean;
 }
 
-const CarCard: React.FC<CarCardProps> = ({ car }) => {
+const CarCard: React.FC<CarCardProps> = ({
+  car,
+  canSendRequest = false,
+  hasExistingRequest = false,
+}) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -263,6 +274,41 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
           )}
         </Grid>
       </CardContent>
+
+      {/* Request to Drive Button */}
+      {canSendRequest && car.status === "available" && (
+        <CardActions sx={{ p: 2, pt: 0 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            startIcon={<Send />}
+            onClick={() => setShowRequestDialog(true)}
+            disabled={hasExistingRequest}
+            sx={{
+              bgcolor: theme.palette.primary.main,
+              color: "white",
+              py: 1.5,
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 600,
+              "&:hover": {
+                bgcolor: theme.palette.primary.dark,
+              },
+            }}
+          >
+            {hasExistingRequest
+              ? t("driveRequests.requestSent")
+              : t("driveRequests.requestToDrive")}
+          </Button>
+        </CardActions>
+      )}
+
+      {/* Drive Request Dialog */}
+      <DriveRequestDialog
+        open={showRequestDialog}
+        onClose={() => setShowRequestDialog(false)}
+        car={car}
+      />
     </Card>
   );
 };

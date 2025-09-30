@@ -333,3 +333,67 @@ export interface ChartData {
   expenses: number;
   netEarnings: number;
 }
+
+// Car Assignment Request Types
+export interface CarAssignmentRequest {
+  id: string;
+  car_id: string;
+  driver_id: string;
+  owner_id: string;
+  status: "pending" | "approved" | "rejected" | "withdrawn" | "expired";
+  available_start_date: string;
+  available_end_date: string | null;
+  preferred_working_hours: any; // JSONB
+  max_hours_per_week: number | null;
+  driver_notes: string | null;
+  experience_details: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  rejection_reason: string | null;
+  owner_notes: string | null;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateCarAssignmentRequest {
+  car_id: string;
+  available_start_date: string;
+  available_end_date?: string | null;
+  preferred_working_hours?: any;
+  max_hours_per_week?: number | null;
+  driver_notes?: string;
+  experience_details?: string;
+}
+
+export interface UpdateCarAssignmentRequest {
+  available_start_date?: string;
+  available_end_date?: string | null;
+  preferred_working_hours?: any;
+  max_hours_per_week?: number | null;
+  driver_notes?: string;
+  experience_details?: string;
+}
+
+export interface AssignmentRequestMessage {
+  id: string;
+  request_id: string;
+  user_id: string;
+  parent_message_id: string | null;
+  content: string;
+  is_internal: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssignmentRequestMessageWithProfile
+  extends AssignmentRequestMessage {
+  profiles: Profile | null;
+}
+
+export interface CreateAssignmentRequestMessage {
+  request_id: string;
+  content: string;
+  parent_message_id?: string;
+  is_internal?: boolean;
+}

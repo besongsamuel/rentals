@@ -9,6 +9,7 @@ import {
   Menu as MenuIcon,
   MoreVert,
   Person,
+  RequestPage,
   Search,
 } from "@mui/icons-material";
 import {
@@ -101,6 +102,11 @@ const Header: React.FC = () => {
       return [
         ...baseItems,
         { label: "Find Drivers", path: "/drivers", icon: <Person /> },
+        {
+          label: t("driveRequests.menuTitle"),
+          path: "/drive-requests",
+          icon: <RequestPage />,
+        },
       ];
     }
 
@@ -116,6 +122,11 @@ const Header: React.FC = () => {
           label: t("cars.search.menuTitle"),
           path: "/search-cars",
           icon: <Search />,
+        },
+        {
+          label: t("driveRequests.menuTitle"),
+          path: "/drive-requests",
+          icon: <RequestPage />,
         },
       ];
     }
@@ -496,9 +507,10 @@ const Header: React.FC = () => {
                   fontSize: "0.875rem",
                   fontWeight: 500,
                   color: currentPath === "/search-cars" ? "#007AFF" : "#86868b",
-                  backgroundColor: currentPath === "/search-cars" 
-                    ? "rgba(0, 122, 255, 0.1)" 
-                    : "transparent",
+                  backgroundColor:
+                    currentPath === "/search-cars"
+                      ? "rgba(0, 122, 255, 0.1)"
+                      : "transparent",
                   textTransform: "none",
                   borderRadius: 2,
                   "&:hover": {

@@ -23,11 +23,13 @@ import Dashboard from "./pages/Dashboard";
 import DataDeletion from "./pages/DataDeletion";
 import DriverDetails from "./pages/DriverDetails";
 import DriverDetailsCompletion from "./pages/DriverDetailsCompletion";
+import DriverDriveRequests from "./pages/DriverDriveRequests";
 import DriverSearch from "./pages/DriverSearch";
 import EnhancedLoginForm from "./pages/EnhancedLoginForm";
 import EnhancedSignUpForm from "./pages/EnhancedSignUpForm";
 import Home from "./pages/Home";
 import HowItWorks from "./pages/HowItWorks";
+import OwnerDriveRequests from "./pages/OwnerDriveRequests";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ProfilePage from "./pages/Profile";
 import ProfileCompletion from "./pages/ProfileCompletion";
@@ -88,6 +90,9 @@ function DocumentTitle() {
         break;
       case "/search-cars":
         pageTitle = `${baseTitle} - Search Cars`;
+        break;
+      case "/drive-requests":
+        pageTitle = `${baseTitle} - Drive Requests`;
         break;
       case "/cars/new":
         pageTitle = `${baseTitle} - Add New Car`;
@@ -202,6 +207,16 @@ function AppContent() {
                             <Route
                               path="/search-cars"
                               element={<CarSearch />}
+                            />
+                            <Route
+                              path="/drive-requests"
+                              element={
+                                profile.user_type === "driver" ? (
+                                  <DriverDriveRequests />
+                                ) : (
+                                  <OwnerDriveRequests />
+                                )
+                              }
                             />
                             <Route path="/cars/new" element={<CarForm />} />
                             <Route

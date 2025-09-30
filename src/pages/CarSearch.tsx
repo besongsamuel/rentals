@@ -1,7 +1,8 @@
-import { Search as SearchIcon } from "@mui/icons-material";
+import { Info, Search as SearchIcon } from "@mui/icons-material";
 import {
   Alert,
   Box,
+  Button,
   Container,
   FormControl,
   Grid,
@@ -17,23 +18,72 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import CarCard from "../components/CarCard";
+import { useUserContext } from "../contexts/UserContext";
 import { supabase } from "../lib/supabase";
+import { assignmentRequestService } from "../services/assignmentRequestService";
 import { Car } from "../types";
 
 const CarSearch: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+  const { profile } = useUserContext();
 
   const [cars, setCars] = useState<Car[]>([]);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [canSendRequests, setCanSendRequests] = useState(false);
+  const [checkingEligibility, setCheckingEligibility] = useState(true);
+  const [requestedCarIds, setRequestedCarIds] = useState<Set<string>>(
+    new Set()
+  );
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [transmissionFilter, setTransmissionFilter] = useState<string>("all");
+
+  // Check if driver can send requests and fetch pending requests
+  useEffect(() => {
+    const checkEligibilityAndRequests = async () => {
+      if (!profile?.id) {
+        setCheckingEligibility(false);
+        return;
+      }
+
+      try {
+        // Check if driver can send requests
+        const canSend = await assignmentRequestService.canDriverSendRequest(
+          profile.id
+        );
+        setCanSendRequests(canSend);
+
+        // Fetch pending requests to know which cars already have requests
+        if (canSend) {
+          const { data: requests } =
+            await assignmentRequestService.getDriverRequests(profile.id);
+
+          // Extract car IDs from pending requests
+          const pendingCarIds = new Set(
+            requests
+              .filter((req: any) => req.status === "pending")
+              .map((req: any) => req.car_id)
+          );
+          setRequestedCarIds(pendingCarIds);
+        }
+      } catch (error) {
+        console.error("Error checking eligibility:", error);
+        setCanSendRequests(false);
+      } finally {
+        setCheckingEligibility(false);
+      }
+    };
+
+    checkEligibilityAndRequests();
+  }, [profile?.id]);
 
   // Fetch available cars
   useEffect(() => {
@@ -109,6 +159,32 @@ const CarSearch: React.FC = () => {
           {t("cars.search.subtitle")}
         </Typography>
       </Box>
+
+      {/* Driver Eligibility Message */}
+      {!checkingEligibility && !canSendRequests && (
+        <Alert
+          severity="info"
+          icon={<Info />}
+          action={
+            <Button
+              size="small"
+              color="inherit"
+              onClick={() => navigate("/profile")}
+              sx={{ textTransform: "none" }}
+            >
+              {t("driveRequests.completeProfile")}
+            </Button>
+          }
+          sx={{ mb: 3, borderRadius: 2 }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {t("driveRequests.profileIncompleteTitle")}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.5 }}>
+            {t("driveRequests.profileIncompleteMessage")}
+          </Typography>
+        </Alert>
+      )}
 
       {/* Filters */}
       <Paper
@@ -227,7 +303,11 @@ const CarSearch: React.FC = () => {
           // Car Cards
           filteredCars.map((car) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={car.id}>
-              <CarCard car={car} />
+              <CarCard
+                car={car}
+                canSendRequest={canSendRequests}
+                hasExistingRequest={requestedCarIds.has(car.id)}
+              />
             </Grid>
           ))
         )}
