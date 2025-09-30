@@ -482,6 +482,36 @@ const Header: React.FC = () => {
               ml: "auto",
             }}
           >
+            {/* Search Cars Button for Drivers on Mobile */}
+            {profile?.user_type === "driver" && isMobile && (
+              <Button
+                size="small"
+                aria-label="search cars"
+                onClick={() => handleNavigation("/search-cars")}
+                startIcon={<Search sx={{ fontSize: 18 }} />}
+                sx={{
+                  px: 1.5,
+                  py: 0.5,
+                  minWidth: "auto",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  color: currentPath === "/search-cars" ? "#007AFF" : "#86868b",
+                  backgroundColor: currentPath === "/search-cars" 
+                    ? "rgba(0, 122, 255, 0.1)" 
+                    : "transparent",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 122, 255, 0.15)",
+                    color: "#007AFF",
+                  },
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {t("cars.search.menuTitle")}
+              </Button>
+            )}
+
             {/* User Type Badge */}
             {profile && !isMobile && (
               <Chip
