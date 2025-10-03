@@ -20,7 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ErrorAlert from "../components/ErrorAlert";
 import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
-import { carImageService } from "../services/carImageService";
+import { carImageStorageService } from "../services/carImageStorageService";
 import { carMakeModelService } from "../services/carMakeModelService";
 import { carService } from "../services/carService";
 import { profileService } from "../services/profileService";
@@ -90,8 +90,10 @@ const CarForm: React.FC = () => {
 
             // Load car images
             try {
-              const images = await carImageService.getCarImages(carId!);
-              setCarImageUrls(images.map((img) => img.image_url));
+              const imageUrls = await carImageStorageService.getCarImageUrls(
+                carId!
+              );
+              setCarImageUrls(imageUrls);
             } catch (error) {
               console.error("Error loading car images:", error);
             }
@@ -527,59 +529,8 @@ const CarForm: React.FC = () => {
                   onUploadComplete={async (urls) => {
                     const urlArray = Array.isArray(urls) ? urls : [urls];
 
-                    // Check if this is a delete operation (fewer URLs than before)
-                    if (urlArray.length < carImageUrls.length) {
-                      // Find which image was deleted
-                      const deletedUrl = carImageUrls.find(
-                        (url) => !urlArray.includes(url)
-                      );
-
-                      if (deletedUrl) {
-                        // Delete from database if it exists
-                        try {
-                          const images = await carImageService.getCarImages(
-                            carId!
-                          );
-                          const imageToDelete = images.find(
-                            (img) => img.image_url === deletedUrl
-                          );
-                          if (imageToDelete) {
-                            await carImageService.deleteCarImage(
-                              imageToDelete.id
-                            );
-                          }
-                        } catch (error) {
-                          console.error(
-                            "Error deleting image from database:",
-                            error
-                          );
-                        }
-                      }
-                      setCarImageUrls(urlArray);
-                    } else {
-                      // This is an upload operation - save to database immediately
-                      const newUrls = urlArray.filter(
-                        (url) => !carImageUrls.includes(url)
-                      );
-
-                      if (newUrls.length > 0) {
-                        try {
-                          // Save new images to database immediately
-                          await carImageService.addCarImages(
-                            carId!,
-                            newUrls,
-                            carImageUrls.length === 0 ? 0 : -1 // First image is primary only if no existing images
-                          );
-                          setCarImageUrls((prev) => [...prev, ...newUrls]);
-                        } catch (error) {
-                          console.error(
-                            "Error saving images to database:",
-                            error
-                          );
-                          setError(t("cars.carSavedButImagesFailed"));
-                        }
-                      }
-                    }
+                    // Update the local state with the new URLs from storage
+                    setCarImageUrls(urlArray);
                   }}
                   label={t("cars.uploadCarImages")}
                   helperText={t("cars.carImagesHelper")}

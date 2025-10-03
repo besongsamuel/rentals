@@ -24,10 +24,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { carImageService } from "../services/carImageService";
+import { carImageStorageService } from "../services/carImageStorageService";
 import { carMakeModelService } from "../services/carMakeModelService";
 import { weeklyReportService } from "../services/weeklyReportService";
-import { Car, CarImage, CarMake, CarModel } from "../types";
+import { Car, CarMake, CarModel } from "../types";
 
 interface AssignedOwnerCarProps {
   car: Car;
@@ -44,7 +44,7 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
   const [loadingCarInfo, setLoadingCarInfo] = useState(true);
   const [reportCount, setReportCount] = useState<number>(0);
   const [loadingReportCount, setLoadingReportCount] = useState(true);
-  const [carImage, setCarImage] = useState<CarImage | null>(null);
+  const [carImageUrl, setCarImageUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(true);
 
   useEffect(() => {
@@ -113,13 +113,13 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
     const loadCarImage = async () => {
       try {
         setLoadingImage(true);
-        const images = await carImageService.getCarImages(car.id);
-        // Get primary image or first image
-        const primaryImage = images.find((img) => img.is_primary) || images[0];
-        setCarImage(primaryImage || null);
+        const imageUrl = await carImageStorageService.getFirstCarImageUrl(
+          car.id
+        );
+        setCarImageUrl(imageUrl);
       } catch (error) {
         console.error("Error loading car image:", error);
-        setCarImage(null);
+        setCarImageUrl(null);
       } finally {
         setLoadingImage(false);
       }
@@ -194,10 +194,10 @@ const AssignedOwnerCar: React.FC<AssignedOwnerCarProps> = ({ car }) => {
             borderRadius: "12px 12px 0 0",
           }}
         />
-      ) : carImage ? (
+      ) : carImageUrl ? (
         <Box
           component="img"
-          src={carImage.image_url}
+          src={carImageUrl}
           alt={`${car.make} ${car.model}`}
           sx={{
             width: "100%",

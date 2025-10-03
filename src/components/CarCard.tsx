@@ -21,20 +21,20 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Car, CarImage } from "../types";
+import { Car } from "../types";
 import DriveRequestDialog from "./DriveRequestDialog";
 import VerificationBadge from "./VerificationBadge";
 
 interface CarCardProps {
   car: Car;
-  carImage?: CarImage | null;
+  carImageUrl?: string | null;
   canSendRequest?: boolean;
   hasExistingRequest?: boolean;
 }
 
 const CarCard: React.FC<CarCardProps> = ({
   car,
-  carImage,
+  carImageUrl,
   canSendRequest = false,
   hasExistingRequest = false,
 }) => {
@@ -82,10 +82,10 @@ const CarCard: React.FC<CarCardProps> = ({
       }}
     >
       {/* Car Image */}
-      {carImage ? (
+      {carImageUrl ? (
         <Box
           component="img"
-          src={carImage.image_url}
+          src={carImageUrl}
           alt={`${car.make} ${car.model}`}
           sx={{
             width: "100%",

@@ -69,6 +69,9 @@ export interface Car {
 }
 
 // CarImage interface for storing multiple car images
+// @deprecated Use carImageStorageService to fetch images directly from storage bucket
+// This interface is deprecated and will be removed in a future release
+// Images are now stored in the "cars" storage bucket under car_id folders
 export interface CarImage {
   id: string;
   car_id: string;

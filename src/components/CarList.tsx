@@ -16,8 +16,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { carImageService } from "../services/carImageService";
-import { Car, CarImage } from "../types";
+import { carImageStorageService } from "../services/carImageStorageService";
+import { Car } from "../types";
 
 interface CarListProps {
   cars: Car[];
@@ -40,7 +40,7 @@ const CarListItem: React.FC<CarListItemProps> = ({
   getStatusColor,
   t,
 }) => {
-  const [carImage, setCarImage] = useState<CarImage | null>(null);
+  const [carImageUrl, setCarImageUrl] = useState<string | null>(null);
   const [loadingImage, setLoadingImage] = useState(true);
 
   // Load first car image
@@ -48,13 +48,13 @@ const CarListItem: React.FC<CarListItemProps> = ({
     const loadCarImage = async () => {
       try {
         setLoadingImage(true);
-        const images = await carImageService.getCarImages(car.id);
-        // Get primary image or first image
-        const primaryImage = images.find((img) => img.is_primary) || images[0];
-        setCarImage(primaryImage || null);
+        const imageUrl = await carImageStorageService.getFirstCarImageUrl(
+          car.id
+        );
+        setCarImageUrl(imageUrl);
       } catch (error) {
         console.error("Error loading car image:", error);
-        setCarImage(null);
+        setCarImageUrl(null);
       } finally {
         setLoadingImage(false);
       }
@@ -89,10 +89,10 @@ const CarListItem: React.FC<CarListItemProps> = ({
             borderRadius: "4px 4px 0 0",
           }}
         />
-      ) : carImage ? (
+      ) : carImageUrl ? (
         <Box
           component="img"
-          src={carImage.image_url}
+          src={carImageUrl}
           alt={`${car.make} ${car.model}`}
           sx={{
             width: "100%",

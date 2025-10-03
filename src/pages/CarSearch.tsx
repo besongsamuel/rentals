@@ -21,7 +21,8 @@ import CarCard from "../components/CarCard";
 import { useUserContext } from "../contexts/UserContext";
 import { supabase } from "../lib/supabase";
 import { assignmentRequestService } from "../services/assignmentRequestService";
-import { Car, CarImage } from "../types";
+import { carImageStorageService } from "../services/carImageStorageService";
+import { Car } from "../types";
 
 const CarSearch: React.FC = () => {
   const { t } = useTranslation();
@@ -30,7 +31,9 @@ const CarSearch: React.FC = () => {
 
   const [cars, setCars] = useState<Car[]>([]);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
-  const [carImages, setCarImages] = useState<CarImage[]>([]);
+  const [carImageUrls, setCarImageUrls] = useState<Record<string, string[]>>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [canSendRequests, setCanSendRequests] = useState(false);
@@ -102,20 +105,13 @@ const CarSearch: React.FC = () => {
         setCars(data || []);
         setFilteredCars(data || []);
 
-        // Fetch all car images for the retrieved cars in one batch
+        // Fetch all car images for the retrieved cars from storage
         if (data && data.length > 0) {
           const carIds = data.map((car) => car.id);
-          const { data: images, error: imagesError } = await supabase
-            .from("car_images")
-            .select("*")
-            .in("car_id", carIds)
-            .order("is_primary", { ascending: false });
-
-          if (imagesError) {
-            console.error("Error fetching car images:", imagesError);
-          } else {
-            setCarImages(images || []);
-          }
+          const imageUrls = await carImageStorageService.getCarImageUrlsForCars(
+            carIds
+          );
+          setCarImageUrls(imageUrls);
         }
       } catch (err) {
         console.error("Error fetching available cars:", err);
@@ -316,17 +312,13 @@ const CarSearch: React.FC = () => {
           // Car Cards
           filteredCars.map((car) => {
             // Get the primary image or first image for this car
-            const carImage = carImages
-              .filter((img) => img.car_id === car.id)
-              .sort(
-                (a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)
-              )[0];
+            const carImageUrl = carImageUrls[car.id]?.[0] || null;
 
             return (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={car.id}>
                 <CarCard
                   car={car}
-                  carImage={carImage}
+                  carImageUrl={carImageUrl}
                   canSendRequest={canSendRequests}
                   hasExistingRequest={requestedCarIds.has(car.id)}
                 />
