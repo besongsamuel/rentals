@@ -15,14 +15,16 @@ import {
   CardContent,
   Chip,
   Grid,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { carImageService } from "../services/carImageService";
 import { carMakeModelService } from "../services/carMakeModelService";
 import { weeklyReportService } from "../services/weeklyReportService";
-import { Car, CarMake, CarModel } from "../types";
+import { Car, CarImage, CarMake, CarModel } from "../types";
 
 interface AssignedCarProps {
   car: Car;
@@ -37,6 +39,8 @@ const AssignedCar: React.FC<AssignedCarProps> = ({ car }) => {
   const [carMake, setCarMake] = useState<CarMake | null>(null);
   const [carModel, setCarModel] = useState<CarModel | null>(null);
   const [loadingCarInfo, setLoadingCarInfo] = useState(true);
+  const [carImage, setCarImage] = useState<CarImage | null>(null);
+  const [loadingImage, setLoadingImage] = useState(true);
 
   useEffect(() => {
     const calculateCurrentMileage = async () => {
@@ -80,6 +84,26 @@ const AssignedCar: React.FC<AssignedCarProps> = ({ car }) => {
 
     loadCarInfo();
   }, [car.make, car.model]);
+
+  // Load first car image
+  useEffect(() => {
+    const loadCarImage = async () => {
+      try {
+        setLoadingImage(true);
+        const images = await carImageService.getCarImages(car.id);
+        // Get primary image or first image
+        const primaryImage = images.find((img) => img.is_primary) || images[0];
+        setCarImage(primaryImage || null);
+      } catch (error) {
+        console.error("Error loading car image:", error);
+        setCarImage(null);
+      } finally {
+        setLoadingImage(false);
+      }
+    };
+
+    loadCarImage();
+  }, [car.id]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -137,6 +161,45 @@ const AssignedCar: React.FC<AssignedCarProps> = ({ car }) => {
         },
       }}
     >
+      {/* Car Image */}
+      {loadingImage ? (
+        <Skeleton
+          variant="rectangular"
+          sx={{
+            width: "100%",
+            height: 240,
+            borderRadius: "12px 12px 0 0",
+          }}
+        />
+      ) : carImage ? (
+        <Box
+          component="img"
+          src={carImage.image_url}
+          alt={`${car.make} ${car.model}`}
+          sx={{
+            width: "100%",
+            height: 240,
+            objectFit: "contain",
+            borderRadius: "12px 12px 0 0",
+            bgcolor: "rgba(0, 0, 0, 0.02)",
+          }}
+        />
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            height: 240,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "rgba(0, 0, 0, 0.05)",
+            borderRadius: "12px 12px 0 0",
+          }}
+        >
+          <DirectionsCar sx={{ fontSize: 100, color: "text.disabled" }} />
+        </Box>
+      )}
+
       <CardContent sx={{ p: 3 }}>
         {/* Header with Car Title and Status */}
         <Box

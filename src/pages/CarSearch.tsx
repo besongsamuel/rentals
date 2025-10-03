@@ -13,8 +13,6 @@ import {
   Skeleton,
   TextField,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,17 +21,16 @@ import CarCard from "../components/CarCard";
 import { useUserContext } from "../contexts/UserContext";
 import { supabase } from "../lib/supabase";
 import { assignmentRequestService } from "../services/assignmentRequestService";
-import { Car } from "../types";
+import { Car, CarImage } from "../types";
 
 const CarSearch: React.FC = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const { profile } = useUserContext();
 
   const [cars, setCars] = useState<Car[]>([]);
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
+  const [carImages, setCarImages] = useState<CarImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [canSendRequests, setCanSendRequests] = useState(false);
@@ -85,7 +82,7 @@ const CarSearch: React.FC = () => {
     checkEligibilityAndRequests();
   }, [profile?.id]);
 
-  // Fetch available cars
+  // Fetch available cars and their images
   useEffect(() => {
     const fetchAvailableCars = async () => {
       try {
@@ -104,6 +101,22 @@ const CarSearch: React.FC = () => {
 
         setCars(data || []);
         setFilteredCars(data || []);
+
+        // Fetch all car images for the retrieved cars in one batch
+        if (data && data.length > 0) {
+          const carIds = data.map((car) => car.id);
+          const { data: images, error: imagesError } = await supabase
+            .from("car_images")
+            .select("*")
+            .in("car_id", carIds)
+            .order("is_primary", { ascending: false });
+
+          if (imagesError) {
+            console.error("Error fetching car images:", imagesError);
+          } else {
+            setCarImages(images || []);
+          }
+        }
       } catch (err) {
         console.error("Error fetching available cars:", err);
         setError(t("cars.search.errorFetchingCars"));
@@ -301,15 +314,25 @@ const CarSearch: React.FC = () => {
           </Grid>
         ) : (
           // Car Cards
-          filteredCars.map((car) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={car.id}>
-              <CarCard
-                car={car}
-                canSendRequest={canSendRequests}
-                hasExistingRequest={requestedCarIds.has(car.id)}
-              />
-            </Grid>
-          ))
+          filteredCars.map((car) => {
+            // Get the primary image or first image for this car
+            const carImage = carImages
+              .filter((img) => img.car_id === car.id)
+              .sort(
+                (a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0)
+              )[0];
+
+            return (
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={car.id}>
+                <CarCard
+                  car={car}
+                  carImage={carImage}
+                  canSendRequest={canSendRequests}
+                  hasExistingRequest={requestedCarIds.has(car.id)}
+                />
+              </Grid>
+            );
+          })
         )}
       </Grid>
     </Container>

@@ -21,18 +21,20 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Car } from "../types";
+import { Car, CarImage } from "../types";
 import DriveRequestDialog from "./DriveRequestDialog";
 import VerificationBadge from "./VerificationBadge";
 
 interface CarCardProps {
   car: Car;
+  carImage?: CarImage | null;
   canSendRequest?: boolean;
   hasExistingRequest?: boolean;
 }
 
 const CarCard: React.FC<CarCardProps> = ({
   car,
+  carImage,
   canSendRequest = false,
   hasExistingRequest = false,
 }) => {
@@ -79,6 +81,36 @@ const CarCard: React.FC<CarCardProps> = ({
         },
       }}
     >
+      {/* Car Image */}
+      {carImage ? (
+        <Box
+          component="img"
+          src={carImage.image_url}
+          alt={`${car.make} ${car.model}`}
+          sx={{
+            width: "100%",
+            height: 200,
+            objectFit: "contain",
+            borderRadius: "12px 12px 0 0",
+            bgcolor: "rgba(0, 0, 0, 0.02)",
+          }}
+        />
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            height: 200,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "rgba(0, 0, 0, 0.05)",
+            borderRadius: "12px 12px 0 0",
+          }}
+        >
+          <DirectionsCar sx={{ fontSize: 80, color: "text.disabled" }} />
+        </Box>
+      )}
+
       <CardContent sx={{ flexGrow: 1, p: 3 }}>
         {/* Car Title */}
         <Box sx={{ mb: 2 }}>
