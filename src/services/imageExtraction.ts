@@ -13,6 +13,8 @@ export interface CarData {
  * Data extracted from driver's license images
  */
 export interface DriversLicenseData {
+  first_name: string | null;
+  last_name: string | null;
   license_number: string | null;
   license_class: string | null;
   issue_date: string | null;

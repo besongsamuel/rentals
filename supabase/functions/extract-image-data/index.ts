@@ -90,6 +90,8 @@ If any information cannot be determined from the image, return null for that fie
       systemPrompt =
         "You are an expert at extracting information from driver's license images.";
       extractionInstructions = `Extract the following information from the driver's license image:
+- first_name: The holder's first name
+- last_name: The holder's last name
 - license_number: The driver's license number
 - license_class: The license class/category (e.g., Class A, Class B, Class C, Class D)
 - issue_date: The date the license was issued (format: YYYY-MM-DD)
@@ -98,6 +100,8 @@ If any information cannot be determined from the image, return null for that fie
 
 Return the data in the following JSON format:
 {
+  "first_name": "string or null",
+  "last_name": "string or null",
   "license_number": "string or null",
   "license_class": "string or null",
   "issue_date": "string or null",

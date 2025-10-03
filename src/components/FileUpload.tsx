@@ -24,6 +24,7 @@ interface FileUploadProps {
   accept?: string;
   maxSizeMB?: number;
   onUploadComplete?: (url: string | string[]) => void;
+  onFileDeleted?: (url: string | string[]) => void;
   onUploadError?: (error: string) => void;
   existingFileUrl?: string | string[] | null;
   label?: string;
@@ -39,6 +40,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   accept = "image/*",
   maxSizeMB = 5,
   onUploadComplete,
+  onFileDeleted,
   onUploadError,
   existingFileUrl,
   label,
@@ -240,16 +242,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
         prev.filter((f) => f.storageUrl !== fileToDelete.storageUrl)
       );
 
-      // Notify parent component
-      if (onUploadComplete) {
+      // Notify parent component about file deletion
+      if (onFileDeleted) {
         const remainingUrls = uploadedFiles
           .filter((f) => f.storageUrl !== fileToDelete.storageUrl)
           .map((f) => f.storageUrl);
 
         if (multiple) {
-          onUploadComplete(remainingUrls);
+          onFileDeleted(remainingUrls);
         } else {
-          onUploadComplete("");
+          onFileDeleted("");
         }
       }
     } catch (err: any) {

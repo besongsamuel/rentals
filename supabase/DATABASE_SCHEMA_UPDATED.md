@@ -970,3 +970,116 @@ CREATE POLICY "Users can update their own messages" ON messages
 CREATE POLICY "Users can delete their own messages" ON messages
   FOR DELETE USING (user_id = auth.uid());
 ```
+
+## Extracted User Data Table
+
+### 13. `extracted_user_data` (AI Extracted Data Storage)
+
+```sql
+CREATE TABLE extracted_user_data (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('drivers_license', 'car_image')),
+  extracted_data JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+**Purpose**: Stores AI extracted data for users (driver licenses, car images, etc.)
+
+**Key Features**:
+
+- **Unique Constraint**: One record per user per data type (user_id, type)
+- **Flexible JSONB Storage**: Can store any extracted data structure
+- **Type Safety**: Enforced data types with CHECK constraints
+- **Automatic Timestamps**: Tracks creation and update times
+- **Cascade Deletion**: Data is deleted when users are deleted
+
+**Indexes**:
+
+```sql
+-- Unique index on user_id and type to ensure one record per user per type
+CREATE UNIQUE INDEX idx_extracted_user_data_user_type
+ON extracted_user_data(user_id, type);
+
+-- Index on user_id for faster queries
+CREATE INDEX idx_extracted_user_data_user_id
+ON extracted_user_data(user_id);
+
+-- Index on type for faster queries
+CREATE INDEX idx_extracted_user_data_type
+ON extracted_user_data(type);
+
+-- Index on created_at for sorting
+CREATE INDEX idx_extracted_user_data_created_at
+ON extracted_user_data(created_at);
+```
+
+**RLS Policies**:
+
+#### Users can view their own extracted data
+
+```sql
+CREATE POLICY "Users can view their own extracted data" ON extracted_user_data
+  FOR SELECT USING (auth.uid() = user_id);
+```
+
+#### Users can insert their own extracted data
+
+```sql
+CREATE POLICY "Users can insert their own extracted data" ON extracted_user_data
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+```
+
+#### Users can update their own extracted data
+
+```sql
+CREATE POLICY "Users can update their own extracted data" ON extracted_user_data
+  FOR UPDATE USING (auth.uid() = user_id);
+```
+
+#### Users can delete their own extracted data
+
+```sql
+CREATE POLICY "Users can delete their own extracted data" ON extracted_user_data
+  FOR DELETE USING (auth.uid() = user_id);
+```
+
+**Sample Queries**:
+
+#### Get extracted driver's license data for a user
+
+```sql
+SELECT
+  extracted_data,
+  created_at,
+  updated_at
+FROM extracted_user_data
+WHERE user_id = auth.uid()
+  AND type = 'drivers_license';
+```
+
+#### Get all extracted data for a user
+
+```sql
+SELECT
+  type,
+  extracted_data,
+  created_at,
+  updated_at
+FROM extracted_user_data
+WHERE user_id = auth.uid()
+ORDER BY created_at DESC;
+```
+
+#### Update extracted data (upsert pattern)
+
+```sql
+INSERT INTO extracted_user_data (user_id, type, extracted_data)
+VALUES (auth.uid(), 'drivers_license', $1)
+ON CONFLICT (user_id, type)
+DO UPDATE SET
+  extracted_data = EXCLUDED.extracted_data,
+  updated_at = NOW();
+```

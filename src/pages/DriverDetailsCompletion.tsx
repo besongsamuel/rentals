@@ -20,10 +20,16 @@ import { City, Country, State } from "country-state-city";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import ExtractionPreviewDialog from "../components/ExtractionPreviewDialog";
 import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
 import { driverLicenseService } from "../services/driverLicenseService";
+import { extractedUserDataService } from "../services/extractedUserDataService";
+import {
+  DriversLicenseData,
+  extractDriversLicenseData,
+} from "../services/imageExtraction";
 import { CreateDriverDetailsData } from "../types";
 
 const DriverDetailsCompletion: React.FC = () => {
@@ -66,6 +72,12 @@ const DriverDetailsCompletion: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [licenseImageUrl, setLicenseImageUrl] = useState<string | null>(null);
+  const [extractingLicenseData, setExtractingLicenseData] = useState(false);
+  const [extractionMessage, setExtractionMessage] = useState("");
+  const [extractionPreviewOpen, setExtractionPreviewOpen] = useState(false);
+  const [extractedData, setExtractedData] = useState<DriversLicenseData | null>(
+    null
+  );
 
   // Country/State/City data
   const [selectedCountry, setSelectedCountry] = useState("CM");
@@ -91,6 +103,64 @@ const DriverDetailsCompletion: React.FC = () => {
     "Hindi",
     "Other",
   ];
+
+  // Extraction preview handlers
+  const handleAcceptExtractedData = async () => {
+    if (extractedData && profile?.id) {
+      try {
+        // Prepare driver details update data
+        const driverDetailsUpdate: Partial<CreateDriverDetailsData> = {};
+
+        if (extractedData.license_number) {
+          driverDetailsUpdate.license_number = extractedData.license_number;
+        }
+        if (extractedData.license_class) {
+          driverDetailsUpdate.license_class = extractedData.license_class;
+        }
+        if (extractedData.issue_date) {
+          driverDetailsUpdate.license_issue_date = extractedData.issue_date;
+        }
+        if (extractedData.expiry_date) {
+          driverDetailsUpdate.license_expiry_date = extractedData.expiry_date;
+        }
+
+        // Update driver details in database
+        await driverDetailsService.updateDriverDetails(
+          profile.id,
+          driverDetailsUpdate
+        );
+
+        // Update local state
+        setDriverDetails((prev) => ({
+          ...prev,
+          ...driverDetailsUpdate,
+        }));
+
+        // Save extracted data to database
+        await extractedUserDataService.saveExtractedData(profile.id, {
+          type: "drivers_license",
+          extracted_data: extractedData,
+        });
+
+        setExtractionMessage(t("profile.licenseDataExtracted"));
+      } catch (error) {
+        console.error("Error updating driver details:", error);
+        setExtractionMessage(t("profile.errorUpdatingDetails"));
+      }
+    }
+    setExtractionPreviewOpen(false);
+    setExtractedData(null);
+  };
+
+  const handleRejectExtractedData = () => {
+    setExtractionPreviewOpen(false);
+    setExtractedData(null);
+  };
+
+  const handleCloseExtractionPreview = () => {
+    setExtractionPreviewOpen(false);
+    setExtractedData(null);
+  };
 
   // Emergency contact relationship options
   const relationshipOptions = [
@@ -345,6 +415,164 @@ const DriverDetailsCompletion: React.FC = () => {
             </Typography>
 
             <Grid container spacing={2}>
+              {/* Driver License Information */}
+              <Grid size={{ xs: 12 }}>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+                  Driver License Information
+                </Typography>
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label="License Number"
+                  value={driverDetails.license_number}
+                  onChange={handleDriverDetailsChange("license_number")}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label="License Class"
+                  value={driverDetails.license_class}
+                  onChange={handleDriverDetailsChange("license_class")}
+                  placeholder="e.g., Class A, Class B, Class C"
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Issue Date"
+                  type="date"
+                  value={driverDetails.license_issue_date}
+                  onChange={handleDriverDetailsChange("license_issue_date")}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField
+                  fullWidth
+                  label="Expiry Date"
+                  type="date"
+                  value={driverDetails.license_expiry_date}
+                  onChange={handleDriverDetailsChange("license_expiry_date")}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <TextField
+                  fullWidth
+                  label="Issuing Authority"
+                  value={driverDetails.license_issuing_authority}
+                  onChange={handleDriverDetailsChange(
+                    "license_issuing_authority"
+                  )}
+                  placeholder="e.g., California DMV, Texas DPS"
+                />
+              </Grid>
+
+              {/* Driver License Upload */}
+              <Grid size={{ xs: 12 }}>
+                <FileUpload
+                  bucket="driver_licenses"
+                  path={profile?.id || ""}
+                  accept="image/*,application/pdf"
+                  maxSizeMB={5}
+                  onUploadComplete={async (url) => {
+                    // Handle file upload
+                    if (profile?.id) {
+                      const urlString = typeof url === "string" ? url : "";
+
+                      // File was uploaded - fetch from storage
+                      const imageUrl =
+                        await driverLicenseService.getFirstDriverLicenseUrl(
+                          profile.id
+                        );
+                      setLicenseImageUrl(imageUrl);
+
+                      setDriverDetails((prev) => ({
+                        ...prev,
+                        license_image_url: urlString,
+                      }));
+
+                      // Extract license data from the uploaded image
+                      if (imageUrl) {
+                        try {
+                          setExtractingLicenseData(true);
+                          setExtractionPreviewOpen(true);
+
+                          const extractedData = await extractDriversLicenseData(
+                            imageUrl
+                          );
+                          setExtractedData(extractedData);
+                        } catch (extractError) {
+                          console.error(
+                            "Error extracting license data:",
+                            extractError
+                          );
+                          setExtractedData(null);
+                        } finally {
+                          setExtractingLicenseData(false);
+                        }
+                      }
+                    }
+                  }}
+                  onFileDeleted={async (url) => {
+                    // Handle file deletion
+                    if (profile?.id) {
+                      setLicenseImageUrl(null);
+                      setDriverDetails((prev) => ({
+                        ...prev,
+                        license_image_url: "",
+                      }));
+
+                      // Delete extracted data when image is deleted
+                      try {
+                        await extractedUserDataService.deleteExtractedDataByType(
+                          profile.id,
+                          "drivers_license"
+                        );
+                      } catch (deleteError) {
+                        console.error(
+                          "Error deleting extracted data:",
+                          deleteError
+                        );
+                      }
+                    }
+                  }}
+                  existingFileUrl={licenseImageUrl || null}
+                  label="Driver's License Image"
+                  helperText={
+                    extractingLicenseData
+                      ? t("profile.extractingLicenseData")
+                      : "Upload a clear photo of your driver's license (front and back). This is required for verification."
+                  }
+                />
+              </Grid>
+
+              {/* Extraction Message */}
+              {extractionMessage && (
+                <Grid size={{ xs: 12 }}>
+                  <Alert
+                    severity={
+                      extractionMessage.includes("Failed") ? "error" : "success"
+                    }
+                    sx={{ mt: 2 }}
+                  >
+                    {extractionMessage}
+                  </Alert>
+                </Grid>
+              )}
+
               {/* Personal Information */}
               <Grid size={{ xs: 12 }}>
                 <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
@@ -523,156 +751,6 @@ const DriverDetailsCompletion: React.FC = () => {
                 </FormControl>
               </Grid>
 
-              {/* Emergency Contact */}
-              <Grid size={{ xs: 12 }}>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-                  Emergency Contact
-                </Typography>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Emergency Contact Name"
-                  value={driverDetails.emergency_contact_name}
-                  onChange={handleDriverDetailsChange("emergency_contact_name")}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Emergency Contact Phone"
-                  value={driverDetails.emergency_contact_phone}
-                  onChange={handleDriverDetailsChange(
-                    "emergency_contact_phone"
-                  )}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12 }}>
-                <FormControl fullWidth>
-                  <InputLabel>Relationship</InputLabel>
-                  <Select
-                    value={driverDetails.emergency_contact_relationship}
-                    onChange={handleDriverDetailsChange(
-                      "emergency_contact_relationship"
-                    )}
-                    label="Relationship"
-                  >
-                    {relationshipOptions.map((relationship) => (
-                      <MenuItem key={relationship} value={relationship}>
-                        {relationship}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              {/* Driver License Information */}
-              <Grid size={{ xs: 12 }}>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
-                  Driver License Information
-                </Typography>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="License Number"
-                  value={driverDetails.license_number}
-                  onChange={handleDriverDetailsChange("license_number")}
-                  required
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="License Class"
-                  value={driverDetails.license_class}
-                  onChange={handleDriverDetailsChange("license_class")}
-                  placeholder="e.g., A, B, C"
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  type="date"
-                  label="License Issue Date"
-                  value={driverDetails.license_issue_date}
-                  onChange={handleDriverDetailsChange("license_issue_date")}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  type="date"
-                  label="License Expiry Date"
-                  value={driverDetails.license_expiry_date}
-                  onChange={handleDriverDetailsChange("license_expiry_date")}
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  label="Issuing Authority"
-                  value={driverDetails.license_issuing_authority}
-                  onChange={handleDriverDetailsChange(
-                    "license_issuing_authority"
-                  )}
-                  placeholder="e.g., Ministry of Transport"
-                />
-              </Grid>
-
-              {/* Driver License Upload */}
-              <Grid size={{ xs: 12 }}>
-                <FileUpload
-                  bucket="driver_licenses"
-                  path={profile?.id || ""}
-                  accept="image/*,application/pdf"
-                  maxSizeMB={5}
-                  onUploadComplete={async (url) => {
-                    // Handle upload or delete
-                    if (profile?.id) {
-                      const urlString = typeof url === "string" ? url : "";
-
-                      // If URL is empty, the file was deleted
-                      if (!urlString) {
-                        setLicenseImageUrl(null);
-                        setDriverDetails((prev) => ({
-                          ...prev,
-                          license_image_url: "",
-                        }));
-                      } else {
-                        // File was uploaded - fetch from storage
-                        const imageUrl =
-                          await driverLicenseService.getFirstDriverLicenseUrl(
-                            profile.id
-                          );
-                        setLicenseImageUrl(imageUrl);
-
-                        setDriverDetails((prev) => ({
-                          ...prev,
-                          license_image_url: urlString,
-                        }));
-                      }
-                    }
-                  }}
-                  existingFileUrl={licenseImageUrl || null}
-                  label="Driver's License Image"
-                  helperText="Upload a clear photo of your driver's license (front and back). This is required for verification."
-                />
-              </Grid>
-
               {/* Professional Information */}
               <Grid size={{ xs: 12 }}>
                 <Divider sx={{ my: 2 }} />
@@ -764,6 +842,51 @@ const DriverDetailsCompletion: React.FC = () => {
               </Grid>
             </Grid>
 
+            {/* Emergency Contact */}
+            <Grid size={{ xs: 12 }}>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600 }}>
+                Emergency Contact
+              </Typography>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Emergency Contact Name"
+                value={driverDetails.emergency_contact_name}
+                onChange={handleDriverDetailsChange("emergency_contact_name")}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Emergency Contact Phone"
+                value={driverDetails.emergency_contact_phone}
+                onChange={handleDriverDetailsChange("emergency_contact_phone")}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormControl fullWidth>
+                <InputLabel>Relationship</InputLabel>
+                <Select
+                  value={driverDetails.emergency_contact_relationship}
+                  onChange={handleDriverDetailsChange(
+                    "emergency_contact_relationship"
+                  )}
+                  label="Relationship"
+                >
+                  {relationshipOptions.map((relationship) => (
+                    <MenuItem key={relationship} value={relationship}>
+                      {relationship}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
               <Button
                 variant="outlined"
@@ -814,6 +937,16 @@ const DriverDetailsCompletion: React.FC = () => {
           </Box>
         </Paper>
       </Container>
+
+      {/* Extraction Preview Dialog */}
+      <ExtractionPreviewDialog
+        open={extractionPreviewOpen}
+        loading={extractingLicenseData}
+        extractedData={extractedData}
+        onAccept={handleAcceptExtractedData}
+        onReject={handleRejectExtractedData}
+        onClose={handleCloseExtractionPreview}
+      />
     </Box>
   );
 };

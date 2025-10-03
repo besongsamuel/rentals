@@ -208,6 +208,20 @@
     "issuingAuthority": "Issuing Authority",
     "driverLicenseImage": "Driver's License Image",
     "driverLicenseImageHelper": "Upload a clear photo of your driver's license (front and back). This is required for verification.",
+    "extractingLicenseData": "Extracting license data from image...",
+    "licenseDataExtracted": "License data successfully extracted and populated in the form!",
+    "licenseDataExtractionFailed": "Could not extract license data from the image. Please fill in the details manually.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "extractionPreview": {
+      "title": "Extracted License Data",
+      "description": "We've extracted the following information from your driver's license. Please review and accept if the data is correct.",
+      "analyzing": "Analyzing your driver's license image...",
+      "personalInfo": "Personal Information",
+      "licenseInfo": "License Information",
+      "dataQuality": "Data extracted using AI - please verify accuracy",
+      "noData": "No data could be extracted from the image"
+    },
     "yearsOfExperience": "Years of Experience",
     "preferredTransmission": "Preferred Transmission",
     "idCardType": "ID Card Type",
@@ -620,7 +634,9 @@
     "currency": "XAF",
     "loading": "Loading...",
     "about": "About",
-    "notProvided": "Not provided"
+    "notProvided": "Not provided",
+    "accept": "Accept",
+    "reject": "Reject"
   },
   "errors": {
     "required": "This field is required",

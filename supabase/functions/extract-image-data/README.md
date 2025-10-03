@@ -65,6 +65,8 @@ The `image` field can be either:
   "success": true,
   "image_type": "drivers_license",
   "data": {
+    "first_name": "John",
+    "last_name": "Doe",
     "license_number": "D1234567",
     "license_class": "Class C",
     "issue_date": "2020-01-15",

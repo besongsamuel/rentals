@@ -209,6 +209,20 @@
     "issuingAuthorityDefault": "Ministère des Transports",
     "driverLicenseImage": "Image du Permis de Conduire",
     "driverLicenseImageHelper": "Téléchargez une photo claire de votre permis de conduire (recto et verso). Ceci est requis pour la vérification.",
+    "extractingLicenseData": "Extraction des données du permis à partir de l'image...",
+    "licenseDataExtracted": "Données du permis extraites avec succès et remplies dans le formulaire !",
+    "licenseDataExtractionFailed": "Impossible d'extraire les données du permis à partir de l'image. Veuillez remplir les détails manuellement.",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "extractionPreview": {
+      "title": "Données du Permis Extraites",
+      "description": "Nous avons extrait les informations suivantes de votre permis de conduire. Veuillez vérifier et accepter si les données sont correctes.",
+      "analyzing": "Analyse de l'image de votre permis de conduire...",
+      "personalInfo": "Informations Personnelles",
+      "licenseInfo": "Informations du Permis",
+      "dataQuality": "Données extraites par IA - veuillez vérifier l'exactitude",
+      "noData": "Aucune donnée n'a pu être extraite de l'image"
+    },
     "idCardType": "Type de pièce d'identité",
     "idCardNumber": "Numéro de pièce d'identité",
     "idCardExpiryDate": "Date d'expiration de la pièce d'identité",
@@ -553,7 +567,9 @@
     "miles": "Miles",
     "currency": "XAF",
     "about": "À propos",
-    "notProvided": "Non fourni"
+    "notProvided": "Non fourni",
+    "accept": "Accepter",
+    "reject": "Rejeter"
   },
   "errors": {
     "required": "Ce champ est requis",
