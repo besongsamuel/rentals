@@ -1,10 +1,12 @@
-import { Add } from "@mui/icons-material";
+import { Add, Upload } from "@mui/icons-material";
 import { Alert, Box, Button, Grid, Paper, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import BasicInformation from "../components/BasicInformation";
 import DriverDetail from "../components/DriverDetail";
 import SkeletonLoader from "../components/SkeletonLoader";
+import VerificationBadge from "../components/VerificationBadge";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
@@ -21,6 +23,7 @@ import {
 const DriverDashboard: React.FC = () => {
   const { profile } = useUserContext();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [assignedCars, setAssignedCars] = useState<Car[]>([]);
   const [driverDetails, setDriverDetails] = useState<DriverDetails | null>(
     null
@@ -142,19 +145,33 @@ const DriverDashboard: React.FC = () => {
   return (
     <Box sx={{ py: { xs: 3, sm: 4 } }}>
       <Box sx={{ mb: 6 }}>
-        <Typography
-          variant="h3"
+        <Box
           sx={{
-            fontWeight: 400,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
             mb: 2,
-            fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            color: "#1D1D1F",
-            letterSpacing: "-0.02em",
-            lineHeight: 1.1,
+            flexWrap: "wrap",
           }}
         >
-          {t("dashboard.driverDashboard")}
-        </Typography>
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: 400,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              color: "#1D1D1F",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+            }}
+          >
+            {t("dashboard.driverDashboard")}
+          </Typography>
+          <VerificationBadge
+            isVerified={driverDetails?.is_verified ?? false}
+            type="driver"
+            size="medium"
+          />
+        </Box>
         <Typography
           variant="body1"
           sx={{
@@ -169,6 +186,57 @@ const DriverDashboard: React.FC = () => {
       </Box>
 
       <Grid container spacing={4}>
+        {/* Verification Alert - Show if driver is not verified */}
+        {!driverDetails?.is_verified && (
+          <Grid size={12}>
+            <Alert
+              severity="info"
+              sx={{
+                borderRadius: 2,
+                backgroundColor: "rgba(46, 125, 50, 0.05)",
+                border: "1px solid rgba(46, 125, 50, 0.2)",
+                "& .MuiAlert-icon": {
+                  color: "#2e7d32",
+                },
+                "& .MuiAlert-message": {
+                  width: "100%",
+                },
+              }}
+              action={
+                <Button
+                  startIcon={<Upload />}
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  onClick={() => navigate("/profile")}
+                  sx={{
+                    minWidth: { xs: "100%", sm: "auto" },
+                    mt: { xs: 1, sm: 0 },
+                    borderColor: "#2e7d32",
+                    color: "#2e7d32",
+                    "&:hover": {
+                      borderColor: "#1b5e20",
+                      backgroundColor: "rgba(46, 125, 50, 0.08)",
+                    },
+                  }}
+                >
+                  {t("verification.uploadLicenseButton")}
+                </Button>
+              }
+            >
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 600, mb: 0.5, color: "#2e7d32" }}
+              >
+                {t("verification.notVerifiedTitle")}
+              </Typography>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {t("verification.notVerifiedMessage")}
+              </Typography>
+            </Alert>
+          </Grid>
+        )}
+
         {/* Profile Summary Section */}
         <Grid size={12}>
           <Paper

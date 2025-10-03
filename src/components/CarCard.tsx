@@ -23,6 +23,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Car } from "../types";
 import DriveRequestDialog from "./DriveRequestDialog";
+import VerificationBadge from "./VerificationBadge";
 
 interface CarCardProps {
   car: Car;
@@ -95,7 +96,15 @@ const CarCard: React.FC<CarCardProps> = ({
             <DirectionsCar sx={{ color: theme.palette.primary.main }} />
             {car.make} {car.model}
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mt: 1,
+              flexWrap: "wrap",
+            }}
+          >
             <Chip
               label={t(`cars.status.${car.status}`)}
               size="small"
@@ -105,6 +114,11 @@ const CarCard: React.FC<CarCardProps> = ({
                 fontWeight: 500,
                 fontSize: "0.75rem",
               }}
+            />
+            <VerificationBadge
+              isVerified={car.is_verified ?? false}
+              type="car"
+              size="small"
             />
           </Box>
         </Box>

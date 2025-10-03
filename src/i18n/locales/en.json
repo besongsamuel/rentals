@@ -962,5 +962,18 @@
     "startDateRequired": "Start date is required",
     "endDateBeforeStart": "End date must be after start date",
     "existingRequestInfo": "You have an existing pending request for this car. Update it below."
+  },
+  "verification": {
+    "driverVerified": "Verified Driver",
+    "driverNotVerified": "Not Verified",
+    "carVerified": "Verified Car",
+    "carNotVerified": "Not Verified",
+    "driverVerifiedTooltip": "This driver has been verified by our admin team",
+    "driverNotVerifiedTooltip": "This driver has not yet been verified by our admin team",
+    "carVerifiedTooltip": "This car has been verified by our admin team",
+    "carNotVerifiedTooltip": "This car has not yet been verified by our admin team",
+    "notVerifiedTitle": "Driver's License Not Verified",
+    "notVerifiedMessage": "To get verified, please complete your driver details and upload an image of your driver's license.",
+    "uploadLicenseButton": "Complete Profile"
   }
 }

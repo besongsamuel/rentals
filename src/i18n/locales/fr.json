@@ -896,5 +896,18 @@
     "startDateRequired": "La date de début est requise",
     "endDateBeforeStart": "La date de fin doit être après la date de début",
     "existingRequestInfo": "Vous avez une demande en attente pour cette voiture. Mettez-la à jour ci-dessous."
+  },
+  "verification": {
+    "driverVerified": "Conducteur Vérifié",
+    "driverNotVerified": "Non Vérifié",
+    "carVerified": "Voiture Vérifiée",
+    "carNotVerified": "Non Vérifiée",
+    "driverVerifiedTooltip": "Ce conducteur a été vérifié par notre équipe d'administration",
+    "driverNotVerifiedTooltip": "Ce conducteur n'a pas encore été vérifié par notre équipe d'administration",
+    "carVerifiedTooltip": "Cette voiture a été vérifiée par notre équipe d'administration",
+    "carNotVerifiedTooltip": "Cette voiture n'a pas encore été vérifiée par notre équipe d'administration",
+    "notVerifiedTitle": "Permis de Conduire Non Vérifié",
+    "notVerifiedMessage": "Pour être vérifié, veuillez compléter vos détails de conducteur et télécharger une image de votre permis de conduire.",
+    "uploadLicenseButton": "Compléter le Profil"
   }
 }

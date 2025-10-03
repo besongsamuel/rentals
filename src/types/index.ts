@@ -63,6 +63,8 @@ export interface Car {
   fuel_type: "gasoline" | "diesel" | "hybrid" | "electric" | null;
   transmission_type: "manual" | "automatic" | null;
   is_available: boolean; // When true, car is publicly visible to all authenticated users
+  is_verified: boolean; // Flag indicating whether the car has been verified by admin
+  image_url: string | null; // Optional URL for car image
   created_at: string;
   updated_at: string;
 }
@@ -228,6 +230,8 @@ export interface DriverDetails {
     | null;
   id_card_number: string | null;
   id_card_expiry_date: string | null;
+  license_image_url: string | null; // Optional URL for driver license image - required for verification
+  is_verified: boolean; // Flag indicating whether the driver has been verified by admin
   created_at: string;
   updated_at: string;
   last_active_at: string;
