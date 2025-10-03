@@ -5,7 +5,6 @@ import {
   Close,
   Dashboard,
   DirectionsCar,
-  Help,
   Menu as MenuIcon,
   MoreVert,
   Person,
@@ -22,6 +21,7 @@ import {
   Menu,
   MenuItem,
   Toolbar,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -40,8 +40,11 @@ const Header: React.FC = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmallDesktop = useMediaQuery(theme.breakpoints.down("lg"));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [secondaryMenuAnchor, setSecondaryMenuAnchor] =
+    useState<null | HTMLElement>(null);
 
   // Get current pathname from window.location for navigation highlighting
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -72,6 +75,14 @@ const Header: React.FC = () => {
     setMobileMenuOpen(false);
   };
 
+  const handleSecondaryMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setSecondaryMenuAnchor(event.currentTarget);
+  };
+
+  const handleSecondaryMenuClose = () => {
+    setSecondaryMenuAnchor(null);
+  };
+
   const handleNavigation = (path: string) => {
     // Always use window.location for navigation to avoid Router context issues
     window.location.href = path;
@@ -83,29 +94,56 @@ const Header: React.FC = () => {
     if (!profile) return [];
 
     const baseItems = [
-      { label: t("dashboard.title"), path: "/", icon: <Dashboard /> },
-      { label: "Analytics", path: "/analytics", icon: <Analytics /> },
-      { label: "Profile", path: "/profile", icon: <Person /> },
-      { label: t("howItWorks.faq"), path: "/how-it-works", icon: <Help /> },
+      {
+        label: t("dashboard.title"),
+        shortLabel: "Home",
+        path: "/",
+        icon: <Dashboard />,
+        priority: "high",
+      },
+      {
+        label: "Analytics",
+        shortLabel: "Stats",
+        path: "/analytics",
+        icon: <Analytics />,
+        priority: "medium",
+      },
+      {
+        label: "Profile",
+        shortLabel: "Profile",
+        path: "/profile",
+        icon: <Person />,
+        priority: "medium",
+      },
     ];
 
     // Add admin link if user is admin
     if (profile.is_admin) {
       baseItems.push({
         label: t("admin.admin"),
+        shortLabel: "Admin",
         path: "/admin",
         icon: <AdminPanelSettings />,
+        priority: "high",
       });
     }
 
     if (profile.user_type === "owner") {
       return [
         ...baseItems,
-        { label: "Find Drivers", path: "/drivers", icon: <Person /> },
+        {
+          label: "Find Drivers",
+          shortLabel: "Drivers",
+          path: "/drivers",
+          icon: <Person />,
+          priority: "high",
+        },
         {
           label: t("driveRequests.menuTitle"),
+          shortLabel: "Requests",
           path: "/drive-requests",
           icon: <RequestPage />,
+          priority: "medium",
         },
       ];
     }
@@ -115,23 +153,61 @@ const Header: React.FC = () => {
         ...baseItems,
         {
           label: "Assigned Cars",
+          shortLabel: "Cars",
           path: "/assigned-cars",
           icon: <DirectionsCar />,
+          priority: "high",
         },
         {
           label: t("cars.search.menuTitle"),
+          shortLabel: "Search",
           path: "/search-cars",
           icon: <Search />,
+          priority: "high",
         },
         {
           label: t("driveRequests.menuTitle"),
+          shortLabel: "Requests",
           path: "/drive-requests",
           icon: <RequestPage />,
+          priority: "medium",
         },
       ];
     }
 
     return baseItems;
+  };
+
+  // Get primary navigation items (high priority) for desktop
+  const getPrimaryNavigationItems = () => {
+    const highPriorityItems = getNavigationItems().filter(
+      (item) => item.priority === "high"
+    );
+
+    // On smaller desktop screens, show only the most essential items
+    if (isSmallDesktop && !isMobile) {
+      return highPriorityItems.slice(0, 2); // Show only first 2 items
+    }
+
+    return highPriorityItems;
+  };
+
+  // Get secondary navigation items (medium priority) for dropdown
+  const getSecondaryNavigationItems = () => {
+    const mediumPriorityItems = getNavigationItems().filter(
+      (item) => item.priority === "medium"
+    );
+
+    // On smaller desktop screens, also include remaining high-priority items
+    if (isSmallDesktop && !isMobile) {
+      const highPriorityItems = getNavigationItems().filter(
+        (item) => item.priority === "high"
+      );
+      const remainingHighPriorityItems = highPriorityItems.slice(2); // Items after the first 2
+      return [...remainingHighPriorityItems, ...mediumPriorityItems];
+    }
+
+    return mediumPriorityItems;
   };
 
   // Update current path when component mounts
@@ -453,34 +529,135 @@ const Header: React.FC = () => {
                 display: "flex",
                 alignItems: "center",
                 gap: 0,
-                ml: 6,
+                ml: 4,
                 flexGrow: 1,
               }}
             >
-              {getNavigationItems().map((item, index) => (
-                <Button
+              {/* Primary Navigation Items */}
+              {getPrimaryNavigationItems().map((item, index) => (
+                <Tooltip
                   key={index}
-                  color="inherit"
-                  onClick={() => handleNavigation(item.path)}
-                  sx={{
-                    px: 2,
-                    py: 1,
-                    minWidth: "auto",
-                    fontSize: "0.9rem",
-                    fontWeight: 400,
-                    color: currentPath === item.path ? "#1d1d1f" : "#86868b",
-                    textTransform: "none",
-                    letterSpacing: "-0.01em",
-                    "&:hover": {
-                      color: "#1d1d1f",
-                      backgroundColor: "transparent",
-                    },
-                    transition: "color 0.2s ease",
-                  }}
+                  title={
+                    isSmallDesktop && !isMobile && item.shortLabel
+                      ? item.label
+                      : ""
+                  }
+                  placement="bottom"
+                  arrow
                 >
-                  {item.label}
-                </Button>
+                  <Button
+                    color="inherit"
+                    onClick={() => handleNavigation(item.path)}
+                    sx={{
+                      px: 1.5,
+                      py: 0.75,
+                      minWidth: "auto",
+                      fontSize: "0.85rem",
+                      fontWeight: 400,
+                      color: currentPath === item.path ? "#1d1d1f" : "#86868b",
+                      textTransform: "none",
+                      letterSpacing: "-0.01em",
+                      "&:hover": {
+                        color: "#1d1d1f",
+                        backgroundColor: "transparent",
+                      },
+                      transition: "color 0.2s ease",
+                    }}
+                  >
+                    {isSmallDesktop && !isMobile && item.shortLabel
+                      ? item.shortLabel
+                      : item.label}
+                  </Button>
+                </Tooltip>
               ))}
+
+              {/* More Menu for Secondary Items */}
+              {getSecondaryNavigationItems().length > 0 && (
+                <>
+                  <Button
+                    color="inherit"
+                    onClick={handleSecondaryMenuOpen}
+                    sx={{
+                      px: 1.5,
+                      py: 0.75,
+                      minWidth: "auto",
+                      fontSize: "0.85rem",
+                      fontWeight: 400,
+                      color: "#86868b",
+                      textTransform: "none",
+                      letterSpacing: "-0.01em",
+                      "&:hover": {
+                        color: "#1d1d1f",
+                        backgroundColor: "transparent",
+                      },
+                      transition: "color 0.2s ease",
+                    }}
+                  >
+                    More
+                  </Button>
+                  <Menu
+                    anchorEl={secondaryMenuAnchor}
+                    open={Boolean(secondaryMenuAnchor)}
+                    onClose={handleSecondaryMenuClose}
+                    PaperProps={{
+                      sx: {
+                        mt: 1,
+                        minWidth: 180,
+                        borderRadius: 2,
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+                        border: "0.5px solid rgba(0, 0, 0, 0.1)",
+                      },
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                  >
+                    {getSecondaryNavigationItems().map((item, index) => (
+                      <MenuItem
+                        key={index}
+                        onClick={() => {
+                          handleNavigation(item.path);
+                          handleSecondaryMenuClose();
+                        }}
+                        sx={{
+                          py: 1.5,
+                          px: 2,
+                          "&:hover": {
+                            backgroundColor: "rgba(0, 0, 0, 0.04)",
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.5,
+                          }}
+                        >
+                          {item.icon}
+                          <Typography
+                            sx={{
+                              fontSize: "0.9rem",
+                              fontWeight: 400,
+                              color:
+                                currentPath === item.path
+                                  ? "#1d1d1f"
+                                  : "#86868b",
+                            }}
+                          >
+                            {item.label}
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </>
+              )}
             </Box>
           )}
 
