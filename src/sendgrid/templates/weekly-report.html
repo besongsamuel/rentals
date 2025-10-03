@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Report Submitted</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f5;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        color: #ffffff;
+        padding: 40px 24px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .header p {
+        margin: 8px 0 0 0;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+      .content {
+        padding: 32px 24px;
+      }
+      .greeting {
+        font-size: 18px;
+        color: #333333;
+        margin-bottom: 24px;
+      }
+      .summary-card {
+        background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+      .summary-card h2 {
+        margin: 0 0 8px 0;
+        font-size: 36px;
+        font-weight: 700;
+      }
+      .summary-card p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
+      }
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .metric-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+      }
+      .metric-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2e7d32;
+        margin-bottom: 4px;
+      }
+      .metric-label {
+        font-size: 12px;
+        color: #666666;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .info-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+      .info-section h2 {
+        margin: 0 0 16px 0;
+        font-size: 18px;
+        color: #2e7d32;
+        font-weight: 600;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .info-row:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      .info-label {
+        font-weight: 600;
+        color: #666666;
+        font-size: 14px;
+      }
+      .info-value {
+        color: #333333;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .expense-item {
+        color: #d32f2f;
+      }
+      .car-badge {
+        display: inline-block;
+        background-color: #2e7d32;
+        color: #ffffff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+      .period-badge {
+        background-color: #f57c00;
+        color: #ffffff;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 16px;
+      }
+      .notes-section {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 16px;
+        border-radius: 4px;
+        margin-bottom: 24px;
+      }
+      .notes-section h3 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #1976d2;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .notes-section p {
+        margin: 0;
+        color: #333333;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .cta-button {
+        display: inline-block;
+        background-color: #2e7d32;
+        color: #ffffff !important;
+        padding: 14px 32px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+        margin: 16px 0;
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+      }
+      .footer {
+        background-color: #f8f9fa;
+        padding: 24px;
+        text-align: center;
+        color: #666666;
+        font-size: 12px;
+      }
+      .footer p {
+        margin: 4px 0;
+      }
+      @media only screen and (max-width: 600px) {
+        .container {
+          border-radius: 0;
+        }
+        .content {
+          padding: 24px 16px;
+        }
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📊 Weekly Report</h1>
+        <p>New earnings report submitted</p>
+      </div>
+
+      <div class="content">
+        <div class="greeting">Hello {{owner_name}},</div>
+
+        <p>
+          {{driver_name}} has submitted a weekly report for your car. Here's a
+          summary of the week's performance:
+        </p>
+
+        <div class="period-badge">📅 {{week_start}} to {{week_end}}</div>
+
+        <div class="car-badge">
+          🚗 {{car_year}} {{car_make}} {{car_model}} ({{car_license_plate}})
+        </div>
+
+        <div class="summary-card">
+          <h2>${{net_earnings}}</h2>
+          <p>NET EARNINGS THIS WEEK</p>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">${{total_earnings}}</div>
+            <div class="metric-label">Total Earnings</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">{{total_trips}}</div>
+            <div class="metric-label">Total Trips</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">{{total_distance}} mi</div>
+            <div class="metric-label">Distance Driven</div>
+          </div>
+          <div class="metric-card" style="background-color: #fff3e0">
+            <div class="metric-value" style="color: #f57c00">
+              ${{fuel_expenses}}
+            </div>
+            <div class="metric-label" style="color: #e65100">Fuel Expenses</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h2>💰 Financial Breakdown</h2>
+          <div class="info-row">
+            <span class="info-label">Gross Earnings</span>
+            <span class="info-value" style="color: #2e7d32"
+              >${{total_earnings}}</span
+            >
+          </div>
+          <div class="info-row">
+            <span class="info-label">Fuel Expenses</span>
+            <span class="info-value expense-item">-${{fuel_expenses}}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Maintenance</span>
+            <span class="info-value expense-item"
+              >-${{maintenance_expenses}}</span
+            >
+          </div>
+          <div class="info-row">
+            <span class="info-label">Other Expenses</span>
+            <span class="info-value expense-item">-${{other_expenses}}</span>
+          </div>
+          <div
+            class="info-row"
+            style="
+              border-top: 2px solid #2e7d32;
+              padding-top: 12px;
+              margin-top: 12px;
+            "
+          >
+            <span class="info-label" style="font-size: 16px">Net Earnings</span>
+            <span class="info-value" style="font-size: 18px; color: #2e7d32"
+              >${{net_earnings}}</span
+            >
+          </div>
+        </div>
+
+        {{#if notes}}
+        <div class="notes-section">
+          <h3>📝 Driver Notes</h3>
+          <p>{{notes}}</p>
+        </div>
+        {{/if}}
+
+        <center>
+          <a href="https://mokumbi.com/owner/car-reports" class="cta-button">
+            View Full Report
+          </a>
+        </center>
+
+        <p style="color: #666666; font-size: 14px; margin-top: 24px">
+          <strong>What's Next:</strong> Review the detailed report in your
+          dashboard. You can download the report, view trip details, and track
+          your car's performance over time.
+        </p>
+      </div>
+
+      <div class="footer">
+        <p><strong>mo kumbi</strong></p>
+        <p>Connecting drivers and car owners</p>
+        <p style="margin-top: 16px">Report ID: {{report_id}}</p>
+      </div>
+    </div>
+  </body>
+</html>
