@@ -299,7 +299,8 @@
       "resultsCount": "{{count}} véhicule(s) trouvé(s)",
       "errorFetchingCars": "Échec du chargement des véhicules disponibles. Veuillez réessayer.",
       "emptyState": "Aucun Véhicule Disponible",
-      "emptyStateSubtitle": "Revenez plus tard pour de nouvelles annonces"
+      "emptyStateSubtitle": "Revenez plus tard pour de nouvelles annonces",
+      "showingResults": "Affichage de {{start}} à {{end}} sur {{total}} véhicules"
     }
   },
   "reports": {

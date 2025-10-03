@@ -364,7 +364,8 @@
       "resultsCount": "{{count}} car(s) found",
       "errorFetchingCars": "Failed to load available cars. Please try again.",
       "emptyState": "No Available Cars",
-      "emptyStateSubtitle": "Check back later for new listings"
+      "emptyStateSubtitle": "Check back later for new listings",
+      "showingResults": "Showing {{start}} to {{end}} of {{total}} cars"
     }
   },
   "reports": {

@@ -8,6 +8,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Pagination,
   Paper,
   Select,
   Skeleton,
@@ -45,6 +46,11 @@ const CarSearch: React.FC = () => {
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [transmissionFilter, setTransmissionFilter] = useState<string>("all");
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginatedCars, setPaginatedCars] = useState<Car[]>([]);
+  const carsPerPage = 20;
 
   // Check if driver can send requests and fetch pending requests
   useEffect(() => {
@@ -104,15 +110,6 @@ const CarSearch: React.FC = () => {
 
         setCars(data || []);
         setFilteredCars(data || []);
-
-        // Fetch all car images for the retrieved cars from storage
-        if (data && data.length > 0) {
-          const carIds = data.map((car) => car.id);
-          const imageUrls = await carImageStorageService.getCarImageUrlsForCars(
-            carIds
-          );
-          setCarImageUrls(imageUrls);
-        }
       } catch (err) {
         console.error("Error fetching available cars:", err);
         setError(t("cars.search.errorFetchingCars"));
@@ -124,7 +121,7 @@ const CarSearch: React.FC = () => {
     fetchAvailableCars();
   }, [t]);
 
-  // Apply filters
+  // Apply filters and pagination
   useEffect(() => {
     let filtered = [...cars];
 
@@ -147,7 +144,33 @@ const CarSearch: React.FC = () => {
     }
 
     setFilteredCars(filtered);
+
+    // Reset to first page when filters change
+    setCurrentPage(1);
   }, [searchQuery, transmissionFilter, cars]);
+
+  // Apply pagination to filtered cars
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * carsPerPage;
+    const endIndex = startIndex + carsPerPage;
+    const paginated = filteredCars.slice(startIndex, endIndex);
+    setPaginatedCars(paginated);
+  }, [filteredCars, currentPage, carsPerPage]);
+
+  // Load images for paginated cars
+  useEffect(() => {
+    const loadImagesForPaginatedCars = async () => {
+      if (paginatedCars.length > 0) {
+        const carIds = paginatedCars.map((car) => car.id);
+        const imageUrls = await carImageStorageService.getCarImageUrlsForCars(
+          carIds
+        );
+        setCarImageUrls(imageUrls);
+      }
+    };
+
+    loadImagesForPaginatedCars();
+  }, [paginatedCars]);
 
   return (
     <Container maxWidth="xl" sx={{ py: { xs: 3, sm: 4 } }}>
@@ -310,7 +333,7 @@ const CarSearch: React.FC = () => {
           </Grid>
         ) : (
           // Car Cards
-          filteredCars.map((car) => {
+          paginatedCars.map((car) => {
             // Get the primary image or first image for this car
             const carImageUrl = carImageUrls[car.id]?.[0] || null;
 
@@ -327,6 +350,52 @@ const CarSearch: React.FC = () => {
           })
         )}
       </Grid>
+
+      {/* Pagination Controls */}
+      {filteredCars.length > carsPerPage && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 4,
+            mb: 2,
+          }}
+        >
+          <Pagination
+            count={Math.ceil(filteredCars.length / carsPerPage)}
+            page={currentPage}
+            onChange={(event, page) => setCurrentPage(page)}
+            color="primary"
+            size="large"
+            showFirstButton
+            showLastButton
+            sx={{
+              "& .MuiPaginationItem-root": {
+                fontSize: "1rem",
+              },
+            }}
+          />
+        </Box>
+      )}
+
+      {/* Results Summary */}
+      {filteredCars.length > 0 && (
+        <Box
+          sx={{
+            textAlign: "center",
+            mt: 2,
+            mb: 2,
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            {t("cars.search.showingResults", {
+              start: (currentPage - 1) * carsPerPage + 1,
+              end: Math.min(currentPage * carsPerPage, filteredCars.length),
+              total: filteredCars.length,
+            })}
+          </Typography>
+        </Box>
+      )}
     </Container>
   );
 };
