@@ -170,6 +170,7 @@ For private buckets like `driver_licenses`, the component automatically generate
 2. The component automatically generates a signed URL using `createSignedUrl()` for preview
 3. Signed URLs are temporary (1 hour expiration) and grant secure access to private files
 4. When displaying an existing file, the component generates a new signed URL on load
+5. **Smart URL Detection**: If an existing file URL is already a full URL (starts with http/https), it's used as-is to prevent URL duplication
 
 ### Benefits
 

@@ -4,6 +4,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  Divider,
   FormControl,
   Grid,
   InputLabel,
@@ -17,7 +18,9 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorAlert from "../components/ErrorAlert";
+import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
+import { carImageService } from "../services/carImageService";
 import { carMakeModelService } from "../services/carMakeModelService";
 import { carService } from "../services/carService";
 import { profileService } from "../services/profileService";
@@ -26,7 +29,7 @@ import { CarMake, CarModel, CreateCarData, Profile } from "../types";
 const CarForm: React.FC = () => {
   const { carId } = useParams<{ carId: string }>();
   const navigate = useNavigate();
-  const { user, profile } = useUserContext();
+  const { user } = useUserContext();
   const { t } = useTranslation();
   const isEditMode = carId && carId !== "new";
 
@@ -52,6 +55,7 @@ const CarForm: React.FC = () => {
   const [loadingModels, setLoadingModels] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [carImageUrls, setCarImageUrls] = useState<string[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -83,6 +87,14 @@ const CarForm: React.FC = () => {
               fuel_type: car.fuel_type || "",
               transmission_type: car.transmission_type || "",
             });
+
+            // Load car images
+            try {
+              const images = await carImageService.getCarImages(carId!);
+              setCarImageUrls(images.map((img) => img.image_url));
+            } catch (error) {
+              console.error("Error loading car images:", error);
+            }
 
             // Load models for the selected make
             if (car.make) {
@@ -120,6 +132,7 @@ const CarForm: React.FC = () => {
     };
 
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [carId, isEditMode, user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -171,6 +184,7 @@ const CarForm: React.FC = () => {
 
       if (isEditMode) {
         // Update existing car
+        // Note: Images are saved immediately when uploaded via FileUpload component
         await carService.updateCar(carId!, {
           ...carData,
           current_mileage: formData.initial_mileage,
@@ -493,6 +507,101 @@ const CarForm: React.FC = () => {
                 disabled={saving}
               />
             </Grid>
+
+            {/* Car Images Section - Only show when editing */}
+            {isEditMode ? (
+              <Grid size={12}>
+                <Divider sx={{ my: 3 }} />
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  {t("cars.carImages")}
+                </Typography>
+                <FileUpload
+                  bucket="cars"
+                  path={carId!}
+                  accept="image/*"
+                  maxSizeMB={5}
+                  multiple={true}
+                  maxFiles={10}
+                  isPublic={true}
+                  existingFileUrl={carImageUrls}
+                  onUploadComplete={async (urls) => {
+                    const urlArray = Array.isArray(urls) ? urls : [urls];
+
+                    // Check if this is a delete operation (fewer URLs than before)
+                    if (urlArray.length < carImageUrls.length) {
+                      // Find which image was deleted
+                      const deletedUrl = carImageUrls.find(
+                        (url) => !urlArray.includes(url)
+                      );
+
+                      if (deletedUrl) {
+                        // Delete from database if it exists
+                        try {
+                          const images = await carImageService.getCarImages(
+                            carId!
+                          );
+                          const imageToDelete = images.find(
+                            (img) => img.image_url === deletedUrl
+                          );
+                          if (imageToDelete) {
+                            await carImageService.deleteCarImage(
+                              imageToDelete.id
+                            );
+                          }
+                        } catch (error) {
+                          console.error(
+                            "Error deleting image from database:",
+                            error
+                          );
+                        }
+                      }
+                      setCarImageUrls(urlArray);
+                    } else {
+                      // This is an upload operation - save to database immediately
+                      const newUrls = urlArray.filter(
+                        (url) => !carImageUrls.includes(url)
+                      );
+
+                      if (newUrls.length > 0) {
+                        try {
+                          // Save new images to database immediately
+                          await carImageService.addCarImages(
+                            carId!,
+                            newUrls,
+                            carImageUrls.length === 0 ? 0 : -1 // First image is primary only if no existing images
+                          );
+                          setCarImageUrls((prev) => [...prev, ...newUrls]);
+                        } catch (error) {
+                          console.error(
+                            "Error saving images to database:",
+                            error
+                          );
+                          setError(t("cars.carSavedButImagesFailed"));
+                        }
+                      }
+                    }
+                  }}
+                  label={t("cars.uploadCarImages")}
+                  helperText={t("cars.carImagesHelper")}
+                />
+              </Grid>
+            ) : (
+              <Grid size={12}>
+                <Divider sx={{ my: 3 }} />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    p: 2,
+                    bgcolor: "rgba(46, 125, 50, 0.05)",
+                    borderRadius: 2,
+                    border: "1px solid rgba(46, 125, 50, 0.2)",
+                  }}
+                >
+                  💡 {t("cars.addImagesAfterCreation")}
+                </Typography>
+              </Grid>
+            )}
           </Grid>
 
           <Box

@@ -639,9 +639,11 @@ const DriverDetailsCompletion: React.FC = () => {
                   accept="image/*,application/pdf"
                   maxSizeMB={5}
                   onUploadComplete={(url) => {
+                    // Single file upload - url will be a string
+                    const urlString = typeof url === "string" ? url : "";
                     setDriverDetails((prev) => ({
                       ...prev,
-                      license_image_url: url,
+                      license_image_url: urlString,
                     }));
                   }}
                   existingFileUrl={driverDetails.license_image_url || null}

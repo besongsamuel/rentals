@@ -64,7 +64,16 @@ export interface Car {
   transmission_type: "manual" | "automatic" | null;
   is_available: boolean; // When true, car is publicly visible to all authenticated users
   is_verified: boolean; // Flag indicating whether the car has been verified by admin
-  image_url: string | null; // Optional URL for car image
+  created_at: string;
+  updated_at: string;
+}
+
+// CarImage interface for storing multiple car images
+export interface CarImage {
+  id: string;
+  car_id: string;
+  image_url: string;
+  is_primary: boolean;
   created_at: string;
   updated_at: string;
 }

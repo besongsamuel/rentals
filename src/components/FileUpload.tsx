@@ -13,17 +13,24 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../lib/supabase";
 
+interface UploadedFile {
+  storageUrl: string; // The actual storage path/URL
+  previewUrl: string | null; // Signed URL for preview
+}
+
 interface FileUploadProps {
   bucket: string;
   path: string;
   accept?: string;
   maxSizeMB?: number;
-  onUploadComplete?: (url: string) => void;
+  onUploadComplete?: (url: string | string[]) => void;
   onUploadError?: (error: string) => void;
-  existingFileUrl?: string | null;
+  existingFileUrl?: string | string[] | null;
   label?: string;
   helperText?: string;
   isPublic?: boolean; // Whether the bucket is public (default: false)
+  multiple?: boolean; // Allow multiple file uploads
+  maxFiles?: number; // Maximum number of files (only applies if multiple is true)
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
@@ -37,18 +44,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
   label,
   helperText,
   isPublic = false,
+  multiple = false,
+  maxFiles = 10,
 }) => {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null); // The actual storage path/URL
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // Signed URL for preview
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   // Generate signed URL for private buckets
   const generateSignedUrl = useCallback(
     async (filePath: string): Promise<string | null> => {
+      // If it's already a full URL (starts with http), return it as-is
+      if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
+        return filePath;
+      }
+
       if (isPublic) {
         const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
         return data.publicUrl;
@@ -82,79 +95,116 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   // Sync with existingFileUrl prop changes
   useEffect(() => {
-    const loadExistingFile = async () => {
-      if (existingFileUrl) {
-        setUploadedUrl(existingFileUrl);
-        const signedUrl = await generateSignedUrl(existingFileUrl);
-        setPreviewUrl(signedUrl);
-      } else {
-        setUploadedUrl(null);
-        setPreviewUrl(null);
+    const loadExistingFiles = async () => {
+      if (!existingFileUrl) {
+        setUploadedFiles([]);
+        return;
       }
+
+      const urls = Array.isArray(existingFileUrl)
+        ? existingFileUrl
+        : [existingFileUrl];
+      const filesWithPreviews = await Promise.all(
+        urls.map(async (url) => {
+          const previewUrl = await generateSignedUrl(url);
+          return {
+            storageUrl: url,
+            previewUrl,
+          };
+        })
+      );
+
+      setUploadedFiles(filesWithPreviews);
     };
 
-    loadExistingFile();
+    loadExistingFiles();
   }, [existingFileUrl, generateSignedUrl]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-    // Check file size
-    const fileSizeMB = file.size / (1024 * 1024);
-    if (fileSizeMB > maxSizeMB) {
-      setError(t("fileUpload.fileTooLarge", { maxSize: maxSizeMB.toString() }));
+    const filesArray = Array.from(files);
+
+    // Check if adding these files would exceed maxFiles
+    if (multiple && uploadedFiles.length + filesArray.length > maxFiles) {
+      setError(t("fileUpload.maxFilesExceeded", { maxFiles: maxFiles }));
       return;
     }
 
-    setSelectedFile(file);
+    // Validate each file size
+    for (const file of filesArray) {
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > maxSizeMB) {
+        setError(
+          t("fileUpload.fileTooLarge", { maxSize: maxSizeMB.toString() })
+        );
+        return;
+      }
+    }
+
+    setSelectedFiles(multiple ? filesArray : [filesArray[0]]);
     setError(null);
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (selectedFiles.length === 0) return;
 
     setUploading(true);
     setError(null);
 
     try {
-      // Generate unique filename with timestamp
-      const fileExt = selectedFile.name.split(".").pop();
-      const fileName = `${path}/${Date.now()}.${fileExt}`;
+      const uploadedUrls: string[] = [];
+      const newUploadedFiles: UploadedFile[] = [];
 
-      // Upload file to Supabase Storage
-      const { data, error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, selectedFile, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      // Upload files sequentially
+      for (const file of selectedFiles) {
+        // Generate unique filename with timestamp
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${path}/${Date.now()}_${Math.random()
+          .toString(36)
+          .substring(7)}.${fileExt}`;
 
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Get URL for storage (public or signed)
-      let storageUrl: string;
-      if (isPublic) {
-        const { data: urlData } = supabase.storage
+        // Upload file to Supabase Storage
+        const { data, error: uploadError } = await supabase.storage
           .from(bucket)
-          .getPublicUrl(data.path);
-        storageUrl = urlData.publicUrl;
-      } else {
-        // For private buckets, store the path
-        storageUrl = data.path;
+          .upload(fileName, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        // Get URL for storage (public or signed)
+        let storageUrl: string;
+        if (isPublic) {
+          const { data: urlData } = supabase.storage
+            .from(bucket)
+            .getPublicUrl(data.path);
+          storageUrl = urlData.publicUrl;
+        } else {
+          // For private buckets, store the path
+          storageUrl = data.path;
+        }
+
+        // Generate preview URL (signed URL for private buckets)
+        const preview = await generateSignedUrl(data.path);
+
+        uploadedUrls.push(storageUrl);
+        newUploadedFiles.push({ storageUrl, previewUrl: preview });
       }
 
-      // Generate preview URL (signed URL for private buckets)
-      const preview = await generateSignedUrl(data.path);
-
-      setUploadedUrl(storageUrl);
-      setPreviewUrl(preview);
-      setSelectedFile(null);
+      setUploadedFiles((prev) => [...prev, ...newUploadedFiles]);
+      setSelectedFiles([]);
 
       if (onUploadComplete) {
-        onUploadComplete(storageUrl);
+        if (multiple) {
+          onUploadComplete(uploadedUrls);
+        } else {
+          onUploadComplete(uploadedUrls[0]);
+        }
       }
     } catch (err: any) {
       const errorMessage = err.message || t("fileUpload.uploadError");
@@ -167,14 +217,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
     }
   };
 
-  const handleDelete = async () => {
-    if (!uploadedUrl) return;
-
+  const handleDelete = async (fileToDelete: UploadedFile) => {
     try {
       // Extract file path from URL
-      let filePath = uploadedUrl;
-      if (uploadedUrl.includes(bucket)) {
-        const urlParts = uploadedUrl.split("/");
+      let filePath = fileToDelete.storageUrl;
+      if (fileToDelete.storageUrl.includes(bucket)) {
+        const urlParts = fileToDelete.storageUrl.split("/");
         filePath = urlParts.slice(urlParts.indexOf(bucket) + 1).join("/");
       }
 
@@ -187,11 +235,22 @@ const FileUpload: React.FC<FileUploadProps> = ({
         throw deleteError;
       }
 
-      setUploadedUrl(null);
-      setPreviewUrl(null);
-      setSelectedFile(null);
+      // Remove from uploaded files
+      setUploadedFiles((prev) =>
+        prev.filter((f) => f.storageUrl !== fileToDelete.storageUrl)
+      );
+
+      // Notify parent component
       if (onUploadComplete) {
-        onUploadComplete("");
+        const remainingUrls = uploadedFiles
+          .filter((f) => f.storageUrl !== fileToDelete.storageUrl)
+          .map((f) => f.storageUrl);
+
+        if (multiple) {
+          onUploadComplete(remainingUrls);
+        } else {
+          onUploadComplete("");
+        }
       }
     } catch (err: any) {
       setError(err.message || t("fileUpload.deleteError"));
@@ -224,6 +283,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         ref={fileInputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         onChange={handleFileSelect}
         style={{ display: "none" }}
       />
@@ -234,98 +294,124 @@ const FileUpload: React.FC<FileUploadProps> = ({
         </Alert>
       )}
 
-      {uploadedUrl ? (
-        <Box>
-          {/* Image Preview */}
-          {(accept?.includes("image") || !accept) && previewUrl && (
-            <Box sx={{ mb: 2 }}>
-              <Box
-                sx={{
-                  position: "relative",
-                  borderRadius: 2,
-                  overflow: "hidden",
-                  border: "1px solid",
-                  borderColor: "divider",
-                  mb: 1,
-                }}
-              >
-                <Box
-                  component="img"
-                  src={previewUrl}
-                  alt="Uploaded file"
-                  sx={{
-                    width: "100%",
-                    maxWidth: 500,
-                    height: "auto",
-                    display: "block",
-                    borderRadius: 2,
-                    cursor: "pointer",
-                    transition: "opacity 0.2s",
-                    "&:hover": {
-                      opacity: 0.9,
-                    },
-                  }}
-                  onClick={() =>
-                    previewUrl && window.open(previewUrl, "_blank")
-                  }
-                />
-              </Box>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  display: "block",
-                  textAlign: "center",
-                  fontStyle: "italic",
-                }}
-              >
-                {t("fileUpload.clickToView")}
-              </Typography>
-            </Box>
-          )}
-
-          {/* File Info and Delete */}
-          <Paper
-            elevation={0}
+      {/* Display uploaded files */}
+      {uploadedFiles.length > 0 && (
+        <Box sx={{ mb: 2 }}>
+          <Box
             sx={{
-              p: 2,
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              display: "grid",
+              gridTemplateColumns: multiple
+                ? { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }
+                : "1fr",
+              gap: 2,
+              mb: 2,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <InsertDriveFile color="primary" />
-              <Box>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  {t("fileUpload.fileUploaded")}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {uploadedUrl.split("/").pop()}
-                </Typography>
+            {uploadedFiles.map((file, index) => (
+              <Box key={index}>
+                {/* Image Preview */}
+                {(accept?.includes("image") || !accept) && file.previewUrl && (
+                  <Box sx={{ mb: 1 }}>
+                    <Box
+                      sx={{
+                        position: "relative",
+                        borderRadius: 2,
+                        overflow: "hidden",
+                        border: "1px solid",
+                        borderColor: "divider",
+                      }}
+                    >
+                      <Box
+                        component="img"
+                        src={file.previewUrl}
+                        alt={`Uploaded file ${index + 1}`}
+                        sx={{
+                          width: "100%",
+                          height: 200,
+                          objectFit: "cover",
+                          display: "block",
+                          cursor: "pointer",
+                          transition: "opacity 0.2s",
+                          "&:hover": {
+                            opacity: 0.9,
+                          },
+                        }}
+                        onClick={() =>
+                          file.previewUrl &&
+                          window.open(file.previewUrl, "_blank")
+                        }
+                      />
+                      <IconButton
+                        onClick={() => handleDelete(file)}
+                        disabled={uploading}
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          bgcolor: "rgba(255, 255, 255, 0.9)",
+                          "&:hover": {
+                            bgcolor: "rgba(255, 255, 255, 1)",
+                          },
+                        }}
+                        size="small"
+                      >
+                        <Delete color="error" />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                )}
+
+                {/* File Info (non-image files or no preview) */}
+                {(!accept?.includes("image") || !file.previewUrl) && (
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 2,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <InsertDriveFile color="primary" />
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {t("fileUpload.fileUploaded")}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {file.storageUrl.split("/").pop()}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <IconButton
+                      onClick={() => handleDelete(file)}
+                      color="error"
+                      size="small"
+                      disabled={uploading}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </Paper>
+                )}
               </Box>
-            </Box>
-            <IconButton
-              onClick={handleDelete}
-              color="error"
-              size="small"
-              disabled={uploading}
-            >
-              <Delete />
-            </IconButton>
-          </Paper>
+            ))}
+          </Box>
         </Box>
-      ) : (
+      )}
+
+      {/* Upload area - only show if not at max files or not multiple */}
+      {(!multiple || uploadedFiles.length < maxFiles) && (
         <>
           <Paper
             elevation={0}
             sx={{
               p: 3,
               border: "2px dashed",
-              borderColor: selectedFile ? "primary.main" : "divider",
+              borderColor:
+                selectedFiles.length > 0 ? "primary.main" : "divider",
               borderRadius: 2,
               textAlign: "center",
               cursor: "pointer",
@@ -340,19 +426,30 @@ const FileUpload: React.FC<FileUploadProps> = ({
             <CloudUpload
               sx={{
                 fontSize: 48,
-                color: selectedFile ? "primary.main" : "text.secondary",
+                color:
+                  selectedFiles.length > 0 ? "primary.main" : "text.secondary",
                 mb: 1,
               }}
             />
             <Typography variant="body1" sx={{ mb: 0.5 }}>
-              {selectedFile ? selectedFile.name : t("fileUpload.clickToUpload")}
+              {selectedFiles.length > 0
+                ? multiple
+                  ? t("fileUpload.filesSelected", {
+                      count: selectedFiles.length,
+                    })
+                  : selectedFiles[0].name
+                : t("fileUpload.clickToUpload")}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {t("fileUpload.maxSize", { size: maxSizeMB.toString() })}
+              {multiple &&
+                ` • ${t("fileUpload.maxFilesLimit", {
+                  max: maxFiles.toString(),
+                })}`}
             </Typography>
           </Paper>
 
-          {selectedFile && (
+          {selectedFiles.length > 0 && (
             <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
               <Button
                 variant="contained"
@@ -367,7 +464,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
               </Button>
               <Button
                 variant="outlined"
-                onClick={() => setSelectedFile(null)}
+                onClick={() => setSelectedFiles([])}
                 disabled={uploading}
               >
                 {t("fileUpload.cancel")}
