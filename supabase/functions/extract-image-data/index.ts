@@ -19,6 +19,8 @@ interface DriversLicenseData {
   issue_date: string | null;
   expiry_date: string | null;
   issuing_authority: string | null;
+  first_name: string | null;
+  last_name: string | null;
 }
 
 interface RequestPayload {
@@ -178,6 +180,8 @@ For dates, always use YYYY-MM-DD format.`;
         issue_date: extractedData.issue_date ?? null,
         expiry_date: extractedData.expiry_date ?? null,
         issuing_authority: extractedData.issuing_authority ?? null,
+        first_name: extractedData.first_name ?? null,
+        last_name: extractedData.last_name ?? null,
       } as DriversLicenseData;
     }
 
