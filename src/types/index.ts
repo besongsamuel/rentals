@@ -298,6 +298,7 @@ export interface CreateDriverDetailsData {
     | "other";
   id_card_number?: string;
   id_card_expiry_date?: string;
+  license_image_url?: string; // Optional URL for driver license image - required for verification
 }
 
 // Type for creating driver rating

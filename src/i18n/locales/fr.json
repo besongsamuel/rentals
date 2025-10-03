@@ -207,6 +207,8 @@
     "licenseClassPlaceholder": "ex., A, B, C",
     "issuingAuthorityPlaceholder": "ex., Ministère des Transports",
     "issuingAuthorityDefault": "Ministère des Transports",
+    "driverLicenseImage": "Image du Permis de Conduire",
+    "driverLicenseImageHelper": "Téléchargez une photo claire de votre permis de conduire (recto et verso). Ceci est requis pour la vérification.",
     "idCardType": "Type de pièce d'identité",
     "idCardNumber": "Numéro de pièce d'identité",
     "idCardExpiryDate": "Date d'expiration de la pièce d'identité",
@@ -449,6 +451,9 @@
     "experience": "Expérience",
     "years": "années",
     "licenseNumber": "Numéro de permis",
+    "licenseImage": "Image du permis",
+    "view": "Voir",
+    "hide": "Masquer",
     "notProvided": "Non fourni",
     "vin": "Numéro de châssis",
     "license": "Plaque d'immatriculation",
@@ -909,5 +914,17 @@
     "notVerifiedTitle": "Permis de Conduire Non Vérifié",
     "notVerifiedMessage": "Pour être vérifié, veuillez compléter vos détails de conducteur et télécharger une image de votre permis de conduire.",
     "uploadLicenseButton": "Compléter le Profil"
+  },
+  "fileUpload": {
+    "clickToUpload": "Cliquez pour sélectionner un fichier",
+    "maxSize": "Taille maximale du fichier : {{size}} Mo",
+    "upload": "Télécharger",
+    "uploading": "Téléchargement...",
+    "cancel": "Annuler",
+    "fileUploaded": "Fichier Téléchargé",
+    "clickToView": "Cliquez sur l'image pour voir en taille réelle",
+    "fileTooLarge": "La taille du fichier dépasse la limite de {{maxSize}} Mo",
+    "uploadError": "Échec du téléchargement du fichier. Veuillez réessayer.",
+    "deleteError": "Échec de la suppression du fichier. Veuillez réessayer."
   }
 }

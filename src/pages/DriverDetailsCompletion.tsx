@@ -20,6 +20,7 @@ import { City, Country, State } from "country-state-city";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
 import { CreateDriverDetailsData } from "../types";
@@ -58,6 +59,7 @@ const DriverDetailsCompletion: React.FC = () => {
     id_card_type: "national_id",
     id_card_number: "",
     id_card_expiry_date: "",
+    license_image_url: "",
   });
 
   const [error, setError] = useState("");
@@ -626,6 +628,25 @@ const DriverDetailsCompletion: React.FC = () => {
                     "license_issuing_authority"
                   )}
                   placeholder="e.g., Ministry of Transport"
+                />
+              </Grid>
+
+              {/* Driver License Upload */}
+              <Grid size={{ xs: 12 }}>
+                <FileUpload
+                  bucket="driver_licenses"
+                  path={profile?.id || ""}
+                  accept="image/*,application/pdf"
+                  maxSizeMB={5}
+                  onUploadComplete={(url) => {
+                    setDriverDetails((prev) => ({
+                      ...prev,
+                      license_image_url: url,
+                    }));
+                  }}
+                  existingFileUrl={driverDetails.license_image_url || null}
+                  label="Driver's License Image"
+                  helperText="Upload a clear photo of your driver's license (front and back). This is required for verification."
                 />
               </Grid>
 

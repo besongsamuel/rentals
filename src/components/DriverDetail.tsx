@@ -1,4 +1,10 @@
-import { Edit, LocationOn, School, Work } from "@mui/icons-material";
+import {
+  Description,
+  Edit,
+  LocationOn,
+  School,
+  Work,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -8,9 +14,10 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 import { DriverDetails } from "../types";
 
 interface DriverDetailProps {
@@ -19,6 +26,46 @@ interface DriverDetailProps {
 
 const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
   const { t } = useTranslation();
+  const [showLicensePreview, setShowLicensePreview] = useState(false);
+  const [signedLicenseUrl, setSignedLicenseUrl] = useState<string | null>(null);
+
+  // Generate signed URL for license image
+  useEffect(() => {
+    const generateSignedUrl = async () => {
+      if (!driverDetails?.license_image_url) {
+        setSignedLicenseUrl(null);
+        return;
+      }
+
+      try {
+        // Extract the path from the URL if needed
+        let cleanPath = driverDetails.license_image_url;
+        if (cleanPath.includes("driver_licenses")) {
+          const urlParts = cleanPath.split("/");
+          cleanPath = urlParts
+            .slice(urlParts.indexOf("driver_licenses") + 1)
+            .join("/");
+        }
+
+        const { data, error } = await supabase.storage
+          .from("driver_licenses")
+          .createSignedUrl(cleanPath, 3600); // 1 hour expiration
+
+        if (error) {
+          console.error("Error creating signed URL:", error);
+          setSignedLicenseUrl(null);
+          return;
+        }
+
+        setSignedLicenseUrl(data.signedUrl);
+      } catch (err) {
+        console.error("Error generating signed URL:", err);
+        setSignedLicenseUrl(null);
+      }
+    };
+
+    generateSignedUrl();
+  }, [driverDetails?.license_image_url]);
 
   return (
     <Card elevation={1} sx={{ height: "100%" }}>
@@ -77,6 +124,63 @@ const DriverDetail: React.FC<DriverDetailProps> = ({ driverDetails }) => {
                   </strong>
                 </Typography>
               </Box>
+
+              {/* License Image Preview */}
+              {driverDetails.license_image_url && signedLicenseUrl && (
+                <Box sx={{ mb: 2 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 1,
+                    }}
+                  >
+                    <Description
+                      sx={{
+                        mr: 1,
+                        fontSize: 16,
+                        color: "text.secondary",
+                      }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      {t("dashboard.licenseImage")}:{" "}
+                      <Button
+                        size="small"
+                        onClick={() =>
+                          setShowLicensePreview(!showLicensePreview)
+                        }
+                        sx={{ textTransform: "none", p: 0, minWidth: "auto" }}
+                      >
+                        {showLicensePreview
+                          ? t("dashboard.hide")
+                          : t("dashboard.view")}
+                      </Button>
+                    </Typography>
+                  </Box>
+                  {showLicensePreview && (
+                    <Box
+                      component="img"
+                      src={signedLicenseUrl}
+                      alt="Driver's License"
+                      sx={{
+                        width: "100%",
+                        maxWidth: 400,
+                        height: "auto",
+                        borderRadius: 2,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        mt: 1,
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        if (signedLicenseUrl) {
+                          window.open(signedLicenseUrl, "_blank");
+                        }
+                      }}
+                    />
+                  )}
+                </Box>
+              )}
 
               {driverDetails.languages &&
                 driverDetails.languages.length > 0 && (

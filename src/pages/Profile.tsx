@@ -25,6 +25,7 @@ import { City, Country, State } from "country-state-city";
 import React, { useCallback, useEffect, useState } from "react";
 import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
+import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
 import { CreateDriverDetailsData } from "../types";
@@ -69,6 +70,7 @@ const ProfilePage: React.FC = () => {
     id_card_type: "national_id",
     id_card_number: "",
     id_card_expiry_date: "",
+    license_image_url: "",
   });
 
   const [error, setError] = useState("");
@@ -160,6 +162,7 @@ const ProfilePage: React.FC = () => {
           id_card_type: existingDetails.id_card_type || "national_id",
           id_card_number: existingDetails.id_card_number || "",
           id_card_expiry_date: existingDetails.id_card_expiry_date || "",
+          license_image_url: existingDetails.license_image_url || "",
         };
         setDriverDetails(driverDetailsData);
         setSelectedCountry(existingDetails.country || "CM");
@@ -980,6 +983,25 @@ const ProfilePage: React.FC = () => {
                         "license_issuing_authority"
                       )}
                       placeholder={t("profile.issuingAuthorityPlaceholder")}
+                    />
+                  </Grid>
+
+                  {/* Driver License Upload */}
+                  <Grid size={{ xs: 12 }}>
+                    <FileUpload
+                      bucket="driver_licenses"
+                      path={profile?.id || ""}
+                      accept="image/*,application/pdf"
+                      maxSizeMB={5}
+                      onUploadComplete={(url) => {
+                        setDriverDetails((prev) => ({
+                          ...prev,
+                          license_image_url: url,
+                        }));
+                      }}
+                      existingFileUrl={driverDetails.license_image_url || null}
+                      label={t("profile.driverLicenseImage")}
+                      helperText={t("profile.driverLicenseImageHelper")}
                     />
                   </Grid>
 

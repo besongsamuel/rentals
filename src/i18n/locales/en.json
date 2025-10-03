@@ -206,6 +206,8 @@
     "licenseIssueDate": "License Issue Date",
     "licenseExpiryDate": "License Expiry Date",
     "issuingAuthority": "Issuing Authority",
+    "driverLicenseImage": "Driver's License Image",
+    "driverLicenseImageHelper": "Upload a clear photo of your driver's license (front and back). This is required for verification.",
     "yearsOfExperience": "Years of Experience",
     "preferredTransmission": "Preferred Transmission",
     "idCardType": "ID Card Type",
@@ -514,6 +516,9 @@
     "experience": "Experience",
     "years": "years",
     "licenseNumber": "License Number",
+    "licenseImage": "License Image",
+    "view": "View",
+    "hide": "Hide",
     "notProvided": "Not provided",
     "vin": "VIN",
     "license": "License",
@@ -975,5 +980,17 @@
     "notVerifiedTitle": "Driver's License Not Verified",
     "notVerifiedMessage": "To get verified, please complete your driver details and upload an image of your driver's license.",
     "uploadLicenseButton": "Complete Profile"
+  },
+  "fileUpload": {
+    "clickToUpload": "Click to select a file",
+    "maxSize": "Max file size: {{size}} MB",
+    "upload": "Upload",
+    "uploading": "Uploading...",
+    "cancel": "Cancel",
+    "fileUploaded": "File Uploaded",
+    "clickToView": "Click image to view full size",
+    "fileTooLarge": "File size exceeds {{maxSize}} MB limit",
+    "uploadError": "Failed to upload file. Please try again.",
+    "deleteError": "Failed to delete file. Please try again."
   }
 }
