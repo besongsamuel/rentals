@@ -17,15 +17,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import CarExtractionPreviewDialog from "../components/CarExtractionPreviewDialog";
 import ErrorAlert from "../components/ErrorAlert";
 import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
-import { CarData, extractCarData } from "../services/carImageExtraction";
 import { carImageStorageService } from "../services/carImageStorageService";
 import { carMakeModelService } from "../services/carMakeModelService";
 import { carService } from "../services/carService";
-import { extractedUserDataService } from "../services/extractedUserDataService";
 import { profileService } from "../services/profileService";
 import { CarMake, CarModel, CreateCarData, Profile } from "../types";
 
@@ -59,11 +56,6 @@ const CarForm: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [carImageUrl, setCarImageUrl] = useState<string | null>(null);
-
-  // Car extraction state
-  const [extractingCarData, setExtractingCarData] = useState(false);
-  const [extractionPreviewOpen, setExtractionPreviewOpen] = useState(false);
-  const [extractedData, setExtractedData] = useState<CarData | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -273,42 +265,6 @@ const CarForm: React.FC = () => {
 
   const handleCancel = () => {
     navigate("/");
-  };
-
-  // Car extraction handlers
-  const handleAcceptExtractedData = async () => {
-    if (extractedData && user?.id) {
-      try {
-        // Update form data with extracted data
-        setFormData((prev) => ({
-          ...prev,
-          make: extractedData.make || prev.make,
-          model: extractedData.model || prev.model,
-          license_plate: extractedData.license_plate || prev.license_plate,
-        }));
-
-        // Save extracted data to database
-        await extractedUserDataService.saveExtractedData(user.id, {
-          type: "car_image",
-          extracted_data: extractedData,
-        });
-      } catch (error) {
-        console.error("Error updating car data:", error);
-        setError(t("cars.errorUpdatingDetails"));
-      }
-    }
-    setExtractionPreviewOpen(false);
-    setExtractedData(null);
-  };
-
-  const handleRejectExtractedData = () => {
-    setExtractionPreviewOpen(false);
-    setExtractedData(null);
-  };
-
-  const handleCloseExtractionPreview = () => {
-    setExtractionPreviewOpen(false);
-    setExtractedData(null);
   };
 
   if (loading) {
@@ -570,56 +526,17 @@ const CarForm: React.FC = () => {
                   multiple={false}
                   isPublic={true}
                   existingFileUrl={carImageUrl}
-                  onUploadComplete={async (url) => {
+                  onUploadComplete={(url) => {
                     const urlString = typeof url === "string" ? url : "";
-
                     // Update the local state with the new URL
                     setCarImageUrl(urlString);
-
-                    // Extract car data from the uploaded image
-                    if (urlString && user?.id) {
-                      try {
-                        setExtractingCarData(true);
-                        setExtractionPreviewOpen(true);
-
-                        const extractedData = await extractCarData(urlString);
-                        setExtractedData(extractedData);
-                      } catch (extractError) {
-                        console.error(
-                          "Error extracting car data:",
-                          extractError
-                        );
-                        setExtractedData(null);
-                      } finally {
-                        setExtractingCarData(false);
-                      }
-                    }
                   }}
-                  onFileDeleted={async (url) => {
+                  onFileDeleted={() => {
                     // Update the local state
                     setCarImageUrl(null);
-
-                    // Delete extracted data when image is deleted
-                    if (user?.id) {
-                      try {
-                        await extractedUserDataService.deleteExtractedDataByType(
-                          user.id,
-                          "car_image"
-                        );
-                      } catch (deleteError) {
-                        console.error(
-                          "Error deleting extracted data:",
-                          deleteError
-                        );
-                      }
-                    }
                   }}
                   label={t("cars.uploadCarImage")}
-                  helperText={
-                    extractingCarData
-                      ? t("cars.extractingCarData")
-                      : t("cars.carImageHelper")
-                  }
+                  helperText={t("cars.carImageHelper")}
                 />
               </Grid>
             ) : (
@@ -684,16 +601,6 @@ const CarForm: React.FC = () => {
           </Box>
         </Box>
       </Paper>
-
-      {/* Car Extraction Preview Dialog */}
-      <CarExtractionPreviewDialog
-        open={extractionPreviewOpen}
-        loading={extractingCarData}
-        extractedData={extractedData}
-        onAccept={handleAcceptExtractedData}
-        onReject={handleRejectExtractedData}
-        onClose={handleCloseExtractionPreview}
-      />
     </Container>
   );
 };

@@ -397,17 +397,7 @@
     "submitReminder": "N'oubliez pas de soumettre votre rapport pour qu'il soit examiné.",
     "addAmount": "Ajouter un montant",
     "addAmountDescription": "Entrez le montant à ajouter à {{field}}. Ce montant sera ajouté à la valeur actuelle.",
-    "amountToAdd": "Montant à ajouter",
-    "extractionPreview": {
-      "title": "Données du Véhicule Extraites",
-      "description": "Nous avons extrait les informations suivantes de l'image de votre véhicule. Veuillez vérifier et accepter si les données sont correctes.",
-      "analyzing": "Analyse de l'image de votre véhicule...",
-      "carInfo": "Informations du Véhicule",
-      "dataQuality": "Données extraites par IA - veuillez vérifier l'exactitude",
-      "noData": "Aucune donnée n'a pu être extraite de l'image"
-    },
-    "extractingCarData": "Extraction des données du véhicule à partir de l'image...",
-    "errorUpdatingDetails": "Échec de la mise à jour des détails du véhicule. Veuillez réessayer."
+    "amountToAdd": "Montant à ajouter"
   },
   "incomeSources": {
     "title": "Sources de revenus",
@@ -963,6 +953,8 @@
     "clickToView": "Cliquez sur l'image pour voir en taille réelle",
     "fileTooLarge": "La taille du fichier dépasse la limite de {{maxSize}} Mo",
     "uploadError": "Échec du téléversement du fichier. Veuillez réessayer.",
-    "deleteError": "Échec de la suppression du fichier. Veuillez réessayer."
+    "deleteError": "Échec de la suppression du fichier. Veuillez réessayer.",
+    "selectedFilesPreview": "Aperçu des Fichiers Sélectionnés",
+    "selected": "Sélectionné"
   }
 }

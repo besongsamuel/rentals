@@ -112,6 +112,17 @@ const FileUpload: React.FC<FileUploadProps> = ({
     [bucket, isPublic, extractCleanFilePath]
   );
 
+  // Cleanup object URLs to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      selectedFiles.forEach((file) => {
+        if (file.type.startsWith("image/")) {
+          URL.revokeObjectURL(URL.createObjectURL(file));
+        }
+      });
+    };
+  }, [selectedFiles]);
+
   // Sync with existingFileUrl prop changes
   useEffect(() => {
     const loadExistingFiles = async () => {
@@ -464,6 +475,122 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 })}`}
             </Typography>
           </Paper>
+
+          {/* Selected Files Preview */}
+          {selectedFiles.length > 0 && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                {t("fileUpload.selectedFilesPreview")}
+              </Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: multiple
+                    ? { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }
+                    : "1fr",
+                  gap: 2,
+                  mb: 2,
+                }}
+              >
+                {selectedFiles.map((file, index) => (
+                  <Box key={index}>
+                    {/* Image Preview for Selected Files */}
+                    {(accept?.includes("image") || !accept) &&
+                      file.type.startsWith("image/") && (
+                        <Box sx={{ mb: 1 }}>
+                          <Box
+                            sx={{
+                              position: "relative",
+                              borderRadius: 2,
+                              overflow: "hidden",
+                              border: "1px solid",
+                              borderColor: "primary.main",
+                              backgroundColor: "rgba(46, 125, 50, 0.02)",
+                            }}
+                          >
+                            <Box
+                              component="img"
+                              src={URL.createObjectURL(file)}
+                              alt={`Selected file ${index + 1}`}
+                              sx={{
+                                width: "100%",
+                                height: { xs: 200, sm: 250, md: 300 },
+                                objectFit: "contain",
+                                display: "block",
+                              }}
+                            />
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                top: 8,
+                                left: 8,
+                                bgcolor: "primary.main",
+                                color: "white",
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 1,
+                                fontSize: "0.75rem",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {t("fileUpload.selected")}
+                            </Box>
+                          </Box>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ mt: 1, display: "block" }}
+                          >
+                            {file.name}
+                          </Typography>
+                        </Box>
+                      )}
+
+                    {/* File Info for Non-Image Files */}
+                    {(!accept?.includes("image") ||
+                      !file.type.startsWith("image/")) && (
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 2,
+                          border: "1px solid",
+                          borderColor: "primary.main",
+                          borderRadius: 2,
+                          backgroundColor: "rgba(46, 125, 50, 0.02)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                        }}
+                      >
+                        <InsertDriveFile color="primary" />
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            {file.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {(file.size / (1024 * 1024)).toFixed(2)} MB
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            bgcolor: "primary.main",
+                            color: "white",
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontSize: "0.75rem",
+                            fontWeight: 600,
+                          }}
+                        >
+                          {t("fileUpload.selected")}
+                        </Box>
+                      </Paper>
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
 
           {selectedFiles.length > 0 && (
             <Box sx={{ mt: 2, display: "flex", gap: 2 }}>

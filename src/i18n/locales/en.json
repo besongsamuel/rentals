@@ -462,17 +462,7 @@
     "submitReminder": "Remember to submit your report to get it reviewed.",
     "addAmount": "Add Amount",
     "addAmountDescription": "Enter the amount to add to {{field}}. This will be added to the current value.",
-    "amountToAdd": "Amount to Add",
-    "extractionPreview": {
-      "title": "Extracted Car Data",
-      "description": "We've extracted the following information from your car image. Please review and accept if the data is correct.",
-      "analyzing": "Analyzing your car image...",
-      "carInfo": "Car Information",
-      "dataQuality": "Data extracted using AI - please verify accuracy",
-      "noData": "No data could be extracted from the image"
-    },
-    "extractingCarData": "Extracting car data from image...",
-    "errorUpdatingDetails": "Failed to update car details. Please try again."
+    "amountToAdd": "Amount to Add"
   },
   "incomeSources": {
     "title": "Income Sources",
@@ -1030,6 +1020,8 @@
     "clickToView": "Click image to view full size",
     "fileTooLarge": "File size exceeds {{maxSize}} MB limit",
     "uploadError": "Failed to upload file. Please try again.",
-    "deleteError": "Failed to delete file. Please try again."
+    "deleteError": "Failed to delete file. Please try again.",
+    "selectedFilesPreview": "Selected Files Preview",
+    "selected": "Selected"
   }
 }
