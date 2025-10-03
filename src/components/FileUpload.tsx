@@ -319,6 +319,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                         overflow: "hidden",
                         border: "1px solid",
                         borderColor: "divider",
+                        backgroundColor: "rgba(0, 0, 0, 0.02)",
                       }}
                     >
                       <Box
@@ -327,8 +328,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
                         alt={`Uploaded file ${index + 1}`}
                         sx={{
                           width: "100%",
-                          height: 200,
-                          objectFit: "cover",
+                          height: { xs: 250, sm: 300, md: 350 },
+                          objectFit: "contain",
                           display: "block",
                           cursor: "pointer",
                           transition: "opacity 0.2s",

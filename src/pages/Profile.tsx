@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
+import { driverLicenseService } from "../services/driverLicenseService";
 import { CreateDriverDetailsData } from "../types";
 
 const ProfilePage: React.FC = () => {
@@ -77,6 +78,7 @@ const ProfilePage: React.FC = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [driverDetailsLoading, setDriverDetailsLoading] = useState(false);
+  const [licenseImageUrl, setLicenseImageUrl] = useState<string | null>(null);
 
   // Country/State/City data
   const [selectedCountry, setSelectedCountry] = useState("CM");
@@ -167,6 +169,12 @@ const ProfilePage: React.FC = () => {
         setDriverDetails(driverDetailsData);
         setSelectedCountry(existingDetails.country || "CM");
         setSelectedState(existingDetails.state_province || "");
+
+        // Fetch license image from storage
+        const imageUrl = await driverLicenseService.getFirstDriverLicenseUrl(
+          profile.id
+        );
+        setLicenseImageUrl(imageUrl);
       }
     } catch (error) {
       console.error("Error loading driver details:", error);
@@ -993,15 +1001,46 @@ const ProfilePage: React.FC = () => {
                       path={profile?.id || ""}
                       accept="image/*,application/pdf"
                       maxSizeMB={5}
-                      onUploadComplete={(url) => {
-                        // Single file upload - url will be a string
-                        const urlString = typeof url === "string" ? url : "";
-                        setDriverDetails((prev) => ({
-                          ...prev,
-                          license_image_url: urlString,
-                        }));
+                      onUploadComplete={async (url) => {
+                        // Refresh the license image from storage
+                        if (profile?.id) {
+                          const urlString = typeof url === "string" ? url : "";
+
+                          // If URL is empty, the file was deleted
+                          if (!urlString) {
+                            // Clear the database field
+                            await driverDetailsService.updateDriverDetails(
+                              profile.id,
+                              { license_image_url: null }
+                            );
+                            setLicenseImageUrl(null);
+                            setDriverDetails((prev) => ({
+                              ...prev,
+                              license_image_url: "",
+                            }));
+                          } else {
+                            // File was uploaded
+                            const imageUrl =
+                              await driverLicenseService.getFirstDriverLicenseUrl(
+                                profile.id
+                              );
+                            setLicenseImageUrl(imageUrl);
+
+                            // Update database with file path (not URL)
+                            setDriverDetails((prev) => ({
+                              ...prev,
+                              license_image_url: urlString,
+                            }));
+
+                            // Save to database
+                            await driverDetailsService.updateDriverDetails(
+                              profile.id,
+                              { license_image_url: urlString }
+                            );
+                          }
+                        }
                       }}
-                      existingFileUrl={driverDetails.license_image_url || null}
+                      existingFileUrl={licenseImageUrl || null}
                       label={t("profile.driverLicenseImage")}
                       helperText={t("profile.driverLicenseImageHelper")}
                     />

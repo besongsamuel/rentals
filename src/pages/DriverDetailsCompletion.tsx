@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
 import { useUserContext } from "../contexts/UserContext";
 import { driverDetailsService } from "../services/driverDetailsService";
+import { driverLicenseService } from "../services/driverLicenseService";
 import { CreateDriverDetailsData } from "../types";
 
 const DriverDetailsCompletion: React.FC = () => {
@@ -64,6 +65,7 @@ const DriverDetailsCompletion: React.FC = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [licenseImageUrl, setLicenseImageUrl] = useState<string | null>(null);
 
   // Country/State/City data
   const [selectedCountry, setSelectedCountry] = useState("CM");
@@ -638,15 +640,34 @@ const DriverDetailsCompletion: React.FC = () => {
                   path={profile?.id || ""}
                   accept="image/*,application/pdf"
                   maxSizeMB={5}
-                  onUploadComplete={(url) => {
-                    // Single file upload - url will be a string
-                    const urlString = typeof url === "string" ? url : "";
-                    setDriverDetails((prev) => ({
-                      ...prev,
-                      license_image_url: urlString,
-                    }));
+                  onUploadComplete={async (url) => {
+                    // Handle upload or delete
+                    if (profile?.id) {
+                      const urlString = typeof url === "string" ? url : "";
+
+                      // If URL is empty, the file was deleted
+                      if (!urlString) {
+                        setLicenseImageUrl(null);
+                        setDriverDetails((prev) => ({
+                          ...prev,
+                          license_image_url: "",
+                        }));
+                      } else {
+                        // File was uploaded - fetch from storage
+                        const imageUrl =
+                          await driverLicenseService.getFirstDriverLicenseUrl(
+                            profile.id
+                          );
+                        setLicenseImageUrl(imageUrl);
+
+                        setDriverDetails((prev) => ({
+                          ...prev,
+                          license_image_url: urlString,
+                        }));
+                      }
+                    }
                   }}
-                  existingFileUrl={driverDetails.license_image_url || null}
+                  existingFileUrl={licenseImageUrl || null}
                   label="Driver's License Image"
                   helperText="Upload a clear photo of your driver's license (front and back). This is required for verification."
                 />
