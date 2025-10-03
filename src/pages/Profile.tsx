@@ -120,6 +120,11 @@ const ProfilePage: React.FC = () => {
           driverDetailsUpdate.license_expiry_date = extractedData.expiry_date;
         }
 
+        if (extractedData.issuing_authority) {
+          driverDetailsUpdate.license_issuing_authority =
+            extractedData.issuing_authority;
+        }
+
         // Update driver details in database
         await driverDetailsService.updateDriverDetails(
           profile.id,
@@ -143,12 +148,6 @@ const ProfilePage: React.FC = () => {
           // Update profile in database
           await updateProfile({ full_name: fullName });
         }
-
-        // Save extracted data to database
-        await extractedUserDataService.saveExtractedData(profile.id, {
-          type: "drivers_license",
-          extracted_data: extractedData,
-        });
 
         setSuccess(t("profile.licenseDataExtracted"));
       } catch (error) {
@@ -809,6 +808,15 @@ const ProfilePage: React.FC = () => {
 
                               const extractedData =
                                 await extractDriversLicenseData(imageUrl);
+
+                              // Save extracted data to database
+                              await extractedUserDataService.saveExtractedData(
+                                profile.id,
+                                {
+                                  type: "drivers_license",
+                                  extracted_data: extractedData,
+                                }
+                              );
                               setExtractedData(extractedData);
                             } catch (extractError) {
                               console.error(
