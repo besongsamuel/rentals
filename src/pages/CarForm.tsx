@@ -58,7 +58,7 @@ const CarForm: React.FC = () => {
   const [loadingModels, setLoadingModels] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [carImageUrls, setCarImageUrls] = useState<string[]>([]);
+  const [carImageUrl, setCarImageUrl] = useState<string | null>(null);
 
   // Car extraction state
   const [extractingCarData, setExtractingCarData] = useState(false);
@@ -101,7 +101,8 @@ const CarForm: React.FC = () => {
               const imageUrls = await carImageStorageService.getCarImageUrls(
                 carId!
               );
-              setCarImageUrls(imageUrls);
+              // Only use the first image
+              setCarImageUrl(imageUrls.length > 0 ? imageUrls[0] : null);
             } catch (error) {
               console.error("Error loading car images:", error);
             }
@@ -554,35 +555,34 @@ const CarForm: React.FC = () => {
               />
             </Grid>
 
-            {/* Car Images Section - Only show when editing */}
+            {/* Car Image Section - Only show when editing */}
             {isEditMode ? (
               <Grid size={12}>
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="h6" sx={{ mb: 2 }}>
-                  {t("cars.carImages")}
+                  {t("cars.carImage")}
                 </Typography>
                 <FileUpload
                   bucket="cars"
                   path={carId!}
                   accept="image/*"
                   maxSizeMB={5}
-                  multiple={true}
-                  maxFiles={10}
+                  multiple={false}
                   isPublic={true}
-                  existingFileUrl={carImageUrls}
-                  onUploadComplete={async (urls) => {
-                    const urlArray = Array.isArray(urls) ? urls : [urls];
+                  existingFileUrl={carImageUrl}
+                  onUploadComplete={async (url) => {
+                    const urlString = typeof url === "string" ? url : "";
 
-                    // Update the local state with the new URLs from storage
-                    setCarImageUrls(urlArray);
+                    // Update the local state with the new URL
+                    setCarImageUrl(urlString);
 
-                    // Extract car data from the first uploaded image
-                    if (urlArray.length > 0 && user?.id) {
+                    // Extract car data from the uploaded image
+                    if (urlString && user?.id) {
                       try {
                         setExtractingCarData(true);
                         setExtractionPreviewOpen(true);
 
-                        const extractedData = await extractCarData(urlArray[0]);
+                        const extractedData = await extractCarData(urlString);
                         setExtractedData(extractedData);
                       } catch (extractError) {
                         console.error(
@@ -595,11 +595,11 @@ const CarForm: React.FC = () => {
                       }
                     }
                   }}
-                  onFileDeleted={async (urls) => {
-                    const urlArray = Array.isArray(urls) ? urls : [urls];
-                    setCarImageUrls(urlArray);
+                  onFileDeleted={async (url) => {
+                    // Update the local state
+                    setCarImageUrl(null);
 
-                    // Delete extracted data when images are deleted
+                    // Delete extracted data when image is deleted
                     if (user?.id) {
                       try {
                         await extractedUserDataService.deleteExtractedDataByType(
@@ -614,11 +614,11 @@ const CarForm: React.FC = () => {
                       }
                     }
                   }}
-                  label={t("cars.uploadCarImages")}
+                  label={t("cars.uploadCarImage")}
                   helperText={
                     extractingCarData
                       ? t("cars.extractingCarData")
-                      : t("cars.carImagesHelper")
+                      : t("cars.carImageHelper")
                   }
                 />
               </Grid>

@@ -56,6 +56,27 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
+  // Helper function to extract clean file path from URL
+  const extractCleanFilePath = useCallback(
+    (url: string): string => {
+      let cleanPath = url;
+
+      // Remove query parameters first
+      if (cleanPath.includes("?")) {
+        cleanPath = cleanPath.split("?")[0];
+      }
+
+      // Extract path from full URL if it contains bucket name
+      if (cleanPath.includes(bucket)) {
+        const urlParts = cleanPath.split("/");
+        cleanPath = urlParts.slice(urlParts.indexOf(bucket) + 1).join("/");
+      }
+
+      return cleanPath;
+    },
+    [bucket]
+  );
+
   // Generate signed URL for private buckets
   const generateSignedUrl = useCallback(
     async (filePath: string): Promise<string | null> => {
@@ -70,12 +91,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
       }
 
       try {
-        // Extract the path from the full URL if needed
-        let cleanPath = filePath;
-        if (filePath.includes(bucket)) {
-          const urlParts = filePath.split("/");
-          cleanPath = urlParts.slice(urlParts.indexOf(bucket) + 1).join("/");
-        }
+        // Extract the clean file path from URL
+        const cleanPath = extractCleanFilePath(filePath);
 
         const { data, error } = await supabase.storage
           .from(bucket)
@@ -92,7 +109,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         return null;
       }
     },
-    [bucket, isPublic]
+    [bucket, isPublic, extractCleanFilePath]
   );
 
   // Sync with existingFileUrl prop changes
@@ -221,12 +238,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const handleDelete = async (fileToDelete: UploadedFile) => {
     try {
-      // Extract file path from URL
-      let filePath = fileToDelete.storageUrl;
-      if (fileToDelete.storageUrl.includes(bucket)) {
-        const urlParts = fileToDelete.storageUrl.split("/");
-        filePath = urlParts.slice(urlParts.indexOf(bucket) + 1).join("/");
-      }
+      // Extract clean file path from URL
+      const filePath = extractCleanFilePath(fileToDelete.storageUrl);
 
       // Delete file from Supabase Storage
       const { error: deleteError } = await supabase.storage
