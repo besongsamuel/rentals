@@ -232,8 +232,8 @@ const DriverAssignment: React.FC<DriverAssignmentProps> = ({
           </Box>
         )}
 
-        {/* Driver Assignment Form - Only for main owners */}
-        {isMainOwner && (
+        {/* Driver Assignment Form - Only for main owners and when no driver is assigned */}
+        {isMainOwner && !currentDriver && (
           <Box>
             <Typography
               variant="body2"
