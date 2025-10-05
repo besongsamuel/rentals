@@ -232,6 +232,46 @@
     .single();
   ```
 
+## Supabase Query Methods
+
+- **CRITICAL: Use `.maybeSingle()` instead of `.single()` for queries that might return no results**
+- **`.single()` vs `.maybeSingle()`**:
+  - `.single()`: Throws an error if no rows are returned (PGRST116 error)
+  - `.maybeSingle()`: Returns `null` if no rows are returned (no error)
+- **When to use `.maybeSingle()`**:
+  - When querying by ID or unique constraint where the record might not exist
+  - When checking for existing records before creating new ones
+  - When fetching optional related data
+  - Any query where zero results is a valid outcome
+- **When to use `.single()`**:
+  - Only when you're absolutely certain the record exists
+  - When you want to explicitly handle the error case
+- **Example Pattern**:
+
+  ```typescript
+  // ❌ DON'T: Use .single() for queries that might return no results
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (error?.code === "PGRST116") {
+    // Handle no results
+  }
+
+  // ✅ DO: Use .maybeSingle() for queries that might return no results
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (!data) {
+    // Handle no results - data is null, no error thrown
+  }
+  ```
+
 ## Supabase RLS Policies by User Type
 
 - **CRITICAL: Create separate RLS policies for different user types (driver, owner)**

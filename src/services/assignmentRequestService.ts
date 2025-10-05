@@ -40,7 +40,7 @@ export const assignmentRequestService = {
         .eq("car_id", carId)
         .eq("driver_id", driverId)
         .eq("status", "pending")
-        .single();
+        .maybeSingle();
 
       if (error) {
         if (error.code === "PGRST116") {
@@ -72,7 +72,7 @@ export const assignmentRequestService = {
           driver_id: driverId,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
@@ -92,7 +92,7 @@ export const assignmentRequestService = {
         .eq("id", requestId)
         .eq("status", "pending")
         .select()
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
@@ -111,7 +111,7 @@ export const assignmentRequestService = {
         .eq("id", requestId)
         .eq("status", "pending")
         .select()
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
@@ -135,7 +135,7 @@ export const assignmentRequestService = {
         .eq("id", requestId)
         .eq("status", "pending")
         .select()
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
@@ -161,7 +161,7 @@ export const assignmentRequestService = {
         .eq("id", requestId)
         .eq("status", "pending")
         .select()
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
@@ -281,7 +281,7 @@ export const assignmentRequestService = {
         `
         )
         .eq("id", requestId)
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
@@ -323,7 +323,7 @@ export const assignmentRequestService = {
         .from("assignment_request_messages")
         .insert(message)
         .select()
-        .single();
+        .maybeSingle();
 
       return { data, error };
     } catch (error) {
