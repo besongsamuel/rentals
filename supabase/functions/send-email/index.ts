@@ -7,10 +7,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-interface EmailPayload {
-  type: "drive_request" | "weekly_report_submitted";
-  record: any;
-}
+// Database Webhook payload structure
+type DatabaseWebhookPayload = {
+  type: "INSERT" | "UPDATE" | "DELETE";
+  table: string;
+  schema: string;
+  record: {
+    id: string;
+    [key: string]: any;
+  };
+  old_record?: any;
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -19,8 +26,14 @@ serve(async (req) => {
   }
 
   try {
-    const payload: EmailPayload = await req.json();
-    const { type, record } = payload;
+    const payload: DatabaseWebhookPayload = await req.json();
+    const { type: webhookType, table, record, old_record } = payload;
+
+    console.log("Webhook received:", {
+      webhookType,
+      table,
+      recordId: record.id,
+    });
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -36,14 +49,20 @@ serve(async (req) => {
     let emailData;
     let templateId;
 
-    if (type === "drive_request") {
+    // Determine email type based on table and webhook type
+    if (
+      table === "car_assignment_requests" &&
+      webhookType === "INSERT" &&
+      record.status === "pending"
+    ) {
       // Handle drive request email
       templateId = Deno.env.get("SENDGRID_DRIVE_REQUEST_TEMPLATE_ID");
-      
+
       // Fetch car and driver details
       const { data: requestData } = await supabase
         .from("car_assignment_requests")
-        .select(`
+        .select(
+          `
           *,
           cars (
             make,
@@ -60,7 +79,8 @@ serve(async (req) => {
             full_name,
             email
           )
-        `)
+        `
+        )
         .eq("id", record.id)
         .single();
 
@@ -88,14 +108,20 @@ serve(async (req) => {
           request_id: record.id,
         },
       };
-    } else if (type === "weekly_report_submitted") {
+    } else if (
+      table === "weekly_reports" &&
+      webhookType === "UPDATE" &&
+      old_record?.status !== "submitted" &&
+      record.status === "submitted"
+    ) {
       // Handle weekly report submitted email
       templateId = Deno.env.get("SENDGRID_WEEKLY_REPORT_TEMPLATE_ID");
 
       // Fetch report and car details
       const { data: reportData } = await supabase
         .from("weekly_reports")
-        .select(`
+        .select(
+          `
           *,
           cars (
             make,
@@ -108,7 +134,8 @@ serve(async (req) => {
             full_name,
             email
           )
-        `)
+        `
+        )
         .eq("id", record.id)
         .single();
 
@@ -151,7 +178,22 @@ serve(async (req) => {
         },
       };
     } else {
-      throw new Error(`Unsupported email type: ${type}`);
+      // Not a webhook event we care about, return success without sending email
+      console.log("Webhook event ignored:", {
+        table,
+        webhookType,
+        status: record.status,
+      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Webhook event ignored (not configured for email)",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
     }
 
     // Send email via SendGrid

@@ -1,15 +1,16 @@
 # Send Email Edge Function
 
-This Supabase Edge Function handles sending email notifications using SendGrid for various events in the mo kumbi application.
+This Supabase Edge Function handles sending email notifications using SendGrid for various events in the mo kumbi application. It is triggered by **Database Webhooks** configured in the Supabase Dashboard.
 
-## Supported Email Types
+## Supported Events
 
-1. **drive_request** - Sent to car owners when a new drive request is created
-2. **weekly_report_submitted** - Sent to car owners when a weekly report is submitted
+1. **car_assignment_requests** (INSERT) - Sent to car owners when a new drive request is created (status = 'pending')
+2. **weekly_reports** (UPDATE) - Sent to car owners when a weekly report status changes to 'submitted'
 
 ## Setup Instructions
 
 ### 1. Install Supabase CLI (if not already installed)
+
 ```bash
 npm install -g supabase
 ```
@@ -19,12 +20,14 @@ npm install -g supabase
 You'll need to set up the following environment variables in your Supabase project:
 
 #### Required Environment Variables:
+
 - `SENDGRID_API_KEY` - Your SendGrid API key
 - `SENDGRID_FROM_EMAIL` - The email address to send from (must be verified in SendGrid)
 - `SENDGRID_DRIVE_REQUEST_TEMPLATE_ID` - SendGrid template ID for drive requests
 - `SENDGRID_WEEKLY_REPORT_TEMPLATE_ID` - SendGrid template ID for weekly reports
 
 #### To set environment variables:
+
 ```bash
 # Using Supabase CLI
 supabase secrets set SENDGRID_API_KEY=your_api_key_here
@@ -34,42 +37,44 @@ supabase secrets set SENDGRID_WEEKLY_REPORT_TEMPLATE_ID=d-xxxxxxxxxxxxx
 ```
 
 Or set them in the Supabase Dashboard:
+
 1. Go to Project Settings > Edge Functions
 2. Add the secrets there
 
-### 3. Enable pg_net Extension
-
-The email triggers use the `pg_net` extension for async HTTP calls. Enable it:
-
-```sql
--- Run this in your Supabase SQL Editor
-CREATE EXTENSION IF NOT EXISTS pg_net;
-```
-
-### 4. Configure Edge Function URL
-
-Set the edge function URL in your database settings:
-
-```sql
--- Run this in your Supabase SQL Editor
--- Replace <project-ref> with your actual Supabase project reference
-ALTER DATABASE postgres SET app.settings.edge_function_url = 'https://<project-ref>.supabase.co/functions/v1/send-email';
-ALTER DATABASE postgres SET app.settings.service_role_key = '<your-service-role-key>';
-```
-
-### 5. Deploy the Edge Function
+### 3. Deploy the Edge Function
 
 ```bash
 # From the project root
 supabase functions deploy send-email
 ```
 
-### 6. Apply the Migration
+### 4. Configure Database Webhooks
 
-```bash
-# Apply the email notification triggers
-supabase db push
-```
+Configure webhooks in the Supabase Dashboard to trigger the edge function:
+
+1. Go to **Database > Webhooks** in your Supabase Dashboard
+2. Create a webhook for **car_assignment_requests**:
+
+   - **Name**: `send-drive-request-email`
+   - **Table**: `car_assignment_requests`
+   - **Events**: `Insert`
+   - **Type**: `HTTP Request`
+   - **Method**: `POST`
+   - **URL**: `https://<project-ref>.supabase.co/functions/v1/send-email`
+   - **HTTP Headers**:
+     - `Content-Type`: `application/json`
+     - `Authorization`: `Bearer <your-service-role-key>`
+
+3. Create a webhook for **weekly_reports**:
+   - **Name**: `send-weekly-report-email`
+   - **Table**: `weekly_reports`
+   - **Events**: `Update`
+   - **Type**: `HTTP Request`
+   - **Method**: `POST`
+   - **URL**: `https://<project-ref>.supabase.co/functions/v1/send-email`
+   - **HTTP Headers**:
+     - `Content-Type`: `application/json`
+     - `Authorization`: `Bearer <your-service-role-key>`
 
 ## SendGrid Template Setup
 
@@ -78,6 +83,7 @@ supabase db push
 Template ID: Set in `SENDGRID_DRIVE_REQUEST_TEMPLATE_ID`
 
 **Dynamic Template Data:**
+
 - `owner_name` - Car owner's name
 - `driver_name` - Driver's name
 - `driver_phone` - Driver's phone number
@@ -94,10 +100,14 @@ Template ID: Set in `SENDGRID_DRIVE_REQUEST_TEMPLATE_ID`
 - `request_id` - Request ID
 
 **Sample Template:**
+
 ```html
 <p>Hello {{owner_name}},</p>
 
-<p>You have received a new drive request for your {{car_year}} {{car_make}} {{car_model}} ({{car_license_plate}}).</p>
+<p>
+  You have received a new drive request for your {{car_year}} {{car_make}}
+  {{car_model}} ({{car_license_plate}}).
+</p>
 
 <h3>Driver Information:</h3>
 <ul>
@@ -119,7 +129,9 @@ Template ID: Set in `SENDGRID_DRIVE_REQUEST_TEMPLATE_ID`
 <h3>Experience:</h3>
 <p>{{experience_details}}</p>
 
-<p><a href="https://mokumbi.com/drive-requests">View and Respond to Request</a></p>
+<p>
+  <a href="https://mokumbi.com/drive-requests">View and Respond to Request</a>
+</p>
 ```
 
 ### Weekly Report Template
@@ -127,6 +139,7 @@ Template ID: Set in `SENDGRID_DRIVE_REQUEST_TEMPLATE_ID`
 Template ID: Set in `SENDGRID_WEEKLY_REPORT_TEMPLATE_ID`
 
 **Dynamic Template Data:**
+
 - `owner_name` - Car owner's name
 - `driver_name` - Driver's name
 - `car_make` - Car make
@@ -146,10 +159,14 @@ Template ID: Set in `SENDGRID_WEEKLY_REPORT_TEMPLATE_ID`
 - `report_id` - Report ID
 
 **Sample Template:**
+
 ```html
 <p>Hello {{owner_name}},</p>
 
-<p>A weekly report has been submitted for your {{car_year}} {{car_make}} {{car_model}} ({{car_license_plate}}) by {{driver_name}}.</p>
+<p>
+  A weekly report has been submitted for your {{car_year}} {{car_make}}
+  {{car_model}} ({{car_license_plate}}) by {{driver_name}}.
+</p>
 
 <h3>Week Summary:</h3>
 <ul>
@@ -171,12 +188,15 @@ Template ID: Set in `SENDGRID_WEEKLY_REPORT_TEMPLATE_ID`
 <h3>Notes:</h3>
 <p>{{notes}}</p>
 
-<p><a href="https://mokumbi.com/cars/{{car_id}}/reports">View Full Report</a></p>
+<p>
+  <a href="https://mokumbi.com/cars/{{car_id}}/reports">View Full Report</a>
+</p>
 ```
 
 ## Testing
 
 ### Test Drive Request Email
+
 ```bash
 curl -X POST 'https://<project-ref>.supabase.co/functions/v1/send-email' \
   -H 'Authorization: Bearer <anon-key>' \
@@ -190,6 +210,7 @@ curl -X POST 'https://<project-ref>.supabase.co/functions/v1/send-email' \
 ```
 
 ### Test Weekly Report Email
+
 ```bash
 curl -X POST 'https://<project-ref>.supabase.co/functions/v1/send-email' \
   -H 'Authorization: Bearer <anon-key>' \
@@ -205,6 +226,7 @@ curl -X POST 'https://<project-ref>.supabase.co/functions/v1/send-email' \
 ## Troubleshooting
 
 ### Check Edge Function Logs
+
 ```bash
 supabase functions logs send-email
 ```
@@ -220,6 +242,7 @@ supabase functions logs send-email
 ## Monitoring
 
 Monitor email delivery in:
+
 1. SendGrid Dashboard → Activity
 2. Supabase Edge Functions → Logs
 3. Database logs for trigger execution
