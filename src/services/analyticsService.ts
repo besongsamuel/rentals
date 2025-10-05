@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import { AnalyticsData, ChartData, PerformanceMetrics } from "../types";
+import { carWeeklyReportsService } from "./carWeeklyReportsService";
 
 export const analyticsService = {
   async getAnalyticsData(
@@ -40,14 +41,15 @@ export const analyticsService = {
       };
     }
 
-    // Get weekly reports for assigned cars
-    const { data: reports, error: reportsError } = await supabase
-      .from("weekly_reports")
-      .select("driver_earnings, start_mileage, end_mileage")
-      .in("car_id", carIds)
-      .eq("driver_id", driverId);
+    // Get weekly reports for assigned cars using the edge function
+    const allReports = await carWeeklyReportsService.getAllReportsForCars(
+      carIds
+    );
 
-    if (reportsError) throw reportsError;
+    // Filter to only reports for this driver
+    const reports = allReports.filter(
+      (report) => report.driver_id === driverId
+    );
 
     const totalEarnings =
       reports?.reduce(
@@ -104,15 +106,10 @@ export const analyticsService = {
       };
     }
 
-    // Get weekly reports for all owned cars
-    const { data: reports, error: reportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "driver_earnings, ride_share_income, rental_income, start_mileage, end_mileage"
-      )
-      .in("car_id", allCarIds);
-
-    if (reportsError) throw reportsError;
+    // Get weekly reports for all owned cars using the edge function
+    const reports = await carWeeklyReportsService.getAllReportsForCars(
+      allCarIds
+    );
 
     const totalRevenue =
       reports?.reduce(
@@ -184,17 +181,19 @@ export const analyticsService = {
       };
     }
 
-    // Get all reports for the driver
-    const { data: allReports, error: allReportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "driver_earnings, start_mileage, end_mileage, week_start_date, status"
-      )
-      .in("car_id", carIds)
-      .eq("driver_id", driverId)
-      .order("week_start_date", { ascending: false });
+    // Get all reports for the driver using the edge function
+    const allReportsUnsorted =
+      await carWeeklyReportsService.getAllReportsForCars(carIds);
 
-    if (allReportsError) throw allReportsError;
+    // Filter to only reports for this driver and sort
+    const allReports = allReportsUnsorted
+      .filter((report) => report.driver_id === driverId)
+      .sort((a, b) => {
+        return (
+          new Date(b.week_start_date).getTime() -
+          new Date(a.week_start_date).getTime()
+        );
+      });
 
     // Get reports from last 30 days
     const thirtyDaysAgo = new Date();
@@ -284,16 +283,10 @@ export const analyticsService = {
       };
     }
 
-    // Get all reports for owned cars
-    const { data: allReports, error: allReportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "car_id, driver_id, driver_earnings, ride_share_income, rental_income, start_mileage, end_mileage, week_start_date, status"
-      )
-      .in("car_id", allCarIds)
-      .order("week_start_date", { ascending: false });
-
-    if (allReportsError) throw allReportsError;
+    // Get all reports for owned cars using the edge function
+    const allReports = await carWeeklyReportsService.getAllReportsForCars(
+      allCarIds
+    );
 
     // Get reports from last 30 days
     const thirtyDaysAgo = new Date();
@@ -402,19 +395,27 @@ export const analyticsService = {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - weeks * 7);
 
-    // Get weekly reports for the specified period
-    const { data: reports, error: reportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "week_start_date, driver_earnings, maintenance_expenses, gas_expense, start_mileage, end_mileage"
-      )
-      .in("car_id", carIds)
-      .eq("driver_id", driverId)
-      .gte("week_start_date", startDate.toISOString().split("T")[0])
-      .lte("week_start_date", endDate.toISOString().split("T")[0])
-      .order("week_start_date", { ascending: true });
+    // Get weekly reports for the specified period using the edge function
+    const allReports = await carWeeklyReportsService.getAllReportsForCars(
+      carIds
+    );
 
-    if (reportsError) throw reportsError;
+    // Filter to only reports for this driver within the date range and sort
+    const reports = allReports
+      .filter((report) => {
+        const reportDate = new Date(report.week_start_date);
+        return (
+          report.driver_id === driverId &&
+          reportDate >= startDate &&
+          reportDate <= endDate
+        );
+      })
+      .sort((a, b) => {
+        return (
+          new Date(a.week_start_date).getTime() -
+          new Date(b.week_start_date).getTime()
+        );
+      });
 
     // Transform data for charts
     const chartData: ChartData[] =
@@ -471,18 +472,23 @@ export const analyticsService = {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - weeks * 7);
 
-    // Get weekly reports for the specified period
-    const { data: reports, error: reportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "week_start_date, ride_share_income, rental_income, maintenance_expenses, gas_expense, start_mileage, end_mileage"
-      )
-      .in("car_id", allCarIds)
-      .gte("week_start_date", startDate.toISOString().split("T")[0])
-      .lte("week_start_date", endDate.toISOString().split("T")[0])
-      .order("week_start_date", { ascending: true });
+    // Get weekly reports for the specified period using the edge function
+    const allReportsData = await carWeeklyReportsService.getAllReportsForCars(
+      allCarIds
+    );
 
-    if (reportsError) throw reportsError;
+    // Filter to only reports within the date range and sort
+    const reports = allReportsData
+      .filter((report) => {
+        const reportDate = new Date(report.week_start_date);
+        return reportDate >= startDate && reportDate <= endDate;
+      })
+      .sort((a, b) => {
+        return (
+          new Date(a.week_start_date).getTime() -
+          new Date(b.week_start_date).getTime()
+        );
+      });
 
     // Group reports by week and aggregate data
     const weeklyData: { [key: string]: ChartData } = {};
@@ -585,18 +591,20 @@ export const analyticsService = {
       };
     }
 
-    // Get weekly reports for the specified period
-    const { data: reports, error: reportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "driver_earnings, start_mileage, end_mileage, week_start_date, status"
-      )
-      .in("car_id", carIds)
-      .eq("driver_id", driverId)
-      .gte("week_start_date", startDate.toISOString().split("T")[0])
-      .lte("week_start_date", endDate.toISOString().split("T")[0]);
+    // Get weekly reports for the specified period using the edge function
+    const allReports = await carWeeklyReportsService.getAllReportsForCars(
+      carIds
+    );
 
-    if (reportsError) throw reportsError;
+    // Filter to only reports for this driver within the date range
+    const reports = allReports.filter((report) => {
+      const reportDate = new Date(report.week_start_date);
+      return (
+        report.driver_id === driverId &&
+        reportDate >= startDate &&
+        reportDate <= endDate
+      );
+    });
 
     const totalEarnings =
       reports?.reduce(
@@ -682,17 +690,16 @@ export const analyticsService = {
       };
     }
 
-    // Get weekly reports for the specified period
-    const { data: reports, error: reportsError } = await supabase
-      .from("weekly_reports")
-      .select(
-        "car_id, driver_id, driver_earnings, ride_share_income, rental_income, start_mileage, end_mileage, week_start_date, status"
-      )
-      .in("car_id", allCarIds)
-      .gte("week_start_date", startDate.toISOString().split("T")[0])
-      .lte("week_start_date", endDate.toISOString().split("T")[0]);
+    // Get weekly reports for the specified period using the edge function
+    const allReports = await carWeeklyReportsService.getAllReportsForCars(
+      allCarIds
+    );
 
-    if (reportsError) throw reportsError;
+    // Filter to only reports within the date range
+    const reports = allReports.filter((report) => {
+      const reportDate = new Date(report.week_start_date);
+      return reportDate >= startDate && reportDate <= endDate;
+    });
 
     const totalRevenue =
       reports?.reduce(

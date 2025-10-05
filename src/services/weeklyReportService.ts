@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import { CreateWeeklyReportData, WeeklyReport } from "../types";
+import { carWeeklyReportsService } from "./carWeeklyReportsService";
 
 export const weeklyReportService = {
   async calculateTotalEarnings(reportId: string): Promise<number> {
@@ -84,38 +85,12 @@ export const weeklyReportService = {
     year?: number,
     month?: number
   ): Promise<WeeklyReport[]> {
-    let query = supabase.from("weekly_reports").select("*").eq("car_id", carId);
-
-    // Apply year filter if provided
-    if (year) {
-      const startOfYear = new Date(year, 0, 1).toISOString().split("T")[0];
-      const endOfYear = new Date(year, 11, 31).toISOString().split("T")[0];
-      query = query
-        .gte("week_start_date", startOfYear)
-        .lte("week_end_date", endOfYear);
-    }
-
-    // Apply month filter if provided
-    if (month && year) {
-      const startOfMonth = new Date(year, month - 1, 1)
-        .toISOString()
-        .split("T")[0];
-      const endOfMonth = new Date(year, month, 0).toISOString().split("T")[0];
-      query = query
-        .gte("week_start_date", startOfMonth)
-        .lte("week_end_date", endOfMonth);
-    }
-
-    const { data, error } = await query.order("week_start_date", {
-      ascending: false,
-    });
-
-    if (error) {
-      console.error("Error fetching weekly reports:", error);
-      throw error;
-    }
-
-    return data || [];
+    // Use the edge function to fetch reports with proper authorization
+    return await carWeeklyReportsService.getCarWeeklyReportsFiltered(
+      carId,
+      year,
+      month
+    );
   },
 
   async getReportsByCarWithTotalEarnings(
@@ -297,18 +272,8 @@ export const weeklyReportService = {
 
   async getTotalMileageForCar(carId: string): Promise<number> {
     try {
-      const { data: reports, error } = await supabase
-        .from("weekly_reports")
-        .select("start_mileage, end_mileage")
-        .eq("car_id", carId);
-
-      if (error) {
-        console.error(
-          "Error fetching weekly reports for mileage calculation:",
-          error
-        );
-        return 0;
-      }
+      // Use the edge function to fetch reports with proper authorization
+      const reports = await carWeeklyReportsService.getCarWeeklyReports(carId);
 
       if (!reports || reports.length === 0) {
         return 0;
@@ -334,33 +299,32 @@ export const weeklyReportService = {
     month?: number
   ) {
     try {
-      let query = supabase
-        .from("weekly_reports")
-        .select("*")
-        .eq("car_id", carId)
-        .order("week_start_date", { ascending: true });
+      // Use the edge function to fetch reports with proper authorization
+      let reports = await carWeeklyReportsService.getCarWeeklyReports(carId);
 
-      // Apply timeframe filters
+      // Apply timeframe filters client-side
       if (timeframe === "yearly" && year) {
-        const startDate = `${year}-01-01`;
-        const endDate = `${year}-12-31`;
-        query = query
-          .gte("week_start_date", startDate)
-          .lte("week_start_date", endDate);
+        reports = reports.filter((report) => {
+          const reportYear = new Date(report.week_start_date).getFullYear();
+          return reportYear === year;
+        });
       } else if (timeframe === "monthly" && year && month) {
-        const startDate = `${year}-${month.toString().padStart(2, "0")}-01`;
-        const endDate = new Date(year, month, 0).toISOString().split("T")[0]; // Last day of month
-        query = query
-          .gte("week_start_date", startDate)
-          .lte("week_start_date", endDate);
+        reports = reports.filter((report) => {
+          const reportDate = new Date(report.week_start_date);
+          return (
+            reportDate.getFullYear() === year &&
+            reportDate.getMonth() === month - 1
+          );
+        });
       }
 
-      const { data: reports, error } = await query;
-
-      if (error) {
-        console.error("Error fetching car statistics:", error);
-        throw error;
-      }
+      // Sort by week_start_date ascending
+      reports.sort((a, b) => {
+        return (
+          new Date(a.week_start_date).getTime() -
+          new Date(b.week_start_date).getTime()
+        );
+      });
 
       if (!reports || reports.length === 0) {
         return {
@@ -439,17 +403,9 @@ export const weeklyReportService = {
 
   async getReportCountForCar(carId: string): Promise<number> {
     try {
-      const { count, error } = await supabase
-        .from("weekly_reports")
-        .select("*", { count: "exact", head: true })
-        .eq("car_id", carId);
-
-      if (error) {
-        console.error("Error fetching report count for car:", error);
-        return 0;
-      }
-
-      return count || 0;
+      // Use the edge function to fetch reports with proper authorization
+      const reports = await carWeeklyReportsService.getCarWeeklyReports(carId);
+      return reports.length;
     } catch (error) {
       console.error("Error getting report count for car:", error);
       return 0;
