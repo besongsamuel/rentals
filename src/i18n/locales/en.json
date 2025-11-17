@@ -625,6 +625,7 @@
     "back": "Back",
     "next": "Next",
     "reply": "Reply",
+    "tryAgain": "Try Again",
     "close": "Close",
     "previous": "Previous",
     "search": "Search",
@@ -712,6 +713,37 @@
     "anonymousRating": "Submit rating anonymously",
     "submitTermination": "End Contract",
     "cancel": "Cancel"
+  },
+  "driverSearch": {
+    "title": "Find Drivers",
+    "subtitle": "Search and connect with qualified drivers for your vehicles",
+    "searchPlaceholder": "Search by name, city, state, or license number...",
+    "experiencedDriver": "Experienced Driver",
+    "locationNotSpecified": "Location not specified",
+    "keyHighlights": "Key Highlights",
+    "drivingExperience": "Driving experience",
+    "transmissionPreference": "Transmission preference",
+    "licensedDriver": "Licensed Driver",
+    "verifiedCredentials": "Verified credentials",
+    "viewProfile": "View Profile",
+    "noDriversFound": "No drivers found",
+    "noDriversAvailable": "No drivers available",
+    "adjustSearchCriteria": "Try adjusting your search criteria",
+    "checkBackLater": "Check back later for available drivers",
+    "resultsFound": "{{count}} driver found",
+    "resultsFound_plural": "{{count}} drivers found",
+    "pageInfo": "Page {{current}} of {{total}}",
+    "availability": {
+      "available": "Available",
+      "busy": "Busy",
+      "onBreak": "On Break",
+      "unavailable": "Unavailable"
+    },
+    "experience": {
+      "newDriver": "New Driver",
+      "oneYear": "1 year",
+      "years": "{{count}} years"
+    }
   },
   "statistics": {
     "title": "Car Statistics",

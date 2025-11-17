@@ -1,12 +1,13 @@
 import {
+  CheckCircle,
   DirectionsCar,
-  Email,
+  LocalShipping,
   LocationOn,
   Person,
-  Phone,
   Search,
-  Star,
+  Verified,
   Visibility,
+  WorkspacePremium,
 } from "@mui/icons-material";
 import {
   Avatar,
@@ -16,12 +17,13 @@ import {
   CardContent,
   Chip,
   Container,
+  Divider,
   Grid,
   InputAdornment,
+  Pagination,
   Paper,
   TextField,
   Typography,
-  useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -35,7 +37,6 @@ const DriverSearch: React.FC = () => {
   const { user, profile } = useUserContext();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const theme = useTheme();
 
   const [drivers, setDrivers] = useState<DriverDetailsWithProfile[]>([]);
   const [filteredDrivers, setFilteredDrivers] = useState<
@@ -44,6 +45,8 @@ const DriverSearch: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // 3x3 grid on desktop
 
   // Redirect if not an owner
   useEffect(() => {
@@ -78,6 +81,7 @@ const DriverSearch: React.FC = () => {
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredDrivers(drivers);
+      setCurrentPage(1);
       return;
     }
 
@@ -97,7 +101,22 @@ const DriverSearch: React.FC = () => {
     });
 
     setFilteredDrivers(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
   }, [searchTerm, drivers]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredDrivers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedDrivers = filteredDrivers.slice(startIndex, endIndex);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number
+  ) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleViewDriver = (driverId: string) => {
     navigate(`/drivers/${driverId}`);
@@ -121,22 +140,308 @@ const DriverSearch: React.FC = () => {
   const getAvailabilityText = (status: string) => {
     switch (status) {
       case "available":
-        return "Available";
+        return t("driverSearch.availability.available");
       case "busy":
-        return "Busy";
+        return t("driverSearch.availability.busy");
       case "on_break":
-        return "On Break";
+        return t("driverSearch.availability.onBreak");
       case "unavailable":
-        return "Unavailable";
+        return t("driverSearch.availability.unavailable");
       default:
         return status;
     }
   };
 
   const formatExperience = (years: number) => {
-    if (years === 0) return "New Driver";
-    if (years === 1) return "1 year experience";
-    return `${years} years experience`;
+    if (years === 0) return t("driverSearch.experience.newDriver");
+    if (years === 1) return t("driverSearch.experience.oneYear");
+    return t("driverSearch.experience.years", { count: years });
+  };
+
+  // Driver Card Component
+  const DriverCard: React.FC<{ driver: DriverDetailsWithProfile }> = ({
+    driver,
+  }) => {
+    const isExperienced = driver.years_of_experience >= 3;
+    const isAvailable = driver.availability_status === "available";
+
+    return (
+      <Card
+        elevation={0}
+        sx={{
+          height: "100%",
+          background: "rgba(255, 255, 255, 0.95)",
+          backdropFilter: "blur(20px)",
+          border: isAvailable
+            ? "2px solid rgba(46, 125, 50, 0.3)"
+            : "1px solid rgba(226, 232, 240, 0.3)",
+          borderRadius: 3,
+          transition: "all 0.3s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-6px)",
+            boxShadow: isAvailable
+              ? "0 12px 40px rgba(46, 125, 50, 0.15)"
+              : "0 12px 40px rgba(0, 0, 0, 0.1)",
+            border: isAvailable
+              ? "2px solid rgba(46, 125, 50, 0.5)"
+              : "1px solid rgba(46, 125, 50, 0.3)",
+          },
+        }}
+      >
+        <CardContent sx={{ p: 3, height: "100%" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+            }}
+          >
+            {/* Header Section */}
+            <Box sx={{ mb: 2.5 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    mr: 2,
+                    background: isAvailable
+                      ? "linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%)"
+                      : "linear-gradient(135deg, #757575 0%, #bdbdbd 100%)",
+                    fontSize: "1.75rem",
+                    fontWeight: 700,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  {driver.profiles?.full_name?.charAt(0) || "D"}
+                </Avatar>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 0.5,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "1.1rem",
+                        color: "text.primary",
+                      }}
+                    >
+                      {driver.profiles?.full_name || "Unknown Driver"}
+                    </Typography>
+                    {isExperienced && (
+                      <WorkspacePremium
+                        sx={{
+                          fontSize: 20,
+                          color: "#f57c00",
+                        }}
+                        titleAccess={t("driverSearch.experiencedDriver")}
+                      />
+                    )}
+                  </Box>
+                  <Chip
+                    label={getAvailabilityText(driver.availability_status)}
+                    size="small"
+                    color={
+                      getAvailabilityColor(driver.availability_status) as any
+                    }
+                    icon={
+                      isAvailable ? (
+                        <CheckCircle sx={{ fontSize: 16 }} />
+                      ) : undefined
+                    }
+                    sx={{
+                      fontSize: "0.75rem",
+                      height: 26,
+                      fontWeight: 600,
+                    }}
+                  />
+                </Box>
+              </Box>
+
+              {/* Location */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  p: 1.5,
+                  bgcolor: "rgba(46, 125, 50, 0.05)",
+                  borderRadius: 2,
+                }}
+              >
+                <LocationOn sx={{ fontSize: 18, color: "primary.main" }} />
+                <Typography
+                  variant="body2"
+                  sx={{ fontWeight: 500, color: "text.primary" }}
+                >
+                  {driver.city && driver.state_province
+                    ? `${driver.city}, ${driver.state_province}`
+                    : driver.city ||
+                      driver.state_province ||
+                      t("driverSearch.locationNotSpecified")}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Divider sx={{ mb: 2 }} />
+
+            {/* Key Highlights */}
+            <Box sx={{ mb: 2.5, flexGrow: 1 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: 700,
+                  color: "text.secondary",
+                  mb: 1.5,
+                  fontSize: "0.75rem",
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
+              >
+                {t("driverSearch.keyHighlights")}
+              </Typography>
+
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                {/* Experience */}
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Box
+                    sx={{
+                      p: 0.75,
+                      borderRadius: 1.5,
+                      bgcolor: isExperienced
+                        ? "rgba(46, 125, 50, 0.1)"
+                        : "rgba(0, 0, 0, 0.05)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <DirectionsCar
+                      sx={{
+                        fontSize: 20,
+                        color: isExperienced
+                          ? "primary.main"
+                          : "text.secondary",
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 600, color: "text.primary" }}
+                    >
+                      {formatExperience(driver.years_of_experience)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t("driverSearch.drivingExperience")}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* Transmission Preference */}
+                {driver.preferred_transmission && (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        p: 0.75,
+                        borderRadius: 1.5,
+                        bgcolor: "rgba(0, 0, 0, 0.05)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <LocalShipping
+                        sx={{ fontSize: 20, color: "text.secondary" }}
+                      />
+                    </Box>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary" }}
+                      >
+                        {driver.preferred_transmission}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t("driverSearch.transmissionPreference")}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+
+                {/* License Verified */}
+                {driver.license_number && (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        p: 0.75,
+                        borderRadius: 1.5,
+                        bgcolor: "rgba(46, 125, 50, 0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Verified sx={{ fontSize: 20, color: "primary.main" }} />
+                    </Box>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontWeight: 600, color: "text.primary" }}
+                      >
+                        {t("driverSearch.licensedDriver")}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t("driverSearch.verifiedCredentials")}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+              </Box>
+            </Box>
+
+            {/* Action Button */}
+            <Button
+              fullWidth
+              variant="contained"
+              endIcon={<Visibility />}
+              onClick={() => handleViewDriver(driver.profile_id)}
+              sx={{
+                borderRadius: 2,
+                py: 1.5,
+                fontWeight: 600,
+                background: isAvailable
+                  ? "linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%)"
+                  : "linear-gradient(135deg, #757575 0%, #9e9e9e 100%)",
+                "&:hover": {
+                  background: isAvailable
+                    ? "linear-gradient(135deg, #1b5e20 0%, #4caf50 100%)"
+                    : "linear-gradient(135deg, #616161 0%, #757575 100%)",
+                  transform: "translateY(-2px)",
+                  boxShadow: isAvailable
+                    ? "0 6px 20px rgba(46, 125, 50, 0.3)"
+                    : "0 6px 20px rgba(0, 0, 0, 0.2)",
+                },
+                transition: "all 0.2s ease-in-out",
+              }}
+            >
+              {t("driverSearch.viewProfile")}
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+    );
   };
 
   if (!user || profile?.user_type !== "owner") {
@@ -160,14 +465,14 @@ const DriverSearch: React.FC = () => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            Find Drivers
+            {t("driverSearch.title")}
           </Typography>
           <Typography
             variant="body1"
             color="text.secondary"
             sx={{ fontWeight: 500 }}
           >
-            Search and connect with qualified drivers for your vehicles
+            {t("driverSearch.subtitle")}
           </Typography>
         </Box>
 
@@ -185,7 +490,7 @@ const DriverSearch: React.FC = () => {
         >
           <TextField
             fullWidth
-            placeholder="Search by name, city, state, or license number..."
+            placeholder={t("driverSearch.searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             InputProps={{
@@ -214,10 +519,11 @@ const DriverSearch: React.FC = () => {
         {loading ? (
           <Grid container spacing={3}>
             {[...Array(6)].map((_, index) => (
-              <Grid size={12} key={index}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                 <Card
                   elevation={0}
                   sx={{
+                    height: "100%",
                     background: "rgba(255, 255, 255, 0.95)",
                     backdropFilter: "blur(20px)",
                     border: "1px solid rgba(226, 232, 240, 0.3)",
@@ -260,7 +566,7 @@ const DriverSearch: React.FC = () => {
                 },
               }}
             >
-              Try Again
+              {t("common.tryAgain")}
             </Button>
           </Paper>
         ) : filteredDrivers.length === 0 ? (
@@ -277,232 +583,79 @@ const DriverSearch: React.FC = () => {
           >
             <Person sx={{ fontSize: 64, color: "text.secondary", mb: 2 }} />
             <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
-              {searchTerm ? "No drivers found" : "No drivers available"}
+              {searchTerm
+                ? t("driverSearch.noDriversFound")
+                : t("driverSearch.noDriversAvailable")}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {searchTerm
-                ? "Try adjusting your search criteria"
-                : "Check back later for available drivers"}
+                ? t("driverSearch.adjustSearchCriteria")
+                : t("driverSearch.checkBackLater")}
             </Typography>
           </Paper>
         ) : (
           <>
             {/* Results Count */}
-            <Box sx={{ mb: 3 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 3,
+                flexWrap: "wrap",
+                gap: 2,
+              }}
+            >
               <Typography variant="body2" color="text.secondary">
-                {filteredDrivers.length} driver
-                {filteredDrivers.length !== 1 ? "s" : ""} found
+                {t("driverSearch.resultsFound", {
+                  count: filteredDrivers.length,
+                })}
               </Typography>
+              {totalPages > 1 && (
+                <Typography variant="body2" color="text.secondary">
+                  {t("driverSearch.pageInfo", {
+                    current: currentPage,
+                    total: totalPages,
+                  })}
+                </Typography>
+              )}
             </Box>
 
             {/* Drivers Grid */}
             <Grid container spacing={3}>
-              {filteredDrivers.map((driver) => (
-                <Grid size={12} key={driver.id}>
-                  <Card
-                    elevation={0}
-                    sx={{
-                      background: "rgba(255, 255, 255, 0.95)",
-                      backdropFilter: "blur(20px)",
-                      border: "1px solid rgba(226, 232, 240, 0.3)",
-                      borderRadius: 3,
-                      transition: "all 0.2s ease-in-out",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-                        border: "1px solid rgba(46, 125, 50, 0.3)",
-                      },
-                    }}
-                  >
-                    <CardContent sx={{ p: 3 }}>
-                      {/* Driver Header */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: 2,
-                        }}
-                      >
-                        <Avatar
-                          sx={{
-                            width: 56,
-                            height: 56,
-                            mr: 2,
-                            background:
-                              "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
-                            fontSize: "1.5rem",
-                            fontWeight: 700,
-                          }}
-                        >
-                          {driver.profiles?.full_name?.charAt(0) || "D"}
-                        </Avatar>
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: 600,
-                              mb: 0.5,
-                              fontSize: "1.1rem",
-                            }}
-                          >
-                            {driver.profiles?.full_name || "Unknown Driver"}
-                          </Typography>
-                          <Chip
-                            label={getAvailabilityText(
-                              driver.availability_status
-                            )}
-                            size="small"
-                            color={
-                              getAvailabilityColor(
-                                driver.availability_status
-                              ) as any
-                            }
-                            sx={{
-                              fontSize: "0.75rem",
-                              height: 24,
-                              fontWeight: 500,
-                            }}
-                          />
-                        </Box>
-                      </Box>
-
-                      {/* Driver Details */}
-                      <Box sx={{ mb: 3 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            mb: 1,
-                          }}
-                        >
-                          <LocationOn
-                            sx={{
-                              fontSize: 16,
-                              color: "text.secondary",
-                              mr: 1,
-                            }}
-                          />
-                          <Typography variant="body2" color="text.secondary">
-                            {driver.city && driver.state_province
-                              ? `${driver.city}, ${driver.state_province}`
-                              : driver.city ||
-                                driver.state_province ||
-                                "Location not specified"}
-                          </Typography>
-                        </Box>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            mb: 1,
-                          }}
-                        >
-                          <DirectionsCar
-                            sx={{
-                              fontSize: 16,
-                              color: "text.secondary",
-                              mr: 1,
-                            }}
-                          />
-                          <Typography variant="body2" color="text.secondary">
-                            {formatExperience(driver.years_of_experience)}
-                          </Typography>
-                        </Box>
-
-                        {driver.preferred_transmission && (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: 1,
-                            }}
-                          >
-                            <Star
-                              sx={{
-                                fontSize: 16,
-                                color: "text.secondary",
-                                mr: 1,
-                              }}
-                            />
-                            <Typography variant="body2" color="text.secondary">
-                              Prefers {driver.preferred_transmission}{" "}
-                              transmission
-                            </Typography>
-                          </Box>
-                        )}
-
-                        {/* Email */}
-                        {driver.profiles?.email && (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: 1,
-                            }}
-                          >
-                            <Email
-                              sx={{
-                                fontSize: 16,
-                                color: "text.secondary",
-                                mr: 1,
-                              }}
-                            />
-                            <Typography variant="body2" color="text.secondary">
-                              {driver.profiles.email}
-                            </Typography>
-                          </Box>
-                        )}
-
-                        {/* Phone */}
-                        {driver.profiles?.phone && (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              mb: 1,
-                            }}
-                          >
-                            <Phone
-                              sx={{
-                                fontSize: 16,
-                                color: "text.secondary",
-                                mr: 1,
-                              }}
-                            />
-                            <Typography variant="body2" color="text.secondary">
-                              {driver.profiles.phone}
-                            </Typography>
-                          </Box>
-                        )}
-                      </Box>
-
-                      {/* Action Button */}
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        startIcon={<Visibility />}
-                        onClick={() => handleViewDriver(driver.profile_id)}
-                        sx={{
-                          borderRadius: 2,
-                          py: 1.5,
-                          background:
-                            "linear-gradient(135deg, #2e7d32 0%, #d32f2f 100%)",
-                          "&:hover": {
-                            background:
-                              "linear-gradient(135deg, #1b5e20 0%, #b71c1c 100%)",
-                            transform: "translateY(-1px)",
-                          },
-                          transition: "all 0.2s ease-in-out",
-                        }}
-                      >
-                        View Details
-                      </Button>
-                    </CardContent>
-                  </Card>
+              {paginatedDrivers.map((driver) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={driver.id}>
+                  <DriverCard driver={driver} />
                 </Grid>
               ))}
             </Grid>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mt: 4,
+                }}
+              >
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  color="primary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      fontSize: "1rem",
+                      fontWeight: 500,
+                    },
+                  }}
+                />
+              </Box>
+            )}
           </>
         )}
       </Container>

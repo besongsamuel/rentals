@@ -380,7 +380,7 @@ export const weeklyReportService = {
       const totalIncome =
         totalRideShareIncome + totalRentalIncome + totalTaxiIncome;
       const totalAllExpenses = totalExpenses + totalGasExpenses;
-      const totalProfit = totalIncome - totalAllExpenses - totalDriverEarnings;
+      const totalProfit = totalIncome;
 
       return {
         totalReports,

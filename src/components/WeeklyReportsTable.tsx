@@ -49,6 +49,25 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
     new Set()
   );
 
+  // Sort reports chronologically and calculate mileage gaps
+  const sortedReports = [...weeklyReports].sort((a, b) => {
+    return (
+      new Date(a.week_start_date).getTime() -
+      new Date(b.week_start_date).getTime()
+    );
+  });
+
+  // Calculate mileage gaps between consecutive reports
+  const mileageGaps = new Map<string, number>();
+  for (let i = 1; i < sortedReports.length; i++) {
+    const currentReport = sortedReports[i];
+    const previousReport = sortedReports[i - 1];
+    const gap = currentReport.start_mileage - previousReport.end_mileage;
+    if (gap !== 0) {
+      mileageGaps.set(currentReport.id, gap);
+    }
+  }
+
   const handleViewEarnings = (report: WeeklyReport) => {
     if (onViewDetails) {
       onViewDetails(report);
@@ -96,7 +115,10 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
   };
 
   // Mobile Card Component
-  const MobileReportCard: React.FC<{ report: WeeklyReport }> = ({ report }) => {
+  const MobileReportCard: React.FC<{
+    report: WeeklyReport;
+    mileageGap?: number;
+  }> = ({ report, mileageGap }) => {
     const rideShareIncome = (report as any).ride_share_income || 0;
     const rentalIncome = (report as any).rental_income || 0;
     const taxiIncome = (report as any).taxi_income || 0;
@@ -111,9 +133,19 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
       <Card
         sx={{
           mb: 2,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          border: "1px solid #e2e8f0",
+          boxShadow:
+            mileageGap !== undefined && mileageGap !== 0
+              ? "0 2px 12px rgba(244, 67, 54, 0.2)"
+              : "0 2px 8px rgba(0,0,0,0.1)",
+          border:
+            mileageGap !== undefined && mileageGap !== 0
+              ? "2px solid rgba(244, 67, 54, 0.5)"
+              : "1px solid #e2e8f0",
           borderRadius: 2,
+          backgroundColor:
+            mileageGap !== undefined && mileageGap !== 0
+              ? "rgba(244, 67, 54, 0.02)"
+              : "background.paper",
         }}
       >
         {/* Header - Always Visible */}
@@ -136,7 +168,13 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
 
               {/* Status and Summary */}
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  mb: 1,
+                  flexWrap: "wrap",
+                }}
               >
                 <Chip
                   label={report.status}
@@ -150,6 +188,19 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                     },
                   }}
                 />
+                {mileageGap !== undefined && mileageGap !== 0 && (
+                  <Chip
+                    label="⚠️ Mileage Gap"
+                    color="error"
+                    size="small"
+                    sx={{
+                      fontWeight: 600,
+                      "& .MuiChip-label": {
+                        fontSize: "0.75rem",
+                      },
+                    }}
+                  />
+                )}
                 <Typography variant="body2" color="text.secondary">
                   {totalMileage.toLocaleString()} km •{" "}
                   {totalIncome.toLocaleString()} {t("common.currency")} income
@@ -219,6 +270,51 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                 {totalMileage.toLocaleString()} {t("common.km")} total
               </Typography>
             </Box>
+
+            {/* Mileage Gap Warning */}
+            {mileageGap !== undefined && mileageGap !== 0 && (
+              <Box
+                sx={{
+                  mb: 2,
+                  p: 1.5,
+                  backgroundColor: "rgba(244, 67, 54, 0.1)",
+                  border: "1px solid rgba(244, 67, 54, 0.3)",
+                  borderRadius: 1,
+                  borderLeft: "4px solid #f44336",
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "error.main",
+                    fontWeight: 600,
+                    fontSize: "0.875rem",
+                  }}
+                >
+                  ⚠️ Mileage Gap Detected
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "error.main",
+                    fontSize: "0.875rem",
+                    mt: 0.5,
+                  }}
+                >
+                  {mileageGap > 0 ? (
+                    <>
+                      {Math.abs(mileageGap).toLocaleString()} km unaccounted for
+                      between this report and the previous one
+                    </>
+                  ) : (
+                    <>
+                      {Math.abs(mileageGap).toLocaleString()} km overlap with
+                      the previous report
+                    </>
+                  )}
+                </Typography>
+              </Box>
+            )}
 
             {/* Incomes */}
             <Box sx={{ mb: 2 }}>
@@ -401,7 +497,7 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
     );
   };
 
-  if (weeklyReports.length === 0) {
+  if (sortedReports.length === 0) {
     return (
       <Box
         sx={{
@@ -427,8 +523,12 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
     <>
       {/* Card Layout for All Screen Sizes */}
       <Box sx={{ px: { xs: 1, sm: 2 } }}>
-        {weeklyReports.map((report) => (
-          <MobileReportCard key={report.id} report={report} />
+        {sortedReports.map((report) => (
+          <MobileReportCard
+            key={report.id}
+            report={report}
+            mileageGap={mileageGaps.get(report.id)}
+          />
         ))}
       </Box>
 

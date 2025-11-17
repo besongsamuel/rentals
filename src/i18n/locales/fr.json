@@ -560,6 +560,7 @@
     "view": "Voir",
     "back": "Retour",
     "next": "Suivant",
+    "tryAgain": "Réessayer",
     "previous": "Précédent",
     "search": "Rechercher",
     "filter": "Filtrer",
@@ -645,6 +646,37 @@
     "anonymousRating": "Soumettre l'évaluation anonymement",
     "submitTermination": "Mettre fin au contrat",
     "cancel": "Annuler"
+  },
+  "driverSearch": {
+    "title": "Trouver des conducteurs",
+    "subtitle": "Recherchez et connectez-vous avec des conducteurs qualifiés pour vos véhicules",
+    "searchPlaceholder": "Rechercher par nom, ville, état ou numéro de permis...",
+    "experiencedDriver": "Conducteur expérimenté",
+    "locationNotSpecified": "Emplacement non spécifié",
+    "keyHighlights": "Points clés",
+    "drivingExperience": "Expérience de conduite",
+    "transmissionPreference": "Préférence de transmission",
+    "licensedDriver": "Conducteur licencié",
+    "verifiedCredentials": "Identifiants vérifiés",
+    "viewProfile": "Voir le profil",
+    "noDriversFound": "Aucun conducteur trouvé",
+    "noDriversAvailable": "Aucun conducteur disponible",
+    "adjustSearchCriteria": "Essayez d'ajuster vos critères de recherche",
+    "checkBackLater": "Revenez plus tard pour les conducteurs disponibles",
+    "resultsFound": "{{count}} conducteur trouvé",
+    "resultsFound_plural": "{{count}} conducteurs trouvés",
+    "pageInfo": "Page {{current}} sur {{total}}",
+    "availability": {
+      "available": "Disponible",
+      "busy": "Occupé",
+      "onBreak": "En pause",
+      "unavailable": "Indisponible"
+    },
+    "experience": {
+      "newDriver": "Nouveau conducteur",
+      "oneYear": "1 an",
+      "years": "{{count}} ans"
+    }
   },
   "statistics": {
     "title": "Statistiques du véhicule",
