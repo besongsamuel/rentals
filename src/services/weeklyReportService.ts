@@ -292,29 +292,25 @@ export const weeklyReportService = {
     }
   },
 
-  async getCarStatistics(
-    carId: string,
-    timeframe: "monthly" | "yearly" | "all" = "all",
-    year?: number,
-    month?: number
-  ) {
+  async getCarStatistics(carId: string, startDate?: Date, endDate?: Date) {
     try {
       // Use the edge function to fetch reports with proper authorization
       let reports = await carWeeklyReportsService.getCarWeeklyReports(carId);
 
-      // Apply timeframe filters client-side
-      if (timeframe === "yearly" && year) {
-        reports = reports.filter((report) => {
-          const reportYear = new Date(report.week_start_date).getFullYear();
-          return reportYear === year;
-        });
-      } else if (timeframe === "monthly" && year && month) {
+      // Apply date range filters client-side
+      if (startDate || endDate) {
         reports = reports.filter((report) => {
           const reportDate = new Date(report.week_start_date);
-          return (
-            reportDate.getFullYear() === year &&
-            reportDate.getMonth() === month - 1
-          );
+
+          if (startDate && reportDate < startDate) {
+            return false;
+          }
+
+          if (endDate && reportDate > endDate) {
+            return false;
+          }
+
+          return true;
         });
       }
 
@@ -369,13 +365,19 @@ export const weeklyReportService = {
         (sum, report) => sum + (report.rental_income || 0),
         0
       );
+
+      const totalTaxiIncome = reports.reduce(
+        (sum, report) => sum + (report.taxi_income || 0),
+        0
+      );
+
       const totalDriverEarnings = reports.reduce(
         (sum, report) => sum + (report.driver_earnings || 0),
         0
       );
-      const totalIncome = totalRideShareIncome + totalRentalIncome;
-      const totalAllExpenses = totalExpenses + totalGasExpenses;
-      const totalProfit = totalIncome - totalAllExpenses;
+      const totalIncome =
+        totalRideShareIncome + totalRentalIncome + totalTaxiIncome;
+      const totalProfit = totalIncome;
 
       return {
         totalReports,

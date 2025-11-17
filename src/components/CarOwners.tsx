@@ -1,10 +1,11 @@
-import { Add, PersonRemove } from "@mui/icons-material";
+import { Add, ExpandMore, PersonRemove } from "@mui/icons-material";
 import {
   Box,
   Button,
   Card,
   CardContent,
   CircularProgress,
+  Collapse,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -12,7 +13,7 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { carOwnerService } from "../services/carOwnerService";
 import { carService } from "../services/carService";
@@ -31,14 +32,11 @@ const CarOwners: React.FC<CarOwnersProps> = ({ currentUser, carId }) => {
   const [loading, setLoading] = useState(true);
   const [showAddOwnerDialog, setShowAddOwnerDialog] = useState(false);
   const [removingOwnerId, setRemovingOwnerId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   const isMainOwner = car?.owner_id === currentUser.id;
 
-  useEffect(() => {
-    loadData();
-  }, [carId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!carId) return;
 
     setLoading(true);
@@ -55,7 +53,11 @@ const CarOwners: React.FC<CarOwnersProps> = ({ currentUser, carId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [carId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleAddCarOwner = async (carOwnerData: any) => {
     try {
@@ -128,85 +130,115 @@ const CarOwners: React.FC<CarOwnersProps> = ({ currentUser, carId }) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              mb: 2,
+              cursor: "pointer",
             }}
+            onClick={() => setExpanded(!expanded)}
           >
             <Typography variant="h6">{t("carManagement.carOwners")}</Typography>
-            {isMainOwner && (
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<Add />}
-                onClick={() => setShowAddOwnerDialog(true)}
-              >
-                {t("carManagement.addOwner")}
-              </Button>
-            )}
+            <IconButton
+              size="small"
+              sx={{
+                transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 0.3s",
+              }}
+            >
+              <ExpandMore />
+            </IconButton>
           </Box>
 
-          {/* Car Owners */}
-          {carOwners.length > 0 ? (
-            <Box>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
-                sx={{ mb: 2 }}
-              >
-                {t("carManagement.carOwners")}
-              </Typography>
-              <Grid container spacing={2}>
-                {carOwners.map((carOwner) => (
-                  <Grid size={12} key={carOwner.id}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        p: 2,
-                        border: 1,
-                        borderColor: "divider",
-                        borderRadius: 1,
-                        bgcolor: "background.paper",
-                      }}
-                    >
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                      >
-                        <Box>
-                          <Typography variant="body2">
-                            {carOwner.profiles?.full_name ||
-                              carOwner.profiles?.email}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {t("carManagement.carOwner")}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      {isMainOwner && carOwner.owner_id !== currentUser.id && (
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => handleRemoveCarOwner(carOwner.id)}
-                          disabled={removingOwnerId === carOwner.id}
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Box sx={{ mt: 2 }}>
+              {isMainOwner && (
+                <Box sx={{ mb: 2 }}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    startIcon={<Add />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowAddOwnerDialog(true);
+                    }}
+                  >
+                    {t("carManagement.addOwner")}
+                  </Button>
+                </Box>
+              )}
+
+              {/* Car Owners */}
+              {carOwners.length > 0 ? (
+                <Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                    sx={{ mb: 2 }}
+                  >
+                    {t("carManagement.carOwners")}
+                  </Typography>
+                  <Grid container spacing={2}>
+                    {carOwners.map((carOwner) => (
+                      <Grid size={12} key={carOwner.id}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            p: 2,
+                            border: 1,
+                            borderColor: "divider",
+                            borderRadius: 1,
+                            bgcolor: "background.paper",
+                          }}
                         >
-                          {removingOwnerId === carOwner.id ? (
-                            <CircularProgress size={16} />
-                          ) : (
-                            <PersonRemove />
-                          )}
-                        </IconButton>
-                      )}
-                    </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="body2">
+                                {carOwner.profiles?.full_name ||
+                                  carOwner.profiles?.email}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                {t("carManagement.carOwner")}
+                              </Typography>
+                            </Box>
+                          </Box>
+                          {isMainOwner &&
+                            carOwner.owner_id !== currentUser.id && (
+                              <IconButton
+                                size="small"
+                                color="error"
+                                onClick={() =>
+                                  handleRemoveCarOwner(carOwner.id)
+                                }
+                                disabled={removingOwnerId === carOwner.id}
+                              >
+                                {removingOwnerId === carOwner.id ? (
+                                  <CircularProgress size={16} />
+                                ) : (
+                                  <PersonRemove />
+                                )}
+                              </IconButton>
+                            )}
+                        </Box>
+                      </Grid>
+                    ))}
                   </Grid>
-                ))}
-              </Grid>
+                </Box>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  {t("carManagement.noCarOwners")}
+                </Typography>
+              )}
             </Box>
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              {t("carManagement.noCarOwners")}
-            </Typography>
-          )}
+          </Collapse>
         </CardContent>
       </Card>
 

@@ -4,11 +4,8 @@ import {
   CardContent,
   Chip,
   CircularProgress,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
@@ -42,26 +39,76 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
   const { t } = useTranslation();
   const [statistics, setStatistics] = useState<CarStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeframe, setTimeframe] = useState<"monthly" | "yearly" | "all">(
-    "all"
-  );
-  const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear()
-  );
-  const [selectedMonth, setSelectedMonth] = useState<number>(
-    new Date().getMonth() + 1
-  );
+
+  // Determine smart default: YTD if after March, else 6 months
+  const getDefaultTimeframe = () => {
+    const currentMonth = new Date().getMonth() + 1; // 1-12
+    return currentMonth > 3 ? "ytd" : "6_months";
+  };
+
+  const [timeframe, setTimeframe] = useState<
+    "ytd" | "3_months" | "6_months" | "12_months" | "custom"
+  >(getDefaultTimeframe());
+  const [customStartDate, setCustomStartDate] = useState<string>("");
+  const [customEndDate, setCustomEndDate] = useState<string>("");
+
+  // Calculate date range based on timeframe
+  const getDateRange = useCallback((): { startDate?: Date; endDate?: Date } => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    switch (timeframe) {
+      case "ytd":
+        // January 1st of current year to today
+        return {
+          startDate: new Date(currentYear, 0, 1),
+          endDate: today,
+        };
+
+      case "3_months":
+        // First day of month 3 months ago to today
+        return {
+          startDate: new Date(currentYear, currentMonth - 3, 1),
+          endDate: today,
+        };
+
+      case "6_months":
+        // First day of month 6 months ago to today
+        return {
+          startDate: new Date(currentYear, currentMonth - 6, 1),
+          endDate: today,
+        };
+
+      case "12_months":
+        // First day of month 12 months ago to today
+        return {
+          startDate: new Date(currentYear, currentMonth - 12, 1),
+          endDate: today,
+        };
+
+      case "custom":
+        // User selected custom dates
+        return {
+          startDate: customStartDate ? new Date(customStartDate) : undefined,
+          endDate: customEndDate ? new Date(customEndDate) : undefined,
+        };
+
+      default:
+        return {};
+    }
+  }, [timeframe, customStartDate, customEndDate]);
 
   const loadStatistics = useCallback(async () => {
     if (!carId) return;
 
     setLoading(true);
     try {
+      const { startDate, endDate } = getDateRange();
       const stats = await weeklyReportService.getCarStatistics(
         carId,
-        timeframe,
-        timeframe !== "all" ? selectedYear : undefined,
-        timeframe === "monthly" ? selectedMonth : undefined
+        startDate,
+        endDate
       );
       setStatistics(stats);
     } catch (error) {
@@ -69,7 +116,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
     } finally {
       setLoading(false);
     }
-  }, [carId, timeframe, selectedYear, selectedMonth]);
+  }, [carId, getDateRange]);
 
   useEffect(() => {
     loadStatistics();
@@ -117,63 +164,79 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
             {t("statistics.title")}
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <FormControl size="small" sx={{ minWidth: 120 }}>
-              <InputLabel>{t("statistics.timeframe")}</InputLabel>
-              <Select
-                value={timeframe}
-                onChange={(e) =>
-                  setTimeframe(e.target.value as "monthly" | "yearly" | "all")
-                }
-                label="Timeframe"
-              >
-                <MenuItem value="monthly">{t("statistics.monthly")}</MenuItem>
-                <MenuItem value="yearly">{t("statistics.yearly")}</MenuItem>
-                <MenuItem value="all">{t("statistics.allTime")}</MenuItem>
-              </Select>
-            </FormControl>
-
-            {timeframe !== "all" && (
-              <FormControl size="small" sx={{ minWidth: 100 }}>
-                <InputLabel>{t("statistics.year")}</InputLabel>
-                <Select
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  label={t("statistics.year")}
-                >
-                  {Array.from(
-                    { length: 5 },
-                    (_, i) => new Date().getFullYear() - i
-                  ).map((year) => (
-                    <MenuItem key={year} value={year}>
-                      {year}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-
-            {timeframe === "monthly" && (
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>{t("statistics.month")}</InputLabel>
-                <Select
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                  label="Month"
-                >
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                    <MenuItem key={month} value={month}>
-                      {new Date(selectedYear, month - 1).toLocaleDateString(
-                        "en-US",
-                        { month: "long" }
-                      )}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <Chip
+              label="YTD"
+              onClick={() => setTimeframe("ytd")}
+              color={timeframe === "ytd" ? "primary" : "default"}
+              variant={timeframe === "ytd" ? "filled" : "outlined"}
+              sx={{ cursor: "pointer" }}
+            />
+            <Chip
+              label="3 Months"
+              onClick={() => setTimeframe("3_months")}
+              color={timeframe === "3_months" ? "primary" : "default"}
+              variant={timeframe === "3_months" ? "filled" : "outlined"}
+              sx={{ cursor: "pointer" }}
+            />
+            <Chip
+              label="6 Months"
+              onClick={() => setTimeframe("6_months")}
+              color={timeframe === "6_months" ? "primary" : "default"}
+              variant={timeframe === "6_months" ? "filled" : "outlined"}
+              sx={{ cursor: "pointer" }}
+            />
+            <Chip
+              label="12 Months"
+              onClick={() => setTimeframe("12_months")}
+              color={timeframe === "12_months" ? "primary" : "default"}
+              variant={timeframe === "12_months" ? "filled" : "outlined"}
+              sx={{ cursor: "pointer" }}
+            />
+            <Chip
+              label="Custom"
+              onClick={() => setTimeframe("custom")}
+              color={timeframe === "custom" ? "primary" : "default"}
+              variant={timeframe === "custom" ? "filled" : "outlined"}
+              sx={{ cursor: "pointer" }}
+            />
           </Box>
         </Box>
+
+        {/* Custom Date Range Inputs */}
+        {timeframe === "custom" && (
+          <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
+            <TextField
+              label="Start Date"
+              type="date"
+              size="small"
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{ minWidth: 150 }}
+            />
+            <TextField
+              label="End Date"
+              type="date"
+              size="small"
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{ minWidth: 150 }}
+            />
+          </Box>
+        )}
 
         <Grid container spacing={3}>
           {/* Usage Statistics */}
