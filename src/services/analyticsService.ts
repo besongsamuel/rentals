@@ -114,7 +114,10 @@ export const analyticsService = {
     const totalRevenue =
       reports?.reduce(
         (sum, report) =>
-          sum + (report.ride_share_income || 0) + (report.rental_income || 0),
+          sum +
+          (report.ride_share_income || 0) +
+          (report.rental_income || 0) +
+          (report.taxi_income || 0),
         0
       ) || 0;
     const totalEarnings =
@@ -301,7 +304,10 @@ export const analyticsService = {
     const totalRevenue =
       allReports?.reduce(
         (sum, report) =>
-          sum + (report.ride_share_income || 0) + (report.rental_income || 0),
+          sum +
+          (report.ride_share_income || 0) +
+          (report.rental_income || 0) +
+          (report.taxi_income || 0),
         0
       ) || 0;
     const totalMileage =
@@ -313,7 +319,10 @@ export const analyticsService = {
 
     const last30DaysEarnings = last30DaysReports.reduce(
       (sum, report) =>
-        sum + (report.ride_share_income || 0) + (report.rental_income || 0),
+        sum +
+        (report.ride_share_income || 0) +
+        (report.rental_income || 0) +
+        (report.taxi_income || 0),
       0
     );
     const last30DaysMileage = last30DaysReports.reduce(
@@ -422,16 +431,16 @@ export const analyticsService = {
       reports?.map((report) => {
         const weekDate = new Date(report.week_start_date);
         const weekLabel = `${weekDate.getMonth() + 1}/${weekDate.getDate()}`;
+        const netEarnings = report.driver_earnings || 0;
         const totalExpenses =
           (report.maintenance_expenses || 0) + (report.gas_expense || 0);
-        const netEarnings = (report.driver_earnings || 0) - totalExpenses;
 
         return {
           week: weekLabel,
-          earnings: report.driver_earnings || 0,
+          earnings: netEarnings,
           mileage: (report.end_mileage || 0) - (report.start_mileage || 0),
           expenses: totalExpenses,
-          netEarnings: netEarnings,
+          netEarnings,
         };
       }) || [];
 
@@ -510,7 +519,9 @@ export const analyticsService = {
 
       // Aggregate data for the week
       weeklyData[weekKey].earnings +=
-        (report.ride_share_income || 0) + (report.rental_income || 0);
+        (report.ride_share_income || 0) +
+        (report.rental_income || 0) +
+        (report.taxi_income || 0);
       weeklyData[weekKey].mileage +=
         (report.end_mileage || 0) - (report.start_mileage || 0);
       weeklyData[weekKey].expenses +=
@@ -520,7 +531,7 @@ export const analyticsService = {
     // Calculate net earnings and convert to array
     const chartData: ChartData[] = Object.values(weeklyData).map((data) => ({
       ...data,
-      netEarnings: data.earnings - data.expenses,
+      netEarnings: data.earnings,
     }));
 
     return chartData.sort((a, b) => {
@@ -704,7 +715,10 @@ export const analyticsService = {
     const totalRevenue =
       reports?.reduce(
         (sum, report) =>
-          sum + (report.ride_share_income || 0) + (report.rental_income || 0),
+          sum +
+          (report.ride_share_income || 0) +
+          (report.rental_income || 0) +
+          (report.taxi_income || 0),
         0
       ) || 0;
     const totalEarnings =

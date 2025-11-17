@@ -51,7 +51,7 @@ export async function fetchRewardAccount(): Promise<RewardAccount | null> {
     if (createError) {
       console.error("Error creating reward account:", createError);
       // Return default account even if creation fails
-      return { user_id: user.id, balance_cents: 0, currency: "CAD" };
+      return { user_id: user.id, balance_cents: 0, currency: "XAF" };
     }
 
     // Try to fetch the newly created account
@@ -64,7 +64,7 @@ export async function fetchRewardAccount(): Promise<RewardAccount | null> {
     if (fetchError) {
       console.error("Error fetching newly created reward account:", fetchError);
       // Return default account even if fetch fails
-      return { user_id: user.id, balance_cents: 0, currency: "CAD" };
+      return { user_id: user.id, balance_cents: 0, currency: "XAF" };
     }
 
     data = newData;

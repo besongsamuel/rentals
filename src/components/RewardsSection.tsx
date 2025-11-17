@@ -81,14 +81,14 @@ export const RewardsSection: React.FC<Props> = () => {
         setAccount(
           acc
             ? { balance_cents: acc.balance_cents, currency: acc.currency }
-            : { balance_cents: 0, currency: "CAD" }
+            : { balance_cents: 0, currency: "XAF" }
         );
         setReferrals(refs || []);
         setPendingWithdrawal(pendingWithdrawalData);
       } catch (error) {
         console.error("Error loading rewards data:", error);
         // Set default values even on error
-        setAccount({ balance_cents: 0, currency: "CAD" });
+        setAccount({ balance_cents: 0, currency: "XAF" });
         setReferrals([]);
         setPendingWithdrawal(null);
       } finally {
@@ -201,7 +201,7 @@ export const RewardsSection: React.FC<Props> = () => {
                       {t("rewards.currentBalance")}
                     </Typography>
                     <Typography variant="h5" sx={{ fontWeight: 800 }}>
-                      {account?.currency ?? "CAD"} {balance}
+                      {account?.currency ?? "XAF"} {balance}
                     </Typography>
                     <Typography
                       variant="caption"
@@ -418,7 +418,7 @@ export const RewardsSection: React.FC<Props> = () => {
           <DialogContentText sx={{ mb: 2 }}>
             {t("rewards.withdrawalDialogDescription", {
               amount: balance,
-              currency: account?.currency ?? "CAD",
+              currency: account?.currency ?? "XAF",
             })}
           </DialogContentText>
 
