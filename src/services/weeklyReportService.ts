@@ -335,6 +335,8 @@ export const weeklyReportService = {
           totalRideShareIncome: 0,
           averageWeeklyRentalIncome: 0,
           totalRentalIncome: 0,
+          averageWeeklyTaxiIncome: 0,
+          totalTaxiIncome: 0,
           averageWeeklyDriverEarnings: 0,
           totalDriverEarnings: 0,
           averageWeeklyProfit: 0,
@@ -377,7 +379,8 @@ export const weeklyReportService = {
       );
       const totalIncome =
         totalRideShareIncome + totalRentalIncome + totalTaxiIncome;
-      const totalProfit = totalIncome;
+      const totalAllExpenses = totalExpenses + totalGasExpenses;
+      const totalProfit = totalIncome - totalAllExpenses - totalDriverEarnings;
 
       return {
         totalReports,
@@ -391,6 +394,8 @@ export const weeklyReportService = {
         totalRideShareIncome,
         averageWeeklyRentalIncome: totalRentalIncome / totalReports,
         totalRentalIncome,
+        averageWeeklyTaxiIncome: totalTaxiIncome / totalReports,
+        totalTaxiIncome,
         averageWeeklyDriverEarnings: totalDriverEarnings / totalReports,
         totalDriverEarnings,
         averageWeeklyProfit: totalProfit / totalReports,

@@ -28,6 +28,8 @@ interface CarStats {
   totalRideShareIncome: number;
   averageWeeklyRentalIncome: number;
   totalRentalIncome: number;
+  averageWeeklyTaxiIncome: number;
+  totalTaxiIncome: number;
   averageWeeklyDriverEarnings: number;
   totalDriverEarnings: number;
   averageWeeklyProfit: number;
@@ -298,7 +300,8 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
               <Typography variant="h4" color="success.main" gutterBottom>
                 {formatCurrency(
                   statistics.averageWeeklyRideShareIncome +
-                    statistics.averageWeeklyRentalIncome
+                    statistics.averageWeeklyRentalIncome +
+                    statistics.averageWeeklyTaxiIncome
                 )}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -319,6 +322,14 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
               >
                 {t("statistics.rental")}:{" "}
                 {formatCurrency(statistics.averageWeeklyRentalIncome)}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: "0.75rem" }}
+              >
+                {t("statistics.taxi")}:{" "}
+                {formatCurrency(statistics.averageWeeklyTaxiIncome)}
               </Typography>
             </Box>
           </Grid>
