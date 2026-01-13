@@ -433,12 +433,17 @@ const AddReportPage: React.FC = () => {
               rentalIncome={formData.rental_income}
               taxiIncome={formData.taxi_income}
               currency={formData.currency}
-              onRevenueChange={(type, amount) =>
+              onRevenueChange={(type, amount) => {
+                const fieldMap: Record<"rideshare" | "rental" | "taxi", keyof typeof formData> = {
+                  rideshare: "ride_share_income",
+                  rental: "rental_income",
+                  taxi: "taxi_income",
+                };
                 setFormData((prev) => ({
                   ...prev,
-                  [`${type}_income`]: amount,
-                } as any))
-              }
+                  [fieldMap[type]]: amount,
+                }));
+              }}
             />
           )}
 
