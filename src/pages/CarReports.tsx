@@ -415,7 +415,7 @@ const CarReports: React.FC = () => {
                   <Tooltip title={t("reports.addReport")}>
                     <IconButton
                       color="primary"
-                      onClick={() => setShowAddReportForm(true)}
+                      onClick={() => navigate(`/reports/add?car_id=${carId}`)}
                       sx={{
                         bgcolor: "primary.main",
                         color: "white",
@@ -770,17 +770,6 @@ const CarReports: React.FC = () => {
       </Grid>
 
       {/* Weekly Report Dialog */}
-      <WeeklyReportDialog
-        open={showAddReportForm}
-        onClose={() => setShowAddReportForm(false)}
-        onSubmit={handleAddReport}
-        assignedCars={car ? [car] : []}
-        editingReport={null}
-        mode="add"
-        existingReports={weeklyReports}
-        userType={profile?.user_type}
-        currentUserId={profile?.id}
-      />
 
       {/* Edit Report Dialog */}
       <Dialog

@@ -32,7 +32,6 @@ import CarOwners from "../components/CarOwners";
 import CarStatistics from "../components/CarStatistics";
 import DriverAssignment from "../components/DriverAssignment";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
-import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import {
@@ -63,8 +62,6 @@ const CarDetailManagement: React.FC = () => {
     type: "submit" | "approve";
     reportId: string;
   } | null>(null);
-  const [showReportDialog, setShowReportDialog] = useState(false);
-  const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
   const [earningsDialogOpen, setEarningsDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
     null
@@ -187,8 +184,7 @@ const CarDetailManagement: React.FC = () => {
   };
 
   const handleAddNewReport = () => {
-    setEditingReport(null);
-    setShowReportDialog(true);
+    navigate(`/reports/add?car_id=${carId}`);
   };
 
   const handleViewEarnings = (report: WeeklyReport) => {
@@ -202,56 +198,9 @@ const CarDetailManagement: React.FC = () => {
   };
 
   const handleEditReport = (report: WeeklyReport) => {
-    setEditingReport(report);
-    setShowReportDialog(true);
+    navigate(`/reports/edit/${report.id}`);
   };
 
-  const handleReportSubmit = async (reportData: any) => {
-    try {
-      if (editingReport) {
-        // Update existing report
-        await weeklyReportService.updateReport(editingReport.id, reportData);
-      } else {
-        // Create new report
-        if (profile?.user_type === "driver") {
-          if (!profile.id) {
-            throw new Error("Driver ID is required to create a report");
-          }
-          await weeklyReportService.createReport({
-            ...reportData,
-            driver_id: profile.id,
-          });
-        } else if (profile?.user_type === "owner") {
-          if (!car?.id || car.owner_id !== profile.id) {
-            throw new Error("Only the car owner can add reports for this car");
-          }
-          // Only require assigned driver if current user is not the owner
-          if (car.owner_id !== profile.id && !car.driver_id) {
-            throw new Error(
-              "Cannot create report: this car has no assigned driver"
-            );
-          }
-          await weeklyReportService.createReport({
-            ...reportData,
-            car_id: car.id,
-            driver_id: car.driver_id || profile.id, // Use owner as driver if no assigned driver
-          });
-        } else {
-          throw new Error("Unauthorized to create weekly reports");
-        }
-      }
-      setShowReportDialog(false);
-      setEditingReport(null);
-      loadData(); // Refresh the data
-    } catch (error) {
-      console.error("Error saving report:", error);
-    }
-  };
-
-  const handleReportDialogClose = () => {
-    setShowReportDialog(false);
-    setEditingReport(null);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -658,18 +607,6 @@ const CarDetailManagement: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Weekly Report Dialog */}
-      <WeeklyReportDialog
-        open={showReportDialog}
-        onClose={handleReportDialogClose}
-        onSubmit={handleReportSubmit}
-        assignedCars={car ? [car] : []}
-        editingReport={editingReport}
-        mode={editingReport ? "edit" : "add"}
-        existingReports={weeklyReports}
-        userType={profile?.user_type}
-        currentUserId={profile?.id}
-      />
 
       {/* Confirmation Dialog */}
       <Dialog

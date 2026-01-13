@@ -97,9 +97,7 @@ const DriverDashboard: React.FC = () => {
   };
 
   const handleEditReport = (report: WeeklyReport) => {
-    setEditingReport(report);
-    setDialogMode("edit");
-    setShowReportDialog(true);
+    navigate(`/reports/edit/${report.id}`);
   };
 
   const handleUpdateReport = async (reportData: CreateWeeklyReportData) => {
@@ -320,9 +318,7 @@ const DriverDashboard: React.FC = () => {
                 variant="contained"
                 startIcon={<Add />}
                 onClick={() => {
-                  setDialogMode("add");
-                  setEditingReport(null);
-                  setShowReportDialog(true);
+                  navigate("/reports/add");
                 }}
                 sx={{
                   minWidth: { xs: "100%", sm: "auto" },
@@ -346,9 +342,7 @@ const DriverDashboard: React.FC = () => {
                   variant="outlined"
                   startIcon={<Add />}
                   onClick={() => {
-                    setDialogMode("add");
-                    setEditingReport(null);
-                    setShowReportDialog(true);
+                    navigate("/reports/add");
                   }}
                 >
                   {t("reports.addFirstReport")}

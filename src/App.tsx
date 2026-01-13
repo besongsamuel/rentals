@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import SkeletonLoader from "./components/SkeletonLoader";
 import { UserProvider, useUserContext } from "./contexts/UserContext";
+import AddReportPage from "./pages/AddReportPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import Analytics from "./pages/Analytics";
 import AssignedCars from "./pages/AssignedCars";
@@ -204,6 +205,14 @@ function AppContent() {
                               element={<DataDeletion />}
                             />
                             <Route path="/rewards" element={<Rewards />} />
+                            <Route
+                              path="/reports/add"
+                              element={<AddReportPage />}
+                            />
+                            <Route
+                              path="/reports/edit/:reportId"
+                              element={<AddReportPage />}
+                            />
                             <Route
                               path="/search-cars"
                               element={<CarSearch />}
