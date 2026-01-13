@@ -424,7 +424,11 @@
     "noCarsAvailable": "Aucune voiture disponible",
     "previous": "Précédent",
     "next": "Suivant",
-    "confirmCancel": "Oui, Annuler"
+    "confirmCancel": "Oui, Annuler",
+    "confirmSubmitReport": "Soumettre le rapport?",
+    "confirmUpdateReport": "Mettre à jour le rapport?",
+    "confirmSubmitReportMessage": "Êtes-vous sûr de vouloir soumettre ce rapport? Vous pourrez le modifier plus tard si nécessaire.",
+    "confirmUpdateReportMessage": "Êtes-vous sûr de vouloir mettre à jour ce rapport? Les modifications seront enregistrées immédiatement."
   },
   "incomeSources": {
     "title": "Sources de revenus",
@@ -600,7 +604,8 @@
     "about": "À propos",
     "notProvided": "Non fourni",
     "accept": "Accepter",
-    "reject": "Rejeter"
+    "reject": "Rejeter",
+    "saving": "Enregistrement..."
   },
   "errors": {
     "required": "Ce champ est requis",

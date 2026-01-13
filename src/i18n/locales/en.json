@@ -489,7 +489,11 @@
     "noCarsAvailable": "No cars available",
     "previous": "Previous",
     "next": "Next",
-    "confirmCancel": "Yes, Cancel"
+    "confirmCancel": "Yes, Cancel",
+    "confirmSubmitReport": "Submit Report?",
+    "confirmUpdateReport": "Update Report?",
+    "confirmSubmitReportMessage": "Are you sure you want to submit this report? You can edit it later if needed.",
+    "confirmUpdateReportMessage": "Are you sure you want to update this report? Changes will be saved immediately."
   },
   "incomeSources": {
     "title": "Income Sources",
@@ -667,7 +671,8 @@
     "about": "About",
     "notProvided": "Not provided",
     "accept": "Accept",
-    "reject": "Reject"
+    "reject": "Reject",
+    "saving": "Saving..."
   },
   "errors": {
     "required": "This field is required",

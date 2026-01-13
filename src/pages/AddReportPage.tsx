@@ -48,6 +48,8 @@ const AddReportPage: React.FC = () => {
   const [existingReports, setExistingReports] = useState<WeeklyReport[]>([]);
   const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -248,7 +250,8 @@ const AddReportPage: React.FC = () => {
       setCurrentStep(currentStep + 1);
       setError("");
     } else {
-      handleSubmit();
+      // Show confirmation dialog before submitting
+      setShowSubmitDialog(true);
     }
   };
 
@@ -276,6 +279,8 @@ const AddReportPage: React.FC = () => {
     if (!profile?.id) return;
 
     setError("");
+    setSubmitting(true);
+    setShowSubmitDialog(false);
 
     try {
       const reportData: CreateWeeklyReportData = {
@@ -307,6 +312,7 @@ const AddReportPage: React.FC = () => {
     } catch (err) {
       console.error("Error saving report:", err);
       setError(err instanceof Error ? err.message : t("errors.generic"));
+      setSubmitting(false);
     }
   };
 
@@ -501,6 +507,46 @@ const AddReportPage: React.FC = () => {
           </Button>
           <Button onClick={confirmCancel} color="error" variant="contained">
             {t("reports.confirmCancel")}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Submit Confirmation Dialog */}
+      <Dialog 
+        open={showSubmitDialog} 
+        onClose={() => !submitting && setShowSubmitDialog(false)}
+        disableEscapeKeyDown={submitting}
+      >
+        <DialogTitle>
+          {isEditMode ? t("reports.confirmUpdateReport") : t("reports.confirmSubmitReport")}
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {isEditMode 
+              ? t("reports.confirmUpdateReportMessage")
+              : t("reports.confirmSubmitReportMessage")
+            }
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => setShowSubmitDialog(false)} 
+            disabled={submitting}
+          >
+            {t("common.cancel")}
+          </Button>
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            disabled={submitting}
+          >
+            {submitting 
+              ? t("common.saving") 
+              : isEditMode 
+                ? t("reports.updateReport") 
+                : t("reports.submitReport")
+            }
           </Button>
         </DialogActions>
       </Dialog>
