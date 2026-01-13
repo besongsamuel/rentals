@@ -69,9 +69,28 @@ const RevenueStep: React.FC<RevenueStepProps> = ({
 
   return (
     <Box sx={{ py: 2 }}>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 500 }}>
+      <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
         {t("reports.revenue")}
       </Typography>
+      
+      {/* Important Helper Text */}
+      <Box
+        sx={{
+          mb: 3,
+          p: 2,
+          backgroundColor: "rgba(255, 152, 0, 0.1)",
+          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "warning.main",
+        }}
+      >
+        <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>
+          {t("reports.revenueStepImportant")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {t("reports.revenueStepHelper")}
+        </Typography>
+      </Box>
 
       {/* Revenue Type Indicator */}
       <Box

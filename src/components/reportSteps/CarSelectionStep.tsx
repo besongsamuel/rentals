@@ -62,8 +62,11 @@ const CarSelectionStep: React.FC<CarSelectionStepProps> = ({
 
   return (
     <Box sx={{ py: 2 }}>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 500 }}>
+      <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
         {t("reports.selectCar")}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        {t("reports.selectCarHelper")}
       </Typography>
       <FormControl fullWidth required>
         <InputLabel>{t("cars.title")}</InputLabel>

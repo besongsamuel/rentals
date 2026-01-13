@@ -19,8 +19,11 @@ const MileageStep: React.FC<MileageStepProps> = ({
 
   return (
     <Box sx={{ py: 2 }}>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 500 }}>
+      <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
         {t("reports.mileage")}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        {t("reports.mileageHelper")}
       </Typography>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

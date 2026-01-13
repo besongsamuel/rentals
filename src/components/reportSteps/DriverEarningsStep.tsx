@@ -17,8 +17,11 @@ const DriverEarningsStep: React.FC<DriverEarningsStepProps> = ({
 
   return (
     <Box sx={{ py: 2 }}>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 500 }}>
+      <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
         {t("reports.driverEarnings")}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        {t("reports.driverEarningsStepHelper")}
       </Typography>
 
       <TextField

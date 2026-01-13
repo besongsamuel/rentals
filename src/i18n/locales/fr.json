@@ -432,7 +432,15 @@
     "confirmSaveDraft": "Enregistrer comme brouillon?",
     "confirmSaveDraftMessage": "Enregistrer ce rapport comme brouillon? Vous pourrez le soumettre plus tard quand il sera prêt.",
     "saveAsDraft": "Enregistrer comme brouillon",
-    "submitReportConfirmation": "Êtes-vous sûr de vouloir soumettre ce rapport hebdomadaire? Une fois soumis, vous ne pourrez plus le modifier."
+    "submitReportConfirmation": "Êtes-vous sûr de vouloir soumettre ce rapport hebdomadaire? Une fois soumis, vous ne pourrez plus le modifier.",
+    "selectCarHelper": "Sélectionnez la voiture pour ce rapport hebdomadaire. Le kilométrage sera calculé automatiquement en fonction des rapports précédents.",
+    "selectWeekHelper": "Sélectionnez la période de la semaine pour ce rapport. Utilisez les boutons de navigation pour naviguer entre les semaines, ou sélectionnez manuellement les dates.",
+    "mileageHelper": "Entrez les lectures de l'odomètre au début et à la fin de la semaine. La distance totale sera calculée automatiquement.",
+    "maintenanceStepHelper": "Indiquez s'il y a eu des dépenses de maintenance ou de réparation cette semaine. Si oui, entrez le montant total dépensé.",
+    "gasExpenseStepHelper": "Entrez le montant total dépensé en carburant (essence) pour cette semaine. Cela comprend tous les achats de carburant pendant la période de rapport.",
+    "revenueStepImportant": "Important: Revenus nets",
+    "revenueStepHelper": "Entrez les revenus NETS (revenu total excluant les dépenses d'essence, les dépenses de maintenance et les gains du conducteur). Il s'agit du gain net donné au propriétaire de la voiture après toutes les déductions.",
+    "driverEarningsStepHelper": "Entrez le montant total payé au conducteur pour cette semaine. Ceci est séparé du revenu et sera déduit lors du calcul du bénéfice net."
   },
   "incomeSources": {
     "title": "Sources de revenus",

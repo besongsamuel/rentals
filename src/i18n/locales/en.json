@@ -497,7 +497,15 @@
     "confirmSaveDraft": "Save as Draft?",
     "confirmSaveDraftMessage": "Save this report as a draft? You can submit it later when ready.",
     "saveAsDraft": "Save as Draft",
-    "submitReportConfirmation": "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it."
+    "submitReportConfirmation": "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it.",
+    "selectCarHelper": "Select the car for this weekly report. The mileage will be automatically calculated based on previous reports.",
+    "selectWeekHelper": "Select the week period for this report. Use the navigation buttons to move between weeks, or manually select dates.",
+    "mileageHelper": "Enter the odometer readings at the start and end of the week. The total distance will be calculated automatically.",
+    "maintenanceStepHelper": "Indicate if there were any maintenance or repair expenses during this week. If yes, enter the total amount spent.",
+    "gasExpenseStepHelper": "Enter the total amount spent on fuel (gas) for this week. This includes all fuel purchases during the reporting period.",
+    "revenueStepImportant": "Important: Net Revenue",
+    "revenueStepHelper": "Enter the NET revenue (total income excluding gas expenses, maintenance expenses, and driver earnings). This is the net gain given to the car owner after all deductions.",
+    "driverEarningsStepHelper": "Enter the total amount paid to the driver for this week. This is separate from the revenue and will be deducted when calculating net profit."
   },
   "incomeSources": {
     "title": "Income Sources",
