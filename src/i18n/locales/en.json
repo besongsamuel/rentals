@@ -493,7 +493,11 @@
     "confirmSubmitReport": "Submit Report?",
     "confirmUpdateReport": "Update Report?",
     "confirmSubmitReportMessage": "Are you sure you want to submit this report? You can edit it later if needed.",
-    "confirmUpdateReportMessage": "Are you sure you want to update this report? Changes will be saved immediately."
+    "confirmUpdateReportMessage": "Are you sure you want to update this report? Changes will be saved immediately.",
+    "confirmSaveDraft": "Save as Draft?",
+    "confirmSaveDraftMessage": "Save this report as a draft? You can submit it later when ready.",
+    "saveAsDraft": "Save as Draft",
+    "submitReportConfirmation": "Are you sure you want to submit this weekly report? Once submitted, you won't be able to edit it."
   },
   "incomeSources": {
     "title": "Income Sources",

@@ -7,6 +7,11 @@ import {
   CardContent,
   Chip,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   Typography,
 } from "@mui/material";
@@ -48,6 +53,8 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
   const [expandedReports, setExpandedReports] = useState<Set<string>>(
     new Set()
   );
+  const [submitConfirmDialogOpen, setSubmitConfirmDialogOpen] = useState(false);
+  const [reportToSubmit, setReportToSubmit] = useState<string | null>(null);
 
   // Sort reports chronologically and calculate mileage gaps
   const sortedReports = [...weeklyReports].sort((a, b) => {
@@ -475,7 +482,10 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
                   size="small"
                   variant="contained"
                   color="primary"
-                  onClick={() => onSubmitReport(report.id)}
+                  onClick={() => {
+                    setReportToSubmit(report.id);
+                    setSubmitConfirmDialogOpen(true);
+                  }}
                   disabled={!reportsWithIncomeSources.has(report.id)}
                   title={
                     !reportsWithIncomeSources.has(report.id)
@@ -551,6 +561,37 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
           }}
         />
       )}
+
+      {/* Submit Confirmation Dialog */}
+      <Dialog
+        open={submitConfirmDialogOpen}
+        onClose={() => setSubmitConfirmDialogOpen(false)}
+      >
+        <DialogTitle>{t("reports.confirmSubmitReport")}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {t("reports.submitReportConfirmation")}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSubmitConfirmDialogOpen(false)}>
+            {t("common.cancel")}
+          </Button>
+          <Button
+            onClick={() => {
+              if (reportToSubmit && onSubmitReport) {
+                onSubmitReport(reportToSubmit);
+                setSubmitConfirmDialogOpen(false);
+                setReportToSubmit(null);
+              }
+            }}
+            variant="contained"
+            color="primary"
+          >
+            {t("reports.submit")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

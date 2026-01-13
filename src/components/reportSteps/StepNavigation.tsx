@@ -137,7 +137,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
               minWidth: { xs: "auto", sm: 120 },
             }}
           >
-            {isLastStep ? t("reports.submitReport") : t("common.next")}
+            {isLastStep ? t("reports.saveAsDraft") : t("common.next")}
           </Button>
         </Box>
       </Box>

@@ -428,7 +428,11 @@
     "confirmSubmitReport": "Soumettre le rapport?",
     "confirmUpdateReport": "Mettre à jour le rapport?",
     "confirmSubmitReportMessage": "Êtes-vous sûr de vouloir soumettre ce rapport? Vous pourrez le modifier plus tard si nécessaire.",
-    "confirmUpdateReportMessage": "Êtes-vous sûr de vouloir mettre à jour ce rapport? Les modifications seront enregistrées immédiatement."
+    "confirmUpdateReportMessage": "Êtes-vous sûr de vouloir mettre à jour ce rapport? Les modifications seront enregistrées immédiatement.",
+    "confirmSaveDraft": "Enregistrer comme brouillon?",
+    "confirmSaveDraftMessage": "Enregistrer ce rapport comme brouillon? Vous pourrez le soumettre plus tard quand il sera prêt.",
+    "saveAsDraft": "Enregistrer comme brouillon",
+    "submitReportConfirmation": "Êtes-vous sûr de vouloir soumettre ce rapport hebdomadaire? Une fois soumis, vous ne pourrez plus le modifier."
   },
   "incomeSources": {
     "title": "Sources de revenus",

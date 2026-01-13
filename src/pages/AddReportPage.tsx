@@ -511,20 +511,20 @@ const AddReportPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Submit Confirmation Dialog */}
+      {/* Save as Draft Confirmation Dialog */}
       <Dialog 
         open={showSubmitDialog} 
         onClose={() => !submitting && setShowSubmitDialog(false)}
         disableEscapeKeyDown={submitting}
       >
         <DialogTitle>
-          {isEditMode ? t("reports.confirmUpdateReport") : t("reports.confirmSubmitReport")}
+          {isEditMode ? t("reports.confirmUpdateReport") : t("reports.confirmSaveDraft")}
         </DialogTitle>
         <DialogContent>
           <Typography>
             {isEditMode 
               ? t("reports.confirmUpdateReportMessage")
-              : t("reports.confirmSubmitReportMessage")
+              : t("reports.confirmSaveDraftMessage")
             }
           </Typography>
         </DialogContent>
@@ -545,7 +545,7 @@ const AddReportPage: React.FC = () => {
               ? t("common.saving") 
               : isEditMode 
                 ? t("reports.updateReport") 
-                : t("reports.submitReport")
+                : t("reports.saveAsDraft")
             }
           </Button>
         </DialogActions>
