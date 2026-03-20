@@ -1,5 +1,5 @@
-import { Add, Upload } from "@mui/icons-material";
-import { Alert, Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { Add, EventBusy, Upload } from "@mui/icons-material";
+import { Alert, Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import BasicInformation from "../components/BasicInformation";
 import DriverDetail from "../components/DriverDetail";
 import SkeletonLoader from "../components/SkeletonLoader";
 import VerificationBadge from "../components/VerificationBadge";
+import MissingWeeksDialog from "../components/MissingWeeksDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
@@ -32,6 +33,7 @@ const DriverDashboard: React.FC = () => {
   const [reportsWithIncomeSources, setReportsWithIncomeSources] = useState<
     Set<string>
   >(new Set());
+  const [missingWeeksOpen, setMissingWeeksOpen] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
   const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
@@ -314,19 +316,36 @@ const DriverDashboard: React.FC = () => {
               <Typography variant="h5" sx={{ fontWeight: 400 }}>
                 {t("reports.weeklyReports")}
               </Typography>
-              <Button
-                variant="contained"
-                startIcon={<Add />}
-                onClick={() => {
-                  navigate("/reports/add");
-                }}
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
                 sx={{
-                  minWidth: { xs: "100%", sm: "auto" },
+                  width: { xs: "100%", sm: "auto" },
                   order: { xs: -1, sm: 0 },
                 }}
               >
-                {t("reports.addReport")}
-              </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  onClick={() => {
+                    navigate("/reports/add");
+                  }}
+                  sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
+                >
+                  {t("reports.addReport")}
+                </Button>
+                {assignedCars.length > 0 && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<EventBusy />}
+                    onClick={() => setMissingWeeksOpen(true)}
+                    sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
+                  >
+                    {t("reports.missingWeeksShort")}
+                  </Button>
+                )}
+              </Stack>
             </Box>
 
             {weeklyReports.length === 0 ? (
@@ -361,6 +380,14 @@ const DriverDashboard: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
+
+      <MissingWeeksDialog
+        open={missingWeeksOpen}
+        onClose={() => setMissingWeeksOpen(false)}
+        carId={null}
+        cars={assignedCars}
+        driverReports={weeklyReports}
+      />
 
       {/* Weekly Report Dialog */}
       <WeeklyReportDialog

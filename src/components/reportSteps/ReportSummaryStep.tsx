@@ -20,6 +20,14 @@ interface ReportSummaryStepProps {
   onEditStep: (stepIndex: number) => void;
 }
 
+const toAmount = (value: unknown): number => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+  const n = parseFloat(String(value ?? ""));
+  return Number.isFinite(n) ? n : 0;
+};
+
 const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
   car,
   weekStartDate,
@@ -37,10 +45,15 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const totalDistance = endMileage > startMileage ? endMileage - startMileage : 0;
-  const totalRevenue = (rideShareIncome || 0) + (rentalIncome || 0) + (taxiIncome || 0);
-  const totalExpenses = (maintenanceExpenses || 0) + (gasExpense || 0);
-  const netProfit = totalRevenue - totalExpenses - (driverEarnings || 0);
+  const totalDistance =
+    endMileage > startMileage ? endMileage - startMileage : 0;
+  const rs = toAmount(rideShareIncome);
+  const ri = toAmount(rentalIncome);
+  const ti = toAmount(taxiIncome);
+  const totalRevenue = rs + ri + ti;
+  const totalExpenses = toAmount(maintenanceExpenses) + toAmount(gasExpense);
+  const driverPay = toAmount(driverEarnings);
+  const netProfit = totalRevenue - totalExpenses - driverPay;
 
   const SummarySection: React.FC<{
     title: string;
@@ -138,13 +151,13 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body2">{t("reports.maintenanceExpenses")}</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {currency} {maintenanceExpenses || 0}
+                {currency} {toAmount(maintenanceExpenses).toFixed(2)}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body2">{t("reports.gasExpense")}</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {currency} {gasExpense || 0}
+                {currency} {toAmount(gasExpense).toFixed(2)}
               </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
@@ -153,7 +166,7 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
                 {t("reports.totalExpenses")}
               </Typography>
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                {currency} {totalExpenses}
+                {currency} {totalExpenses.toFixed(2)}
               </Typography>
             </Box>
           </Box>
@@ -165,19 +178,19 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body2">{t("reports.rideShareIncome")}</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {currency} {rideShareIncome || 0}
+                {currency} {rs.toFixed(2)}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body2">{t("reports.rentalIncome")}</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {currency} {rentalIncome || 0}
+                {currency} {ri.toFixed(2)}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="body2">{t("reports.taxiIncome")}</Typography>
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {currency} {taxiIncome || 0}
+                {currency} {ti.toFixed(2)}
               </Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
@@ -186,7 +199,7 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
                 {t("reports.totalRevenue")}
               </Typography>
               <Typography variant="body1" sx={{ fontWeight: 600, color: "success.main" }}>
-                {currency} {totalRevenue}
+                {currency} {totalRevenue.toFixed(2)}
               </Typography>
             </Box>
           </Box>
@@ -195,7 +208,7 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
         {/* Driver Earnings */}
         <SummarySection title={t("reports.driverEarnings")} stepIndex={6}>
           <Typography variant="body1" sx={{ fontWeight: 500 }}>
-            {currency} {driverEarnings || 0}
+            {currency} {driverPay.toFixed(2)}
           </Typography>
         </SummarySection>
 
@@ -220,6 +233,13 @@ const ReportSummaryStep: React.FC<ReportSummaryStepProps> = ({
             }}
           >
             {currency} {netProfit.toFixed(2)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+            {t("reports.summaryNetProfitFormula", {
+              rev: `${currency} ${totalRevenue.toFixed(2)}`,
+              exp: `${currency} ${totalExpenses.toFixed(2)}`,
+              drv: `${currency} ${driverPay.toFixed(2)}`,
+            })}
           </Typography>
         </Box>
       </Box>

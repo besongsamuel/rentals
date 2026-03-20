@@ -143,6 +143,60 @@ export const navigateWeek = (
   };
 };
 
+export type WeekRange = {
+  weekStart: string;
+  weekEnd: string;
+};
+
+/**
+ * Monday-start weeks in the last `lookbackWeeks` that have no report for this car.
+ * Newest missing week first.
+ */
+export const getMissingWeekRangesForCar = (
+  carId: string,
+  reports: Array<{ car_id: string; week_start_date: string }>,
+  lookbackWeeks = 52
+): WeekRange[] => {
+  const existing = new Set(
+    reports
+      .filter((r) => r.car_id === carId)
+      .map((r) => String(r.week_start_date).trim().split("T")[0].split(" ")[0])
+  );
+
+  const todayNoon = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    new Date().getDate(),
+    12,
+    0,
+    0
+  );
+  const currentMonday = getWeekStart(todayNoon);
+  const missing: WeekRange[] = [];
+
+  for (let w = 0; w < lookbackWeeks; w++) {
+    const monday = new Date(
+      currentMonday.getFullYear(),
+      currentMonday.getMonth(),
+      currentMonday.getDate() - w * 7,
+      12,
+      0,
+      0
+    );
+    const weekStartDate = getWeekStart(monday);
+    const startStr = formatDateForInput(weekStartDate);
+    if (!existing.has(startStr)) {
+      const weekEndDate = getWeekEnd(weekStartDate);
+      missing.push({
+        weekStart: startStr,
+        weekEnd: formatDateForInput(weekEndDate),
+      });
+    }
+  }
+
+  return missing;
+};
+
 // Helper function to calculate mileage for new report
 export const calculateMileageForNewReport = (
   carId: string,

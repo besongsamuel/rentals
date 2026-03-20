@@ -34,6 +34,7 @@ import { Car, CreateWeeklyReportData, WeeklyReport } from "../types";
 import {
   calculateMileageForNewReport,
   getCurrentWeek,
+  parseLocalDateOnly,
 } from "../utils/dateHelpers";
 
 function weeklyReportSaveErrorMessage(err: unknown, t: TFunction): string {
@@ -62,6 +63,8 @@ const AddReportPage: React.FC = () => {
 
   const isEditMode = !!reportId;
   const preSelectedCarId = searchParams.get("car_id") || "";
+  const preWeekStart = (searchParams.get("week_start") || "").trim();
+  const preWeekEnd = (searchParams.get("week_end") || "").trim();
 
   // State
   const [loading, setLoading] = useState(true);
@@ -171,29 +174,39 @@ const AddReportPage: React.FC = () => {
           driver_id: report.driver_id,
         });
       } else {
-        // Initialize with current week for new report
         const currentWeek = getCurrentWeek();
-        const selectedCarId = preSelectedCarId || (carsData.length === 1 ? carsData[0].id : "");
-        
+        const hasPresetWeek =
+          Boolean(preWeekStart && preWeekEnd) &&
+          Boolean(parseLocalDateOnly(preWeekStart)) &&
+          Boolean(parseLocalDateOnly(preWeekEnd));
+        const initialWeek = hasPresetWeek
+          ? {
+              start: preWeekStart.split("T")[0],
+              end: preWeekEnd.split("T")[0],
+            }
+          : currentWeek;
+
+        const selectedCarId =
+          preSelectedCarId || (carsData.length === 1 ? carsData[0].id : "");
+
         if (selectedCarId && carsData.length > 0) {
-          // Load reports for mileage calculation if driver
           let reports: WeeklyReport[] = [];
           if (profile.user_type === "driver") {
             reports = await weeklyReportService.getReportsByDriver(profile.id);
             setExistingReports(reports);
           }
-          
+
           const mileage = calculateMileageForNewReport(
             selectedCarId,
             carsData,
             reports
           );
-          
+
           setFormData((prev) => ({
             ...prev,
             car_id: selectedCarId,
-            week_start_date: currentWeek.start,
-            week_end_date: currentWeek.end,
+            week_start_date: initialWeek.start,
+            week_end_date: initialWeek.end,
             start_mileage: mileage.startMileage,
             end_mileage: mileage.endMileage,
             driver_id: profile.id,
@@ -201,8 +214,8 @@ const AddReportPage: React.FC = () => {
         } else {
           setFormData((prev) => ({
             ...prev,
-            week_start_date: currentWeek.start,
-            week_end_date: currentWeek.end,
+            week_start_date: initialWeek.start,
+            week_end_date: initialWeek.end,
             driver_id: profile.id,
           }));
         }
@@ -213,7 +226,15 @@ const AddReportPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [profile, isEditMode, reportId, preSelectedCarId, t]);
+  }, [
+    profile,
+    isEditMode,
+    reportId,
+    preSelectedCarId,
+    preWeekStart,
+    preWeekEnd,
+    t,
+  ]);
 
   useEffect(() => {
     loadData();
@@ -611,7 +632,9 @@ const AddReportPage: React.FC = () => {
               weekEndDate={formData.week_end_date}
               startMileage={formData.start_mileage}
               endMileage={formData.end_mileage}
-              maintenanceExpenses={formData.maintenance_expenses}
+              maintenanceExpenses={
+                formData.has_maintenance ? formData.maintenance_expenses : 0
+              }
               gasExpense={formData.gas_expense}
               rideShareIncome={formData.ride_share_income}
               rentalIncome={formData.rental_income}

@@ -3,6 +3,7 @@ import {
   ArrowBack,
   AttachMoney,
   Edit,
+  EventBusy,
   FilterList,
   Home,
   Settings,
@@ -37,6 +38,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
+import MissingWeeksDialog from "../components/MissingWeeksDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
@@ -80,6 +82,7 @@ const CarReports: React.FC = () => {
     driver_earnings: 0,
     maintenance_expenses: 0,
   });
+  const [missingWeeksOpen, setMissingWeeksOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<{
     type: "submit" | "approve";
@@ -421,9 +424,33 @@ const CarReports: React.FC = () => {
                         bgcolor: "primary.main",
                         color: "white",
                         "&:hover": { bgcolor: "primary.dark" },
+                        minWidth: 44,
+                        minHeight: 44,
                       }}
                     >
                       <Add />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {(profile?.user_type === "driver" ||
+                  (profile?.user_type === "owner" &&
+                    car.owner_id === profile.id)) && (
+                  <Tooltip title={t("reports.missingWeeksButtonTooltip")}>
+                    <IconButton
+                      color="primary"
+                      onClick={() => setMissingWeeksOpen(true)}
+                      sx={{
+                        border: "1px solid",
+                        borderColor: "primary.main",
+                        minWidth: 44,
+                        minHeight: 44,
+                        "&:hover": {
+                          backgroundColor: "primary.main",
+                          color: "white",
+                        },
+                      }}
+                    >
+                      <EventBusy />
                     </IconButton>
                   </Tooltip>
                 )}
@@ -895,6 +922,13 @@ const CarReports: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <MissingWeeksDialog
+        open={missingWeeksOpen}
+        onClose={() => setMissingWeeksOpen(false)}
+        carId={carId || null}
+        cars={car ? [car] : []}
+      />
 
       {/* Earnings Details Dialog */}
       <EarningsDetailsDialog

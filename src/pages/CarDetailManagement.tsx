@@ -1,4 +1,4 @@
-import { Add, ArrowBack, Edit } from "@mui/icons-material";
+import { Add, ArrowBack, Edit, EventBusy } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -32,6 +32,7 @@ import CarOwners from "../components/CarOwners";
 import CarStatistics from "../components/CarStatistics";
 import DriverAssignment from "../components/DriverAssignment";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
+import MissingWeeksDialog from "../components/MissingWeeksDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import {
@@ -66,6 +67,7 @@ const CarDetailManagement: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
     null
   );
+  const [missingWeeksOpen, setMissingWeeksOpen] = useState(false);
   const [terminateOpen, setTerminateOpen] = useState(false);
   const [terminationReason, setTerminationReason] =
     useState<TerminationReason>("contract_completed");
@@ -487,14 +489,27 @@ const CarDetailManagement: React.FC = () => {
                 {(profile?.user_type === "driver" ||
                   (profile?.user_type === "owner" &&
                     car?.owner_id === profile.id)) && (
-                  <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={handleAddNewReport}
-                    size="small"
-                  >
-                    {t("carManagement.addNewReport")}
-                  </Button>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    <Button
+                      variant="contained"
+                      startIcon={<Add />}
+                      onClick={handleAddNewReport}
+                      size="small"
+                      sx={{ minHeight: 44 }}
+                    >
+                      {t("carManagement.addNewReport")}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      startIcon={<EventBusy />}
+                      onClick={() => setMissingWeeksOpen(true)}
+                      size="small"
+                      sx={{ minHeight: 44 }}
+                    >
+                      {t("reports.missingWeeksShort")}
+                    </Button>
+                  </Box>
                 )}
               </Box>
 
@@ -649,6 +664,13 @@ const CarDetailManagement: React.FC = () => {
         open={earningsDialogOpen}
         onClose={handleCloseEarningsDialog}
         weeklyReport={selectedReport}
+      />
+
+      <MissingWeeksDialog
+        open={missingWeeksOpen}
+        onClose={() => setMissingWeeksOpen(false)}
+        carId={carId || null}
+        cars={car ? [car] : []}
       />
 
       {/* Terminate/Complete Contract Dialog */}
