@@ -23,7 +23,16 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Car, CreateWeeklyReportData, WeeklyReport } from "../types";
+import {
+  formatDateForInput,
+  getCurrentWeek,
+  getWeekEnd,
+  getWeekStart,
+  navigateWeek,
+  parseLocalDateOnly,
+} from "../utils/dateHelpers";
 import ErrorAlert from "./ErrorAlert";
+import RelativeWeekBanner from "./reportSteps/RelativeWeekBanner";
 
 interface WeeklyReportDialogProps {
   open: boolean;
@@ -57,59 +66,6 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
   const [dailyDate, setDailyDate] = useState<string>("");
   // Selected driver (for owners creating reports)
   const [selectedDriverId, setSelectedDriverId] = useState<string>("");
-
-  // Helper function to get the start of the week (Sunday)
-  const getWeekStart = useCallback((date: Date): Date => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day; // Sunday is 0
-    return new Date(d.setDate(diff));
-  }, []);
-
-  // Helper function to get the end of the week (Saturday)
-  const getWeekEnd = useCallback(
-    (date: Date): Date => {
-      const weekStart = getWeekStart(date);
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      return weekEnd;
-    },
-    [getWeekStart]
-  );
-
-  // Helper function to format date as YYYY-MM-DD
-  const formatDateForInput = useCallback((date: Date): string => {
-    return date.toISOString().split("T")[0];
-  }, []);
-
-  // Helper function to get current week dates
-  const getCurrentWeek = useCallback(() => {
-    const today = new Date();
-    const weekStart = getWeekStart(today);
-    const weekEnd = getWeekEnd(today);
-    return {
-      start: formatDateForInput(weekStart),
-      end: formatDateForInput(weekEnd),
-    };
-  }, [getWeekStart, getWeekEnd, formatDateForInput]);
-
-  // Helper function to navigate to previous/next week
-  const navigateWeek = (
-    currentStartDate: string,
-    direction: "prev" | "next"
-  ) => {
-    const currentDate = new Date(currentStartDate);
-    const newDate = new Date(currentDate);
-    newDate.setDate(currentDate.getDate() + (direction === "next" ? 7 : -7));
-
-    const weekStart = getWeekStart(newDate);
-    const weekEnd = getWeekEnd(newDate);
-
-    return {
-      start: formatDateForInput(weekStart),
-      end: formatDateForInput(weekEnd),
-    };
-  };
 
   const [formData, setFormData] = useState({
     car_id: "",
@@ -227,8 +183,6 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
     editingReport,
     assignedCars,
     existingReports,
-    getCurrentWeek,
-    formatDateForInput,
     calculateMileageForNewReport,
     userType,
     currentUserId,
@@ -404,9 +358,8 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
       }));
     } else {
       // revert to the current week window based on existing start date or today
-      const base = formData.week_start_date
-        ? new Date(formData.week_start_date)
-        : new Date();
+      const base =
+        parseLocalDateOnly(formData.week_start_date) ?? new Date();
       const start = formatDateForInput(getWeekStart(base));
       const end = formatDateForInput(getWeekEnd(base));
       setFormData((prev) => ({
@@ -582,6 +535,7 @@ const WeeklyReportDialog: React.FC<WeeklyReportDialogProps> = ({
                       {t("reports.nextWeek")}
                     </Button>
                   </Box>
+                  <RelativeWeekBanner weekStartDate={formData.week_start_date} />
                 </Box>
               </Grid>
             )}

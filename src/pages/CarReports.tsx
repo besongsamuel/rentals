@@ -44,12 +44,13 @@ import { carService } from "../services/carService";
 import { profileService } from "../services/profileService";
 import { weeklyReportService } from "../services/weeklyReportService";
 import { Car, Profile, WeeklyReport } from "../types";
+import { formatSqlDateOnlyForDisplay } from "../utils/dateHelpers";
 
 const CarReports: React.FC = () => {
   const { carId } = useParams<{ carId: string }>();
   const navigate = useNavigate();
   const { user, profile } = useUserContext();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [car, setCar] = useState<Car | null>(null);
@@ -607,13 +608,15 @@ const CarReports: React.FC = () => {
                                 {t("reports.weekPeriod")}
                               </Typography>
                               <Typography variant="body2">
-                                {new Date(
-                                  report.week_start_date
-                                ).toLocaleDateString()}{" "}
+                                {formatSqlDateOnlyForDisplay(
+                                  report.week_start_date,
+                                  i18n.language
+                                )}{" "}
                                 -{" "}
-                                {new Date(
-                                  report.week_end_date
-                                ).toLocaleDateString()}
+                                {formatSqlDateOnlyForDisplay(
+                                  report.week_end_date,
+                                  i18n.language
+                                )}
                               </Typography>
                             </Box>
 

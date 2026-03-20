@@ -90,6 +90,13 @@ const RevenueStep: React.FC<RevenueStepProps> = ({
         <Typography variant="body2" color="text.secondary">
           {t("reports.revenueStepHelper")}
         </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mt: 1.5, fontStyle: "italic" }}
+        >
+          {t("reports.revenueSentToOwnerNote")}
+        </Typography>
       </Box>
 
       {/* Revenue Type Indicator */}

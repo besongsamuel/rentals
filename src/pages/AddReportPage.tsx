@@ -1,5 +1,6 @@
 import { ArrowBack } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -11,6 +12,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import type { TFunction } from "i18next";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -29,7 +31,27 @@ import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
 import { weeklyReportService } from "../services/weeklyReportService";
 import { Car, CreateWeeklyReportData, WeeklyReport } from "../types";
-import { calculateMileageForNewReport, getCurrentWeek } from "../utils/dateHelpers";
+import {
+  calculateMileageForNewReport,
+  getCurrentWeek,
+} from "../utils/dateHelpers";
+
+function weeklyReportSaveErrorMessage(err: unknown, t: TFunction): string {
+  if (err && typeof err === "object") {
+    const o = err as { code?: string; message?: string; details?: string };
+    if (o.code === "23505") {
+      return t("reports.saveReportErrorDuplicateWeek");
+    }
+    const combined = [o.message, o.details].filter(Boolean).join(" — ");
+    if (combined) {
+      return combined;
+    }
+  }
+  if (err instanceof Error && err.message) {
+    return err.message;
+  }
+  return t("errors.generic");
+}
 
 const AddReportPage: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
@@ -50,6 +72,9 @@ const AddReportPage: React.FC = () => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [weekConflictReport, setWeekConflictReport] =
+    useState<WeeklyReport | null>(null);
+  const [checkingWeekConflict, setCheckingWeekConflict] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -210,31 +235,87 @@ const AddReportPage: React.FC = () => {
     }
   }, [formData.car_id, cars, isEditMode, existingReports]);
 
+  useEffect(() => {
+    if (!formData.car_id || !formData.week_start_date) {
+      setWeekConflictReport(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    const checkWeek = async () => {
+      setCheckingWeekConflict(true);
+      try {
+        const reports = await weeklyReportService.getReportsByCar(
+          formData.car_id
+        );
+        if (cancelled) {
+          return;
+        }
+        const match = reports.find(
+          (r) => r.week_start_date === formData.week_start_date
+        );
+        if (
+          match &&
+          (!isEditMode || match.id !== editingReport?.id)
+        ) {
+          setWeekConflictReport(match);
+        } else {
+          setWeekConflictReport(null);
+        }
+      } catch (e) {
+        console.error("Error checking week conflict:", e);
+        if (!cancelled) {
+          setWeekConflictReport(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setCheckingWeekConflict(false);
+        }
+      }
+    };
+
+    checkWeek();
+    return () => {
+      cancelled = true;
+    };
+  }, [formData.car_id, formData.week_start_date, isEditMode, editingReport]);
+
   // Validation
   const validateStep = (step: number): boolean => {
     const actualStep = needsCarSelection ? step : step + 1;
+
+    const blockedByWeekConflict =
+      !!weekConflictReport || checkingWeekConflict;
 
     switch (actualStep) {
       case 0: // Car selection
         return !!formData.car_id;
       case 1: // Date selection
-        return !!(formData.week_start_date && formData.week_end_date);
+        return (
+          !!(formData.week_start_date && formData.week_end_date) &&
+          !blockedByWeekConflict
+        );
       case 2: // Mileage
         return (
+          !blockedByWeekConflict &&
           formData.start_mileage >= 0 &&
           formData.end_mileage >= 0 &&
           formData.end_mileage >= formData.start_mileage
         );
       case 3: // Maintenance
-        return !formData.has_maintenance || formData.maintenance_expenses >= 0;
+        return (
+          !blockedByWeekConflict &&
+          (!formData.has_maintenance || formData.maintenance_expenses >= 0)
+        );
       case 4: // Gas expense
-        return formData.gas_expense >= 0;
+        return !blockedByWeekConflict && formData.gas_expense >= 0;
       case 5: // Revenue (always valid, can be 0)
-        return true;
+        return !blockedByWeekConflict;
       case 6: // Driver earnings
-        return formData.driver_earnings >= 0;
+        return !blockedByWeekConflict && formData.driver_earnings >= 0;
       case 7: // Summary (always valid)
-        return true;
+        return !blockedByWeekConflict;
       default:
         return true;
     }
@@ -250,7 +331,7 @@ const AddReportPage: React.FC = () => {
       setCurrentStep(currentStep + 1);
       setError("");
     } else {
-      // Show confirmation dialog before submitting
+      setError("");
       setShowSubmitDialog(true);
     }
   };
@@ -280,7 +361,6 @@ const AddReportPage: React.FC = () => {
 
     setError("");
     setSubmitting(true);
-    setShowSubmitDialog(false);
 
     try {
       const reportData: CreateWeeklyReportData = {
@@ -307,11 +387,12 @@ const AddReportPage: React.FC = () => {
         });
       }
 
-      // Navigate back
+      setShowSubmitDialog(false);
       navigate(-1);
     } catch (err) {
       console.error("Error saving report:", err);
-      setError(err instanceof Error ? err.message : t("errors.generic"));
+      setError(weeklyReportSaveErrorMessage(err, t));
+    } finally {
       setSubmitting(false);
     }
   };
@@ -321,6 +402,7 @@ const AddReportPage: React.FC = () => {
   }
 
   const selectedCar = cars.find((c) => c.id === formData.car_id);
+  const dateStepIndex = needsCarSelection ? 1 : 0;
 
   return (
     <Box
@@ -351,8 +433,8 @@ const AddReportPage: React.FC = () => {
           </Box>
         </Paper>
 
-        {/* Error Alert */}
-        {error && (
+        {/* Error Alert (hidden while save dialog is open — same message is shown in the dialog) */}
+        {error && !showSubmitDialog && (
           <Box sx={{ mb: 2 }}>
             <ErrorAlert message={error} />
           </Box>
@@ -369,6 +451,34 @@ const AddReportPage: React.FC = () => {
             minHeight: 400,
           }}
         >
+          {weekConflictReport && currentStep !== dateStepIndex && (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {t("reports.weekAlreadyHasReport")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                {t("reports.weekConflictSelectOtherOrEdit")}
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setCurrentStep(dateStepIndex)}
+                >
+                  {t("reports.backToWeekSelection")}
+                </Button>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() =>
+                    navigate(`/reports/edit/${weekConflictReport.id}`)
+                  }
+                >
+                  {t("reports.editExistingReport")}
+                </Button>
+              </Box>
+            </Alert>
+          )}
           {needsCarSelection && currentStep === 0 && (
             <CarSelectionStep
               cars={cars}
@@ -381,17 +491,48 @@ const AddReportPage: React.FC = () => {
           )}
 
           {(needsCarSelection ? currentStep === 1 : currentStep === 0) && (
-            <DateSelectionStep
-              weekStartDate={formData.week_start_date}
-              weekEndDate={formData.week_end_date}
-              onDateChange={(start, end) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  week_start_date: start,
-                  week_end_date: end,
-                }))
-              }
-            />
+            <Box>
+              {checkingWeekConflict && (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 2 }}
+                >
+                  {t("reports.checkingWeekAvailability")}
+                </Typography>
+              )}
+              {weekConflictReport && (
+                <Alert severity="warning" sx={{ mb: 2 }}>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    {t("reports.weekAlreadyHasReport")}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t("reports.weekConflictSelectOtherOrEdit")}
+                  </Typography>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    sx={{ mt: 2 }}
+                    onClick={() =>
+                      navigate(`/reports/edit/${weekConflictReport.id}`)
+                    }
+                  >
+                    {t("reports.editExistingReport")}
+                  </Button>
+                </Alert>
+              )}
+              <DateSelectionStep
+                weekStartDate={formData.week_start_date}
+                weekEndDate={formData.week_end_date}
+                onDateChange={(start, end) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    week_start_date: start,
+                    week_end_date: end,
+                  }))
+                }
+              />
+            </Box>
           )}
 
           {(needsCarSelection ? currentStep === 2 : currentStep === 1) && (
@@ -527,6 +668,11 @@ const AddReportPage: React.FC = () => {
               : t("reports.confirmSaveDraftMessage")
             }
           </Typography>
+          {error && (
+            <Box sx={{ mt: 2 }}>
+              <ErrorAlert message={error} />
+            </Box>
+          )}
         </DialogContent>
         <DialogActions>
           <Button 

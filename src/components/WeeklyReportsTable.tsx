@@ -18,6 +18,7 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Profile, WeeklyReport } from "../types";
+import { formatSqlDateOnlyForDisplay } from "../utils/dateHelpers";
 import EarningsDetailsDialog from "./EarningsDetailsDialog";
 import MessagesManager from "./MessagesManager";
 
@@ -42,7 +43,7 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
   profile,
   reportsWithIncomeSources,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [earningsDialogOpen, setEarningsDialogOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(
     null
@@ -56,24 +57,23 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
   const [submitConfirmDialogOpen, setSubmitConfirmDialogOpen] = useState(false);
   const [reportToSubmit, setReportToSubmit] = useState<string | null>(null);
 
-  // Sort reports chronologically and calculate mileage gaps
-  const sortedReports = [...weeklyReports].sort((a, b) => {
-    return (
-      new Date(a.week_start_date).getTime() -
-      new Date(b.week_start_date).getTime()
-    );
-  });
+  // Oldest → newest for mileage gap detection (each row vs prior week)
+  const reportsChronologicalAsc = [...weeklyReports].sort((a, b) =>
+    String(a.week_start_date).localeCompare(String(b.week_start_date))
+  );
 
-  // Calculate mileage gaps between consecutive reports
   const mileageGaps = new Map<string, number>();
-  for (let i = 1; i < sortedReports.length; i++) {
-    const currentReport = sortedReports[i];
-    const previousReport = sortedReports[i - 1];
+  for (let i = 1; i < reportsChronologicalAsc.length; i++) {
+    const currentReport = reportsChronologicalAsc[i];
+    const previousReport = reportsChronologicalAsc[i - 1];
     const gap = currentReport.start_mileage - previousReport.end_mileage;
     if (gap !== 0) {
       mileageGaps.set(currentReport.id, gap);
     }
   }
+
+  // Newest first for display
+  const sortedReports = [...reportsChronologicalAsc].reverse();
 
   const handleViewEarnings = (report: WeeklyReport) => {
     if (onViewDetails) {
@@ -169,8 +169,15 @@ const WeeklyReportsTable: React.FC<WeeklyReportsTableProps> = ({
             <Box sx={{ flex: 1 }}>
               {/* Week Period */}
               <Typography variant="h6" fontWeight={600} gutterBottom>
-                {new Date(report.week_start_date).toLocaleDateString()} -{" "}
-                {new Date(report.week_end_date).toLocaleDateString()}
+                {formatSqlDateOnlyForDisplay(
+                  report.week_start_date,
+                  i18n.language
+                )}{" "}
+                -{" "}
+                {formatSqlDateOnlyForDisplay(
+                  report.week_end_date,
+                  i18n.language
+                )}
               </Typography>
 
               {/* Status and Summary */}

@@ -2,7 +2,12 @@ import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { navigateWeek } from "../../utils/dateHelpers";
+import {
+  formatDateForInput,
+  navigateWeek,
+  parseLocalDateOnly,
+} from "../../utils/dateHelpers";
+import RelativeWeekBanner from "./RelativeWeekBanner";
 
 interface DateSelectionStepProps {
   weekStartDate: string;
@@ -90,6 +95,7 @@ const DateSelectionStep: React.FC<DateSelectionStepProps> = ({
             {t("reports.nextWeek")}
           </Button>
         </Box>
+        <RelativeWeekBanner weekStartDate={weekStartDate} />
       </Box>
 
       {/* Date Inputs */}
@@ -101,12 +107,19 @@ const DateSelectionStep: React.FC<DateSelectionStepProps> = ({
           value={weekStartDate}
           onChange={(e) => {
             const start = e.target.value;
-            // Calculate end date (6 days after start)
-            const startDate = new Date(start);
-            const endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + 6);
-            const end = endDate.toISOString().split("T")[0];
-            onDateChange(start, end);
+            const parsed = parseLocalDateOnly(start);
+            if (!parsed) {
+              return;
+            }
+            const endDate = new Date(
+              parsed.getFullYear(),
+              parsed.getMonth(),
+              parsed.getDate() + 6,
+              12,
+              0,
+              0
+            );
+            onDateChange(start, formatDateForInput(endDate));
           }}
           InputLabelProps={{ shrink: true }}
           helperText={t("reports.weekStartHelper")}
@@ -119,12 +132,19 @@ const DateSelectionStep: React.FC<DateSelectionStepProps> = ({
           value={weekEndDate}
           onChange={(e) => {
             const end = e.target.value;
-            // Calculate start date (6 days before end)
-            const endDate = new Date(end);
-            const startDate = new Date(endDate);
-            startDate.setDate(endDate.getDate() - 6);
-            const start = startDate.toISOString().split("T")[0];
-            onDateChange(start, end);
+            const parsed = parseLocalDateOnly(end);
+            if (!parsed) {
+              return;
+            }
+            const startDate = new Date(
+              parsed.getFullYear(),
+              parsed.getMonth(),
+              parsed.getDate() - 6,
+              12,
+              0,
+              0
+            );
+            onDateChange(formatDateForInput(startDate), end);
           }}
           InputLabelProps={{ shrink: true }}
           helperText={t("reports.weekEndHelper")}
