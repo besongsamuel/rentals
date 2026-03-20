@@ -25,7 +25,8 @@ import {
   type WeekRange,
 } from "../utils/dateHelpers";
 
-const LOOKBACK_WEEKS = 52;
+/** Shown in copy when the car has no reports yet (fallback window). */
+const FALLBACK_WEEKS_WHEN_NO_REPORTS = 52;
 
 export interface MissingWeeksDialogProps {
   open: boolean;
@@ -97,20 +98,12 @@ const MissingWeeksDialog: React.FC<MissingWeeksDialogProps> = ({
       if (car) {
         list.push({
           car,
-          missing: getMissingWeekRangesForCar(
-            carId,
-            fetchedReports,
-            LOOKBACK_WEEKS
-          ),
+          missing: getMissingWeekRangesForCar(carId, fetchedReports),
         });
       }
     } else {
       for (const car of cars) {
-        const missing = getMissingWeekRangesForCar(
-          car.id,
-          fetchedReports,
-          LOOKBACK_WEEKS
-        );
+        const missing = getMissingWeekRangesForCar(car.id, fetchedReports);
         if (missing.length > 0) {
           list.push({ car, missing });
         }
@@ -162,7 +155,9 @@ const MissingWeeksDialog: React.FC<MissingWeeksDialogProps> = ({
       </DialogTitle>
       <DialogContent dividers sx={{ pt: 0 }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t("reports.missingWeeksDescription", { count: LOOKBACK_WEEKS })}
+          {t("reports.missingWeeksDescription", {
+            count: FALLBACK_WEEKS_WHEN_NO_REPORTS,
+          })}
         </Typography>
 
         {loading ? (

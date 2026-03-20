@@ -148,19 +148,23 @@ export type WeekRange = {
   weekEnd: string;
 };
 
+const normalizeReportWeekStart = (raw: string): string =>
+  String(raw).trim().split("T")[0].split(" ")[0];
+
 /**
- * Monday-start weeks in the last `lookbackWeeks` that have no report for this car.
+ * Monday-start weeks with no report for this car from the week of the **earliest
+ * existing report** through the current week (inclusive). If there are no reports
+ * yet, scans the last `fallbackLookbackWeeksWhenNoReports` weeks instead.
  * Newest missing week first.
  */
 export const getMissingWeekRangesForCar = (
   carId: string,
   reports: Array<{ car_id: string; week_start_date: string }>,
-  lookbackWeeks = 52
+  fallbackLookbackWeeksWhenNoReports = 52
 ): WeekRange[] => {
+  const carReports = reports.filter((r) => r.car_id === carId);
   const existing = new Set(
-    reports
-      .filter((r) => r.car_id === carId)
-      .map((r) => String(r.week_start_date).trim().split("T")[0].split(" ")[0])
+    carReports.map((r) => normalizeReportWeekStart(r.week_start_date))
   );
 
   const todayNoon = new Date(
@@ -172,18 +176,62 @@ export const getMissingWeekRangesForCar = (
     0
   );
   const currentMonday = getWeekStart(todayNoon);
-  const missing: WeekRange[] = [];
 
-  for (let w = 0; w < lookbackWeeks; w++) {
-    const monday = new Date(
+  let scanStartMonday: Date;
+  if (carReports.length > 0) {
+    let earliest = normalizeReportWeekStart(carReports[0].week_start_date);
+    for (let i = 1; i < carReports.length; i++) {
+      const s = normalizeReportWeekStart(carReports[i].week_start_date);
+      if (s < earliest) {
+        earliest = s;
+      }
+    }
+    const parsed = parseLocalDateOnly(earliest);
+    scanStartMonday = parsed ? getWeekStart(parsed) : currentMonday;
+  } else {
+    const anchor = new Date(
       currentMonday.getFullYear(),
       currentMonday.getMonth(),
-      currentMonday.getDate() - w * 7,
+      currentMonday.getDate() -
+        fallbackLookbackWeeksWhenNoReports * 7,
       12,
       0,
       0
     );
-    const weekStartDate = getWeekStart(monday);
+    scanStartMonday = getWeekStart(anchor);
+  }
+
+  if (scanStartMonday.getTime() > currentMonday.getTime()) {
+    scanStartMonday = new Date(
+      currentMonday.getFullYear(),
+      currentMonday.getMonth(),
+      currentMonday.getDate(),
+      12,
+      0,
+      0
+    );
+  }
+
+  const missing: WeekRange[] = [];
+  let cursor = new Date(
+    scanStartMonday.getFullYear(),
+    scanStartMonday.getMonth(),
+    scanStartMonday.getDate(),
+    12,
+    0,
+    0
+  );
+  const endMs = new Date(
+    currentMonday.getFullYear(),
+    currentMonday.getMonth(),
+    currentMonday.getDate(),
+    12,
+    0,
+    0
+  ).getTime();
+
+  while (cursor.getTime() <= endMs) {
+    const weekStartDate = getWeekStart(cursor);
     const startStr = formatDateForInput(weekStartDate);
     if (!existing.has(startStr)) {
       const weekEndDate = getWeekEnd(weekStartDate);
@@ -192,9 +240,10 @@ export const getMissingWeekRangesForCar = (
         weekEnd: formatDateForInput(weekEndDate),
       });
     }
+    cursor.setDate(cursor.getDate() + 7);
   }
 
-  return missing;
+  return missing.reverse();
 };
 
 // Helper function to calculate mileage for new report

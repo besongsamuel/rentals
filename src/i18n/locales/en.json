@@ -516,7 +516,7 @@
     "missingWeeksTitle": "Missing week reports",
     "missingWeeksShort": "Missing weeks",
     "missingWeeksButtonTooltip": "See weeks without a report yet",
-    "missingWeeksDescription": "Monday–Sunday weeks in the last {{count}} weeks with no report for this vehicle (including the current week if it is still empty).",
+    "missingWeeksDescription": "Weeks from the week of your first report on this vehicle through the current week that still need a report. If there are no reports yet, the last {{count}} weeks are checked instead.",
     "noMissingWeeks": "Every week in this range already has a report.",
     "fillReportForWeek": "Fill report",
     "checkingWeekAvailability": "Checking whether a report already exists for this week…",
