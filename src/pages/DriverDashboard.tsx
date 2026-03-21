@@ -1,9 +1,10 @@
-import { Add, EventBusy, Upload } from "@mui/icons-material";
+import { Add, EventBusy, ReceiptLong, Upload } from "@mui/icons-material";
 import { Alert, Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import BasicInformation from "../components/BasicInformation";
+import CarExpenseDialog from "../components/CarExpenseDialog";
 import DriverDetail from "../components/DriverDetail";
 import SkeletonLoader from "../components/SkeletonLoader";
 import VerificationBadge from "../components/VerificationBadge";
@@ -34,6 +35,7 @@ const DriverDashboard: React.FC = () => {
     Set<string>
   >(new Set());
   const [missingWeeksOpen, setMissingWeeksOpen] = useState(false);
+  const [carExpenseDialogOpen, setCarExpenseDialogOpen] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
   const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
@@ -338,6 +340,17 @@ const DriverDashboard: React.FC = () => {
                   <Button
                     variant="outlined"
                     color="primary"
+                    startIcon={<ReceiptLong />}
+                    onClick={() => setCarExpenseDialogOpen(true)}
+                    sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
+                  >
+                    {t("carExpense.addButton")}
+                  </Button>
+                )}
+                {assignedCars.length > 0 && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
                     startIcon={<EventBusy />}
                     onClick={() => setMissingWeeksOpen(true)}
                     sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
@@ -388,6 +401,17 @@ const DriverDashboard: React.FC = () => {
         cars={assignedCars}
         driverReports={weeklyReports}
       />
+
+      {assignedCars.length > 0 && (
+        <CarExpenseDialog
+          open={carExpenseDialogOpen}
+          onClose={() => setCarExpenseDialogOpen(false)}
+          cars={assignedCars}
+          onSaved={() => {
+            void loadData();
+          }}
+        />
+      )}
 
       {/* Weekly Report Dialog */}
       <WeeklyReportDialog

@@ -713,7 +713,9 @@
     "cancel": "Annuler"
   },
   "carExpense": {
+    "addButton": "Ajouter une dépense",
     "addTooltip": "Ajouter une dépense (hors rapport hebdomadaire)",
+    "selectCar": "Véhicule",
     "dialogTitle": "Ajouter une dépense véhicule",
     "amount": "Montant",
     "currency": "Devise",
@@ -726,6 +728,7 @@
     "cancel": "Annuler",
     "close": "Fermer",
     "validationAmount": "Saisissez un montant valide (≥ 0).",
+    "validationCar": "Sélectionnez un véhicule.",
     "validationDate": "Sélectionnez une date.",
     "errorGeneric": "Impossible d'enregistrer la dépense. Réessayez.",
     "groups": {

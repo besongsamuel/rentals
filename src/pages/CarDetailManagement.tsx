@@ -36,6 +36,7 @@ import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import MissingWeeksDialog from "../components/MissingWeeksDialog";
 import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
+import { supabase } from "../lib/supabase";
 import {
   assignmentService,
   TerminationReason,
@@ -79,6 +80,43 @@ const CarDetailManagement: React.FC = () => {
   const [terminating, setTerminating] = useState<boolean>(false);
   const [carExpenseDialogOpen, setCarExpenseDialogOpen] = useState(false);
   const [carStatisticsRefreshKey, setCarStatisticsRefreshKey] = useState(0);
+  const [isCoOwner, setIsCoOwner] = useState(false);
+
+  const isAssignedDriver =
+    profile?.user_type === "driver" && car?.driver_id === profile.id;
+  const isMainOwner =
+    profile?.user_type === "owner" && car?.owner_id === profile.id;
+  const showWeeklyReportShortcuts = isAssignedDriver || isMainOwner;
+  const canAddCarExpense =
+    showWeeklyReportShortcuts ||
+    (profile?.user_type === "owner" && isCoOwner);
+
+
+  useEffect(() => {
+    const checkCoOwner = async () => {
+      if (!car?.id || !profile?.id || profile.user_type !== "owner") {
+        setIsCoOwner(false);
+        return;
+      }
+      if (car.owner_id === profile.id) {
+        setIsCoOwner(false);
+        return;
+      }
+      const { data, error } = await supabase
+        .from("car_owners")
+        .select("id")
+        .eq("car_id", car.id)
+        .eq("owner_id", profile.id)
+        .maybeSingle();
+      if (error) {
+        console.error("Error checking car co-ownership:", error);
+        setIsCoOwner(false);
+        return;
+      }
+      setIsCoOwner(!!data);
+    };
+    checkCoOwner();
+  }, [car?.id, car?.owner_id, profile?.id, profile?.user_type]);
 
   const loadData = useCallback(async () => {
     if (!carId) return;
@@ -484,53 +522,68 @@ const CarDetailManagement: React.FC = () => {
               <Box
                 sx={{
                   display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "space-between",
-                  alignItems: "center",
+                  alignItems: { xs: "stretch", sm: "center" },
+                  gap: 2,
                   mb: 2,
                 }}
               >
                 <Typography variant="h6">
                   {t("carManagement.weeklyReportsDetails")}
                 </Typography>
-                {(profile?.user_type === "driver" ||
-                  (profile?.user_type === "owner" &&
-                    car?.owner_id === profile.id)) && (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    <Button
-                      variant="contained"
-                      startIcon={<Add />}
-                      onClick={handleAddNewReport}
-                      size="small"
-                      sx={{ minHeight: 44 }}
-                    >
-                      {t("carManagement.addNewReport")}
-                    </Button>
-                    <Tooltip title={t("carExpense.addTooltip")}>
-                      <IconButton
-                        color="primary"
-                        onClick={() => setCarExpenseDialogOpen(true)}
-                        aria-label={t("carExpense.addTooltip")}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "primary.main",
-                          minWidth: 44,
-                          minHeight: 44,
-                          borderRadius: 1,
-                        }}
+                {(showWeeklyReportShortcuts || canAddCarExpense) && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 1,
+                      alignItems: "center",
+                      justifyContent: { xs: "flex-start", sm: "flex-end" },
+                      width: { xs: "100%", sm: "auto" },
+                    }}
+                  >
+                    {showWeeklyReportShortcuts && (
+                      <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        onClick={handleAddNewReport}
+                        size="small"
+                        sx={{ minHeight: 44 }}
                       >
-                        <ReceiptLong />
-                      </IconButton>
-                    </Tooltip>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<EventBusy />}
-                      onClick={() => setMissingWeeksOpen(true)}
-                      size="small"
-                      sx={{ minHeight: 44 }}
-                    >
-                      {t("reports.missingWeeksShort")}
-                    </Button>
+                        {t("carManagement.addNewReport")}
+                      </Button>
+                    )}
+                    {canAddCarExpense && (
+                      <Tooltip title={t("carExpense.addTooltip")}>
+                        <IconButton
+                          color="primary"
+                          onClick={() => setCarExpenseDialogOpen(true)}
+                          aria-label={t("carExpense.addTooltip")}
+                          sx={{
+                            border: "1px solid",
+                            borderColor: "primary.main",
+                            minWidth: 44,
+                            minHeight: 44,
+                            borderRadius: 1,
+                          }}
+                        >
+                          <ReceiptLong />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                    {showWeeklyReportShortcuts && (
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<EventBusy />}
+                        onClick={() => setMissingWeeksOpen(true)}
+                        size="small"
+                        sx={{ minHeight: 44 }}
+                      >
+                        {t("reports.missingWeeksShort")}
+                      </Button>
+                    )}
                   </Box>
                 )}
               </Box>

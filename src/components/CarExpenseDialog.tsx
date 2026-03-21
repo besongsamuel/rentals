@@ -22,7 +22,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { carExpenseService } from "../services/carExpenseService";
-import { CarExpenseType } from "../types";
+import { Car, CarExpenseType } from "../types";
 
 const EXPENSE_GROUPS: {
   labelKey: string;
@@ -71,14 +71,18 @@ const CURRENCY_OPTIONS = ["XAF", "EUR", "USD"] as const;
 export interface CarExpenseDialogProps {
   open: boolean;
   onClose: () => void;
-  carId: string;
   onSaved: () => void;
+  /** Single car (e.g. car detail page) */
+  carId?: string;
+  /** One or more cars (e.g. driver dashboard); picker shown when more than one */
+  cars?: Car[];
 }
 
 const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
   open,
   onClose,
   carId,
+  cars,
   onSaved,
 }) => {
   const { t } = useTranslation();
@@ -94,6 +98,11 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [selectedCarId, setSelectedCarId] = useState("");
+
+  const showCarPicker = Boolean(cars && cars.length > 1);
+  const effectiveCarId =
+    carId ?? (cars?.length === 1 ? cars[0].id : selectedCarId);
 
   const resetForm = useCallback(() => {
     setAmount("");
@@ -112,8 +121,15 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
       const m = String(d.getMonth() + 1).padStart(2, "0");
       const day = String(d.getDate()).padStart(2, "0");
       setExpenseDate(`${y}-${m}-${day}`);
+      if (carId) {
+        setSelectedCarId(carId);
+      } else if (cars && cars.length > 0) {
+        setSelectedCarId(cars[0].id);
+      } else {
+        setSelectedCarId("");
+      }
     }
-  }, [open, resetForm]);
+  }, [open, resetForm, carId, cars]);
 
   const handleTypeChange = (e: SelectChangeEvent<CarExpenseType>) => {
     setExpenseType(e.target.value as CarExpenseType);
@@ -135,11 +151,15 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
       setFormError(t("carExpense.notesRequiredOther"));
       return;
     }
+    if (!effectiveCarId) {
+      setFormError(t("carExpense.validationCar"));
+      return;
+    }
 
     setSubmitting(true);
     try {
       await carExpenseService.insertCarExpense({
-        car_id: carId,
+        car_id: effectiveCarId,
         amount: parsed,
         currency,
         expense_date: expenseDate,
@@ -195,6 +215,29 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
             <Typography color="error" variant="body2">
               {formError}
             </Typography>
+          )}
+          {showCarPicker && cars && (
+            <FormControl fullWidth required>
+              <InputLabel id="car-expense-car-label">
+                {t("carExpense.selectCar")}
+              </InputLabel>
+              <Select
+                labelId="car-expense-car-label"
+                label={t("carExpense.selectCar")}
+                value={selectedCarId}
+                onChange={(e) => {
+                  setSelectedCarId(e.target.value);
+                  setFormError(null);
+                }}
+              >
+                {cars.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {[c.make, c.model, c.year].filter(Boolean).join(" ")}
+                    {c.license_plate ? ` · ${c.license_plate}` : ""}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           )}
           <TextField
             label={t("carExpense.amount")}

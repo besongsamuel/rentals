@@ -779,7 +779,9 @@
     "cancel": "Cancel"
   },
   "carExpense": {
+    "addButton": "Add expense",
     "addTooltip": "Add expense (outside weekly report)",
+    "selectCar": "Vehicle",
     "dialogTitle": "Add car expense",
     "amount": "Amount",
     "currency": "Currency",
@@ -792,6 +794,7 @@
     "cancel": "Cancel",
     "close": "Close",
     "validationAmount": "Enter a valid amount (0 or greater).",
+    "validationCar": "Select a vehicle.",
     "validationDate": "Select a date.",
     "errorGeneric": "Could not save the expense. Try again.",
     "groups": {
