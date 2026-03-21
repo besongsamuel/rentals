@@ -8,6 +8,7 @@ function sumCarExpensesInCurrency(
   currency: string
 ): number {
   return expenses
+    .filter((e) => e.status === "approved")
     .filter((e) => e.currency === currency)
     .reduce((sum, e) => sum + Number(e.amount), 0);
 }

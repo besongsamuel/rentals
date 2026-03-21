@@ -158,6 +158,10 @@ CREATE TABLE car_expenses (
   expense_date DATE NOT NULL,
   expense_type car_expense_type NOT NULL,
   notes TEXT,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'approved')),
+  submitted_at TIMESTAMPTZ,
+  approved_at TIMESTAMPTZ,
+  approved_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
   CONSTRAINT car_expenses_other_requires_notes CHECK (
@@ -167,7 +171,9 @@ CREATE TABLE car_expenses (
 );
 ```
 
-**RLS (summary):** Drivers can SELECT/INSERT for `cars.driver_id = auth.uid()`. Owners (main or `car_owners`) can SELECT/INSERT/UPDATE/DELETE. See migration `20260321120000_create_car_expenses.sql`.
+**Workflow:** New rows are `draft` (only `created_by` may update; may set `submitted`). In `submitted`, main/co-owners may edit or set `approved`. `approved` rows are locked (no UPDATE policy). Deletes allowed only for `draft` (creator or car owner/co-owner).
+
+**RLS (summary):** See migrations `20260321120000_create_car_expenses.sql` (SELECT/INSERT base) and `20260321140000_car_expenses_approval_workflow.sql` (status, UPDATE/DELETE workflow).
 
 ### 7. `income_sources` (New table)
 

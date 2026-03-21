@@ -1,9 +1,7 @@
-import { Add, ArrowBack, Edit, EventBusy, ReceiptLong } from "@mui/icons-material";
+import { ArrowBack, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Chip,
   CircularProgress,
   Container,
@@ -28,13 +26,12 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import CarExpenseDialog from "../components/CarExpenseDialog";
 import CarOwners from "../components/CarOwners";
+import CarReportsExpensesTabs from "../components/CarReportsExpensesTabs";
 import CarStatistics from "../components/CarStatistics";
 import DriverAssignment from "../components/DriverAssignment";
 import EarningsDetailsDialog from "../components/EarningsDetailsDialog";
 import MissingWeeksDialog from "../components/MissingWeeksDialog";
-import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { supabase } from "../lib/supabase";
 import {
@@ -78,7 +75,6 @@ const CarDetailManagement: React.FC = () => {
   const [wouldRecommend, setWouldRecommend] = useState<boolean>(true);
   const [anonymousRating, setAnonymousRating] = useState<boolean>(false);
   const [terminating, setTerminating] = useState<boolean>(false);
-  const [carExpenseDialogOpen, setCarExpenseDialogOpen] = useState(false);
   const [carStatisticsRefreshKey, setCarStatisticsRefreshKey] = useState(0);
   const [isCoOwner, setIsCoOwner] = useState(false);
 
@@ -90,7 +86,8 @@ const CarDetailManagement: React.FC = () => {
   const canAddCarExpense =
     showWeeklyReportShortcuts ||
     (profile?.user_type === "owner" && isCoOwner);
-
+  const canApproveCarExpenses =
+    profile?.user_type === "owner" && (isMainOwner || isCoOwner);
 
   useEffect(() => {
     const checkCoOwner = async () => {
@@ -260,36 +257,9 @@ const CarDetailManagement: React.FC = () => {
     }
   };
 
-  const generateYearOptions = () => {
-    const currentYear = new Date().getFullYear();
-    const years = [];
-    for (let i = currentYear; i >= currentYear - 5; i--) {
-      years.push(i);
-    }
-    return years;
-  };
-
   const clearFilters = () => {
     setSelectedYear("");
     setSelectedMonth("");
-  };
-
-  const generateMonthOptions = () => {
-    const months = [
-      { value: 1, label: t("months.january") },
-      { value: 2, label: t("months.february") },
-      { value: 3, label: t("months.march") },
-      { value: 4, label: t("months.april") },
-      { value: 5, label: t("months.may") },
-      { value: 6, label: t("months.june") },
-      { value: 7, label: t("months.july") },
-      { value: 8, label: t("months.august") },
-      { value: 9, label: t("months.september") },
-      { value: 10, label: t("months.october") },
-      { value: 11, label: t("months.november") },
-      { value: 12, label: t("months.december") },
-    ];
-    return months;
   };
 
   if (loading) {
@@ -434,267 +404,30 @@ const CarDetailManagement: React.FC = () => {
           />
         </Grid>
 
-        {/* Weekly Reports Filters Section */}
-        <Grid size={12}>
-          <Card elevation={2}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                {t("reports.filterReports")}
-              </Typography>
-
-              {/* Filters */}
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid size={6}>
-                  <FormControl fullWidth size="small">
-                    <Select
-                      value={selectedYear}
-                      onChange={(e) =>
-                        setSelectedYear(e.target.value as number | "")
-                      }
-                      displayEmpty
-                    >
-                      <MenuItem value="">
-                        <em>{t("reports.allYears")}</em>
-                      </MenuItem>
-                      {generateYearOptions().map((year) => (
-                        <MenuItem key={year} value={year}>
-                          {year}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={6}>
-                  <FormControl fullWidth size="small">
-                    <Select
-                      value={selectedMonth}
-                      onChange={(e) =>
-                        setSelectedMonth(e.target.value as number | "")
-                      }
-                      displayEmpty
-                      disabled={!selectedYear}
-                    >
-                      <MenuItem value="">
-                        <em>{t("reports.allMonths")}</em>
-                      </MenuItem>
-                      {generateMonthOptions().map((month) => (
-                        <MenuItem key={month.value} value={month.value}>
-                          {month.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-
-                <Grid size={12}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={clearFilters}
-                    disabled={!selectedYear && !selectedMonth}
-                  >
-                    {t("reports.clearFilters")}
-                  </Button>
-                </Grid>
-              </Grid>
-
-              <Typography variant="body2" color="text.secondary">
-                {t("reports.found", { count: weeklyReports.length })}
-                {selectedYear && selectedMonth && (
-                  <>
-                    {" "}
-                    for {generateMonthOptions()[selectedMonth - 1]?.label}{" "}
-                    {selectedYear}
-                  </>
-                )}
-                {selectedYear && !selectedMonth && <> for {selectedYear}</>}
-                {!selectedYear && <> (all time)</>}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Weekly Reports Table */}
-        <Grid size={12}>
-          <Card elevation={2}>
-            <CardContent>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
-                  justifyContent: "space-between",
-                  alignItems: { xs: "stretch", sm: "center" },
-                  gap: 2,
-                  mb: 2,
-                }}
-              >
-                <Typography variant="h6">
-                  {t("carManagement.weeklyReportsDetails")}
-                </Typography>
-                {(showWeeklyReportShortcuts || canAddCarExpense) && (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: 1,
-                      alignItems: "center",
-                      justifyContent: { xs: "flex-start", sm: "flex-end" },
-                      width: { xs: "100%", sm: "auto" },
-                    }}
-                  >
-                    {showWeeklyReportShortcuts && (
-                      <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        onClick={handleAddNewReport}
-                        size="small"
-                        sx={{ minHeight: 44 }}
-                      >
-                        {t("carManagement.addNewReport")}
-                      </Button>
-                    )}
-                    {canAddCarExpense && (
-                      <Tooltip title={t("carExpense.addTooltip")}>
-                        <IconButton
-                          color="primary"
-                          onClick={() => setCarExpenseDialogOpen(true)}
-                          aria-label={t("carExpense.addTooltip")}
-                          sx={{
-                            border: "1px solid",
-                            borderColor: "primary.main",
-                            minWidth: 44,
-                            minHeight: 44,
-                            borderRadius: 1,
-                          }}
-                        >
-                          <ReceiptLong />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    {showWeeklyReportShortcuts && (
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<EventBusy />}
-                        onClick={() => setMissingWeeksOpen(true)}
-                        size="small"
-                        sx={{ minHeight: 44 }}
-                      >
-                        {t("reports.missingWeeksShort")}
-                      </Button>
-                    )}
-                  </Box>
-                )}
-              </Box>
-
-              {/* Weekly Reports Tips */}
-              <Card
-                sx={{
-                  mb: 3,
-                  background:
-                    "linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, rgba(0, 122, 255, 0.02) 100%)",
-                  border: "1px solid rgba(0, 122, 255, 0.2)",
-                  borderRadius: 2,
-                }}
-              >
-                <CardContent sx={{ p: 3 }}>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 500,
-                      color: "#1d1d1f",
-                      mb: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                    }}
-                  >
-                    💡 {t("carManagement.reportTipsTitle")}
-                  </Typography>
-                  <Box sx={{ pl: 2 }}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "#1d1d1f",
-                        mb: 1.5,
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 1,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          backgroundColor: "#007AFF",
-                          mt: 1,
-                          flexShrink: 0,
-                        }}
-                      />
-                      {t("carManagement.reportTip1")}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "#1d1d1f",
-                        mb: 1.5,
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 1,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          backgroundColor: "#007AFF",
-                          mt: 1,
-                          flexShrink: 0,
-                        }}
-                      />
-                      {t("carManagement.reportTip2")}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "#1d1d1f",
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: 1,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: "50%",
-                          backgroundColor: "#007AFF",
-                          mt: 1,
-                          flexShrink: 0,
-                        }}
-                      />
-                      {t("carManagement.reportTip3")}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-
-              <WeeklyReportsTable
-                weeklyReports={weeklyReports}
-                reportsWithIncomeSources={reportsWithIncomeSources}
-                profile={profile}
-                user={user}
-                onViewDetails={handleViewEarnings}
-                onEditReport={handleEditReport}
-                onApproveReport={handleApproveReport}
-                onSubmitReport={handleSubmitReport}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
+        <CarReportsExpensesTabs
+          carId={carId!}
+          canAddExpense={canAddCarExpense}
+          canApproveCarExpenses={canApproveCarExpenses}
+          onExpensesChanged={() =>
+            setCarStatisticsRefreshKey((key) => key + 1)
+          }
+          weeklyReports={weeklyReports}
+          reportsWithIncomeSources={reportsWithIncomeSources}
+          profile={profile}
+          user={user}
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          onYearChange={setSelectedYear}
+          onMonthChange={setSelectedMonth}
+          onClearFilters={clearFilters}
+          showWeeklyReportShortcuts={showWeeklyReportShortcuts}
+          onAddNewReport={handleAddNewReport}
+          onOpenMissingWeeks={() => setMissingWeeksOpen(true)}
+          onViewEarnings={handleViewEarnings}
+          onEditReport={handleEditReport}
+          onApproveReport={handleApproveReport}
+          onSubmitReport={handleSubmitReport}
+        />
       </Grid>
 
 
@@ -747,17 +480,6 @@ const CarDetailManagement: React.FC = () => {
         carId={carId || null}
         cars={car ? [car] : []}
       />
-
-      {carId && (
-        <CarExpenseDialog
-          open={carExpenseDialogOpen}
-          onClose={() => setCarExpenseDialogOpen(false)}
-          carId={carId}
-          onSaved={() =>
-            setCarStatisticsRefreshKey((key) => key + 1)
-          }
-        />
-      )}
 
       {/* Terminate/Complete Contract Dialog */}
       <Dialog

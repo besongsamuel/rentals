@@ -1,16 +1,15 @@
-import { Add, EventBusy, ReceiptLong, Upload } from "@mui/icons-material";
-import { Alert, Box, Button, Grid, Paper, Stack, Typography } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import { Add, Upload } from "@mui/icons-material";
+import { Alert, Box, Button, Grid, Paper, Typography } from "@mui/material";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import BasicInformation from "../components/BasicInformation";
-import CarExpenseDialog from "../components/CarExpenseDialog";
+import CarReportsExpensesTabs from "../components/CarReportsExpensesTabs";
 import DriverDetail from "../components/DriverDetail";
 import SkeletonLoader from "../components/SkeletonLoader";
 import VerificationBadge from "../components/VerificationBadge";
 import MissingWeeksDialog from "../components/MissingWeeksDialog";
 import WeeklyReportDialog from "../components/WeeklyReportDialog";
-import WeeklyReportsTable from "../components/WeeklyReportsTable";
 import { useUserContext } from "../contexts/UserContext";
 import { carService } from "../services/carService";
 import { driverDetailsService } from "../services/driverDetailsService";
@@ -35,16 +34,17 @@ const DriverDashboard: React.FC = () => {
     Set<string>
   >(new Set());
   const [missingWeeksOpen, setMissingWeeksOpen] = useState(false);
-  const [carExpenseDialogOpen, setCarExpenseDialogOpen] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
   const [editingReport, setEditingReport] = useState<WeeklyReport | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (options?: { silent?: boolean }) => {
     if (!profile?.id) return;
 
-    setLoading(true);
+    if (!options?.silent) {
+      setLoading(true);
+    }
     try {
       // Load assigned cars
       const carsData = await carService.getCarsByDriver(profile.id);
@@ -74,7 +74,9 @@ const DriverDashboard: React.FC = () => {
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
-      setLoading(false);
+      if (!options?.silent) {
+        setLoading(false);
+      }
     }
   }, [profile?.id]);
 
@@ -139,6 +141,18 @@ const DriverDashboard: React.FC = () => {
       console.error("Error submitting report:", error);
     }
   };
+
+  const weeklyReportsWithEarnings = useMemo(
+    () =>
+      weeklyReports.map((r) => ({
+        ...r,
+        total_earnings:
+          (r.ride_share_income || 0) +
+          (r.rental_income || 0) +
+          (r.taxi_income || 0),
+      })),
+    [weeklyReports]
+  );
 
   if (loading) {
     return <SkeletonLoader variant="dashboard" />;
@@ -302,96 +316,50 @@ const DriverDashboard: React.FC = () => {
           </Grid>
         )}
 
-        {/* Weekly Reports Section */}
-        <Grid size={12}>
-          <Paper elevation={3} sx={{ p: 4 }}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 3,
-                flexDirection: { xs: "column", sm: "row" },
-                gap: 2,
-              }}
-            >
-              <Typography variant="h5" sx={{ fontWeight: 400 }}>
-                {t("reports.weeklyReports")}
-              </Typography>
-              <Stack
-                direction={{ xs: "column", sm: "row" }}
-                spacing={1}
-                sx={{
-                  width: { xs: "100%", sm: "auto" },
-                  order: { xs: -1, sm: 0 },
-                }}
+        <CarReportsExpensesTabs
+          cars={assignedCars}
+          canAddExpense={assignedCars.length > 0}
+          canApproveCarExpenses={false}
+          onExpensesChanged={() => {
+            void loadData({ silent: true });
+          }}
+          weeklyReports={weeklyReportsWithEarnings}
+          reportsWithIncomeSources={reportsWithIncomeSources}
+          profile={profile}
+          user={profile}
+          selectedYear=""
+          selectedMonth=""
+          onYearChange={() => undefined}
+          onMonthChange={() => undefined}
+          onClearFilters={() => undefined}
+          hideFilters
+          showWeeklyReportShortcuts={false}
+          showAddReportButton
+          showMissingWeeksButton={assignedCars.length > 0}
+          onAddNewReport={() => navigate("/reports/add")}
+          onOpenMissingWeeks={() => setMissingWeeksOpen(true)}
+          onEditReport={handleEditReport}
+          onSubmitReport={handleSubmitReport}
+          weeklyEmptyContent={
+            <Box sx={{ textAlign: "center", py: 4 }}>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ mb: 2 }}
               >
-                <Button
-                  variant="contained"
-                  startIcon={<Add />}
-                  onClick={() => {
-                    navigate("/reports/add");
-                  }}
-                  sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
-                >
-                  {t("reports.addReport")}
-                </Button>
-                {assignedCars.length > 0 && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<ReceiptLong />}
-                    onClick={() => setCarExpenseDialogOpen(true)}
-                    sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
-                  >
-                    {t("carExpense.addButton")}
-                  </Button>
-                )}
-                {assignedCars.length > 0 && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<EventBusy />}
-                    onClick={() => setMissingWeeksOpen(true)}
-                    sx={{ minWidth: { xs: "100%", sm: "auto" }, minHeight: 44 }}
-                  >
-                    {t("reports.missingWeeksShort")}
-                  </Button>
-                )}
-              </Stack>
+                {t("reports.noReportsMessage")}
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<Add />}
+                onClick={() => navigate("/reports/add")}
+                sx={{ minHeight: 44 }}
+              >
+                {t("reports.addFirstReport")}
+              </Button>
             </Box>
-
-            {weeklyReports.length === 0 ? (
-              <Box sx={{ textAlign: "center", py: 4 }}>
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  sx={{ mb: 2 }}
-                >
-                  {t("reports.noReportsMessage")}
-                </Typography>
-                <Button
-                  variant="outlined"
-                  startIcon={<Add />}
-                  onClick={() => {
-                    navigate("/reports/add");
-                  }}
-                >
-                  {t("reports.addFirstReport")}
-                </Button>
-              </Box>
-            ) : (
-              <WeeklyReportsTable
-                weeklyReports={weeklyReports}
-                onEditReport={handleEditReport}
-                onSubmitReport={handleSubmitReport}
-                user={profile}
-                profile={profile}
-                reportsWithIncomeSources={reportsWithIncomeSources}
-              />
-            )}
-          </Paper>
-        </Grid>
+          }
+        />
       </Grid>
 
       <MissingWeeksDialog
@@ -401,17 +369,6 @@ const DriverDashboard: React.FC = () => {
         cars={assignedCars}
         driverReports={weeklyReports}
       />
-
-      {assignedCars.length > 0 && (
-        <CarExpenseDialog
-          open={carExpenseDialogOpen}
-          onClose={() => setCarExpenseDialogOpen(false)}
-          cars={assignedCars}
-          onSaved={() => {
-            void loadData();
-          }}
-        />
-      )}
 
       {/* Weekly Report Dialog */}
       <WeeklyReportDialog

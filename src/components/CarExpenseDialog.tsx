@@ -1,6 +1,7 @@
 import { Close } from "@mui/icons-material";
 import {
   Button,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -22,7 +23,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { carExpenseService } from "../services/carExpenseService";
-import { Car, CarExpenseType } from "../types";
+import { Car, CarExpense, CarExpenseType } from "../types";
 
 const EXPENSE_GROUPS: {
   labelKey: string;
@@ -76,6 +77,8 @@ export interface CarExpenseDialogProps {
   carId?: string;
   /** One or more cars (e.g. driver dashboard); picker shown when more than one */
   cars?: Car[];
+  /** When set, dialog updates this expense (draft or submitted, per RLS). */
+  editingExpense?: CarExpense | null;
 }
 
 const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
@@ -84,6 +87,7 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
   carId,
   cars,
   onSaved,
+  editingExpense,
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -100,9 +104,13 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
   const [formError, setFormError] = useState<string | null>(null);
   const [selectedCarId, setSelectedCarId] = useState("");
 
-  const showCarPicker = Boolean(cars && cars.length > 1);
+  const isEdit = Boolean(editingExpense?.id);
+  const showCarPicker =
+    Boolean(cars && cars.length > 1) && !isEdit;
   const effectiveCarId =
-    carId ?? (cars?.length === 1 ? cars[0].id : selectedCarId);
+    editingExpense?.car_id ??
+    carId ??
+    (cars?.length === 1 ? cars[0].id : selectedCarId);
 
   const resetForm = useCallback(() => {
     setAmount("");
@@ -114,22 +122,33 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
   }, []);
 
   useEffect(() => {
-    if (open) {
-      resetForm();
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      setExpenseDate(`${y}-${m}-${day}`);
-      if (carId) {
-        setSelectedCarId(carId);
-      } else if (cars && cars.length > 0) {
-        setSelectedCarId(cars[0].id);
-      } else {
-        setSelectedCarId("");
-      }
+    if (!open) return;
+
+    if (editingExpense) {
+      setAmount(String(editingExpense.amount));
+      setCurrency(editingExpense.currency || "XAF");
+      setExpenseDate(editingExpense.expense_date);
+      setExpenseType(editingExpense.expense_type);
+      setNotes(editingExpense.notes ?? "");
+      setSelectedCarId(editingExpense.car_id);
+      setFormError(null);
+      return;
     }
-  }, [open, resetForm, carId, cars]);
+
+    resetForm();
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    setExpenseDate(`${y}-${m}-${day}`);
+    if (carId) {
+      setSelectedCarId(carId);
+    } else if (cars && cars.length > 0) {
+      setSelectedCarId(cars[0].id);
+    } else {
+      setSelectedCarId("");
+    }
+  }, [open, resetForm, carId, cars, editingExpense]);
 
   const handleTypeChange = (e: SelectChangeEvent<CarExpenseType>) => {
     setExpenseType(e.target.value as CarExpenseType);
@@ -158,14 +177,24 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
 
     setSubmitting(true);
     try {
-      await carExpenseService.insertCarExpense({
-        car_id: effectiveCarId,
-        amount: parsed,
-        currency,
-        expense_date: expenseDate,
-        expense_type: expenseType,
-        notes: notes.trim() || null,
-      });
+      if (editingExpense) {
+        await carExpenseService.updateCarExpense(editingExpense.id, {
+          amount: parsed,
+          currency,
+          expense_date: expenseDate,
+          expense_type: expenseType,
+          notes: notes.trim() || null,
+        });
+      } else {
+        await carExpenseService.insertCarExpense({
+          car_id: effectiveCarId,
+          amount: parsed,
+          currency,
+          expense_date: expenseDate,
+          expense_type: expenseType,
+          notes: notes.trim() || null,
+        });
+      }
       onSaved();
       onClose();
     } catch (e) {
@@ -174,6 +203,12 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const statusLabel = (s: string) => {
+    if (s === "submitted") return t("carExpense.statusSubmitted");
+    if (s === "approved") return t("carExpense.statusApproved");
+    return t("carExpense.statusDraft");
   };
 
   return (
@@ -195,7 +230,7 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
         }}
       >
         <Typography variant="h6" component="span">
-          {t("carExpense.dialogTitle")}
+          {isEdit ? t("carExpense.dialogTitleEdit") : t("carExpense.dialogTitle")}
         </Typography>
         <Tooltip title={t("carExpense.close")}>
           <IconButton
@@ -211,6 +246,20 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
       </DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2} sx={{ pt: 1 }}>
+          {isEdit && editingExpense && (
+            <Chip
+              size="small"
+              label={statusLabel(editingExpense.status)}
+              color={
+                editingExpense.status === "approved"
+                  ? "success"
+                  : editingExpense.status === "submitted"
+                    ? "warning"
+                    : "default"
+              }
+              sx={{ alignSelf: "flex-start" }}
+            />
+          )}
           {formError && (
             <Typography color="error" variant="body2">
               {formError}
@@ -335,7 +384,11 @@ const CarExpenseDialog: React.FC<CarExpenseDialogProps> = ({
           fullWidth={fullScreen}
           sx={{ minHeight: 44 }}
         >
-          {submitting ? t("carExpense.saving") : t("carExpense.submit")}
+          {submitting
+            ? t("carExpense.saving")
+            : isEdit
+              ? t("carExpense.saveChanges")
+              : t("carExpense.saveDraft")}
         </Button>
       </DialogActions>
     </Dialog>

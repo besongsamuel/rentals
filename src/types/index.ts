@@ -143,6 +143,8 @@ export const CAR_EXPENSE_TYPES = [
 
 export type CarExpenseType = (typeof CAR_EXPENSE_TYPES)[number];
 
+export type CarExpenseStatus = "draft" | "submitted" | "approved";
+
 export interface CarExpense {
   id: string;
   car_id: string;
@@ -151,6 +153,10 @@ export interface CarExpense {
   expense_date: string;
   expense_type: CarExpenseType;
   notes: string | null;
+  status: CarExpenseStatus;
+  submitted_at: string | null;
+  approved_at: string | null;
+  approved_by: string | null;
   created_at: string;
   created_by: string | null;
 }
@@ -161,6 +167,14 @@ export interface CreateCarExpenseInput {
   currency?: string;
   expense_date: string;
   expense_type: CarExpenseType;
+  notes?: string | null;
+}
+
+export interface UpdateCarExpenseInput {
+  amount?: number;
+  currency?: string;
+  expense_date?: string;
+  expense_type?: CarExpenseType;
   notes?: string | null;
 }
 
