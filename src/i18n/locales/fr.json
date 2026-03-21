@@ -712,6 +712,51 @@
     "submitTermination": "Mettre fin au contrat",
     "cancel": "Annuler"
   },
+  "carExpense": {
+    "addTooltip": "Ajouter une dépense (hors rapport hebdomadaire)",
+    "dialogTitle": "Ajouter une dépense véhicule",
+    "amount": "Montant",
+    "currency": "Devise",
+    "expenseDate": "Date",
+    "expenseType": "Type de dépense",
+    "notes": "Notes",
+    "notesRequiredOther": "Décrivez la dépense lorsque le type est « Autre ».",
+    "submit": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "validationAmount": "Saisissez un montant valide (≥ 0).",
+    "validationDate": "Sélectionnez une date.",
+    "errorGeneric": "Impossible d'enregistrer la dépense. Réessayez.",
+    "groups": {
+      "legal": "Administratif & légal",
+      "repairs": "Réparations & pièces",
+      "services": "Services",
+      "equipment": "Équipement & numérique",
+      "financial": "Financier",
+      "other": "Autre"
+    },
+    "types": {
+      "car_registration": "Immatriculation",
+      "insurance": "Assurance",
+      "road_tax": "Taxe routière / vignette",
+      "technical_inspection": "Contrôle technique",
+      "major_repair": "Réparation majeure",
+      "tires": "Pneus",
+      "battery": "Batterie",
+      "brakes": "Freins",
+      "glass_repair": "Réparation vitrage",
+      "bodywork": "Carrosserie",
+      "towing": "Remorquage",
+      "roadside_assistance": "Assistance routière",
+      "cleaning_detailing": "Nettoyage / detailing",
+      "equipment_accessories": "Équipement & accessoires",
+      "software_telematics": "Logiciel / télématique",
+      "financing_lease": "Financement / crédit-bail",
+      "fines_violations": "Amendes & contraventions",
+      "other": "Autre"
+    }
+  },
   "driverSearch": {
     "title": "Trouver des conducteurs",
     "subtitle": "Recherchez et connectez-vous avec des conducteurs qualifiés pour vos véhicules",
@@ -794,7 +839,9 @@
     "averageWeeklyProfit": "Profit hebdomadaire moyen",
     "totalProfit": "Total",
     "averageWeeklyDriverEarnings": "Gains hebdomadaires moyens du conducteur",
-    "totalDriverEarnings": "Total"
+    "totalDriverEarnings": "Total",
+    "averageWeeklyCarLevelExpenses": "Moy. hebdo (hors rapport)",
+    "totalCarLevelExpenses": "Total hors rapport"
   },
   "months": {
     "january": "Janvier",

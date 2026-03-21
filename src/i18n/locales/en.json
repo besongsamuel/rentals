@@ -778,6 +778,51 @@
     "submitTermination": "End Contract",
     "cancel": "Cancel"
   },
+  "carExpense": {
+    "addTooltip": "Add expense (outside weekly report)",
+    "dialogTitle": "Add car expense",
+    "amount": "Amount",
+    "currency": "Currency",
+    "expenseDate": "Date",
+    "expenseType": "Expense type",
+    "notes": "Notes",
+    "notesRequiredOther": "Describe this expense when type is Other.",
+    "submit": "Save expense",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "validationAmount": "Enter a valid amount (0 or greater).",
+    "validationDate": "Select a date.",
+    "errorGeneric": "Could not save the expense. Try again.",
+    "groups": {
+      "legal": "Legal & admin",
+      "repairs": "Repairs & parts",
+      "services": "Services",
+      "equipment": "Equipment & digital",
+      "financial": "Financial",
+      "other": "Other"
+    },
+    "types": {
+      "car_registration": "Car registration",
+      "insurance": "Insurance",
+      "road_tax": "Road tax / vignette",
+      "technical_inspection": "Technical inspection",
+      "major_repair": "Major repair",
+      "tires": "Tires",
+      "battery": "Battery",
+      "brakes": "Brakes",
+      "glass_repair": "Glass repair",
+      "bodywork": "Bodywork",
+      "towing": "Towing",
+      "roadside_assistance": "Roadside assistance",
+      "cleaning_detailing": "Cleaning / detailing",
+      "equipment_accessories": "Equipment & accessories",
+      "software_telematics": "Software / telematics",
+      "financing_lease": "Financing / lease",
+      "fines_violations": "Fines & violations",
+      "other": "Other"
+    }
+  },
   "driverSearch": {
     "title": "Find Drivers",
     "subtitle": "Search and connect with qualified drivers for your vehicles",
@@ -860,7 +905,9 @@
     "averageWeeklyProfit": "Avg Weekly Profit",
     "totalProfit": "Total",
     "averageWeeklyDriverEarnings": "Avg Weekly Driver Earnings",
-    "totalDriverEarnings": "Total"
+    "totalDriverEarnings": "Total",
+    "averageWeeklyCarLevelExpenses": "Avg weekly (off-report)",
+    "totalCarLevelExpenses": "Total off-report"
   },
   "months": {
     "january": "January",

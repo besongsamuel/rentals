@@ -145,6 +145,30 @@ CREATE TABLE weekly_reports (
 );
 ```
 
+### 6a. `car_expenses` (car-level costs outside weekly reports)
+
+Enum `car_expense_type`: `car_registration`, `insurance`, `road_tax`, `technical_inspection`, `major_repair`, `tires`, `battery`, `brakes`, `glass_repair`, `bodywork`, `towing`, `roadside_assistance`, `cleaning_detailing`, `equipment_accessories`, `software_telematics`, `financing_lease`, `fines_violations`, `other`.
+
+```sql
+CREATE TABLE car_expenses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  car_id UUID NOT NULL REFERENCES cars(id) ON DELETE CASCADE,
+  amount NUMERIC(12, 2) NOT NULL CHECK (amount >= 0),
+  currency TEXT NOT NULL DEFAULT 'XAF',
+  expense_date DATE NOT NULL,
+  expense_type car_expense_type NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  CONSTRAINT car_expenses_other_requires_notes CHECK (
+    expense_type <> 'other'::car_expense_type
+    OR (notes IS NOT NULL AND btrim(notes) <> '')
+  )
+);
+```
+
+**RLS (summary):** Drivers can SELECT/INSERT for `cars.driver_id = auth.uid()`. Owners (main or `car_owners`) can SELECT/INSERT/UPDATE/DELETE. See migration `20260321120000_create_car_expenses.sql`.
+
 ### 7. `income_sources` (New table)
 
 ```sql

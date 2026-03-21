@@ -3,8 +3,8 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   Grid,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -14,6 +14,7 @@ import { weeklyReportService } from "../services/weeklyReportService";
 
 interface CarStatisticsProps {
   carId: string;
+  statisticsRefreshKey?: number;
 }
 
 interface CarStats {
@@ -32,19 +33,79 @@ interface CarStats {
   totalTaxiIncome: number;
   averageWeeklyDriverEarnings: number;
   totalDriverEarnings: number;
+  averageWeeklyCarLevelExpenses: number;
+  totalCarLevelExpenses: number;
   averageWeeklyProfit: number;
   totalProfit: number;
   currency: string;
 }
 
-const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
+const StatisticsSkeleton: React.FC = () => (
+  <Card sx={{ mb: 3 }}>
+    <CardContent>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
+        <Skeleton variant="text" width={160} height={32} />
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton
+              key={i}
+              variant="rounded"
+              width={72}
+              height={32}
+              sx={{ borderRadius: 4 }}
+            />
+          ))}
+        </Box>
+      </Box>
+      <Grid container spacing={3}>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ textAlign: "center" }}>
+              <Skeleton
+                variant="text"
+                width="60%"
+                height={40}
+                sx={{ mx: "auto" }}
+              />
+              <Skeleton variant="text" width="80%" sx={{ mx: "auto" }} />
+              <Skeleton variant="text" width="70%" sx={{ mx: "auto" }} />
+            </Box>
+          </Grid>
+        ))}
+        <Grid size={{ xs: 12 }}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 6 }}>
+              <Skeleton variant="rounded" height={100} sx={{ borderRadius: 1 }} />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <Skeleton variant="rounded" height={100} sx={{ borderRadius: 1 }} />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </CardContent>
+  </Card>
+);
+
+const CarStatistics: React.FC<CarStatisticsProps> = ({
+  carId,
+  statisticsRefreshKey = 0,
+}) => {
   const { t } = useTranslation();
   const [statistics, setStatistics] = useState<CarStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Determine smart default: YTD if after March, else 6 months
   const getDefaultTimeframe = () => {
-    const currentMonth = new Date().getMonth() + 1; // 1-12
+    const currentMonth = new Date().getMonth() + 1;
     return currentMonth > 3 ? "ytd" : "6_months";
   };
 
@@ -54,7 +115,6 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
   const [customStartDate, setCustomStartDate] = useState<string>("");
   const [customEndDate, setCustomEndDate] = useState<string>("");
 
-  // Calculate date range based on timeframe
   const getDateRange = useCallback((): { startDate?: Date; endDate?: Date } => {
     const today = new Date();
     const currentYear = today.getFullYear();
@@ -62,35 +122,30 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
 
     switch (timeframe) {
       case "ytd":
-        // January 1st of current year to today
         return {
           startDate: new Date(currentYear, 0, 1),
           endDate: today,
         };
 
       case "3_months":
-        // First day of month 3 months ago to today
         return {
           startDate: new Date(currentYear, currentMonth - 3, 1),
           endDate: today,
         };
 
       case "6_months":
-        // First day of month 6 months ago to today
         return {
           startDate: new Date(currentYear, currentMonth - 6, 1),
           endDate: today,
         };
 
       case "12_months":
-        // First day of month 12 months ago to today
         return {
           startDate: new Date(currentYear, currentMonth - 12, 1),
           endDate: today,
         };
 
       case "custom":
-        // User selected custom dates
         return {
           startDate: customStartDate ? new Date(customStartDate) : undefined,
           endDate: customEndDate ? new Date(customEndDate) : undefined,
@@ -122,7 +177,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
 
   useEffect(() => {
     loadStatistics();
-  }, [loadStatistics]);
+  }, [loadStatistics, statisticsRefreshKey]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("fr-FR", {
@@ -136,15 +191,7 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
   };
 
   if (loading) {
-    return (
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-            <CircularProgress />
-          </Box>
-        </CardContent>
-      </Card>
-    );
+    return <StatisticsSkeleton />;
   }
 
   if (!statistics) {
@@ -212,7 +259,6 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
           </Box>
         </Box>
 
-        {/* Custom Date Range Inputs */}
         {timeframe === "custom" && (
           <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
             <TextField
@@ -241,7 +287,6 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
         )}
 
         <Grid container spacing={3}>
-          {/* Usage Statistics */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="primary" gutterBottom>
@@ -262,7 +307,6 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
             </Box>
           </Grid>
 
-          {/* Expenses */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="error.main" gutterBottom>
@@ -278,7 +322,6 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
             </Box>
           </Grid>
 
-          {/* Gas Expenses */}
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="warning.main" gutterBottom>
@@ -294,7 +337,21 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
             </Box>
           </Grid>
 
-          {/* Income Breakdown */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography variant="h4" color="secondary.main" gutterBottom>
+                {formatCurrency(statistics.averageWeeklyCarLevelExpenses)}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                {t("statistics.averageWeeklyCarLevelExpenses")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t("statistics.totalCarLevelExpenses")}:{" "}
+                {formatCurrency(statistics.totalCarLevelExpenses)}
+              </Typography>
+            </Box>
+          </Grid>
+
           <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Box sx={{ textAlign: "center" }}>
               <Typography variant="h4" color="success.main" gutterBottom>
@@ -334,7 +391,6 @@ const CarStatistics: React.FC<CarStatisticsProps> = ({ carId }) => {
             </Box>
           </Grid>
 
-          {/* Profit & Driver Earnings */}
           <Grid size={{ xs: 12 }}>
             <Grid container spacing={2}>
               <Grid size={{ xs: 6 }}>

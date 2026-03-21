@@ -119,6 +119,51 @@ export interface WeeklyReport {
   updated_at: string;
 }
 
+/** Postgres enum `car_expense_type` for costs outside weekly reports */
+export const CAR_EXPENSE_TYPES = [
+  "car_registration",
+  "insurance",
+  "road_tax",
+  "technical_inspection",
+  "major_repair",
+  "tires",
+  "battery",
+  "brakes",
+  "glass_repair",
+  "bodywork",
+  "towing",
+  "roadside_assistance",
+  "cleaning_detailing",
+  "equipment_accessories",
+  "software_telematics",
+  "financing_lease",
+  "fines_violations",
+  "other",
+] as const;
+
+export type CarExpenseType = (typeof CAR_EXPENSE_TYPES)[number];
+
+export interface CarExpense {
+  id: string;
+  car_id: string;
+  amount: number;
+  currency: string;
+  expense_date: string;
+  expense_type: CarExpenseType;
+  notes: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+export interface CreateCarExpenseInput {
+  car_id: string;
+  amount: number;
+  currency?: string;
+  expense_date: string;
+  expense_type: CarExpenseType;
+  notes?: string | null;
+}
+
 // Car Assignment interface matching database schema
 export interface CarAssignment {
   id: string;

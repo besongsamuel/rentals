@@ -1,6 +1,16 @@
 import { supabase } from "../lib/supabase";
-import { CreateWeeklyReportData, WeeklyReport } from "../types";
+import { CarExpense, CreateWeeklyReportData, WeeklyReport } from "../types";
+import { carExpenseService } from "./carExpenseService";
 import { carWeeklyReportsService } from "./carWeeklyReportsService";
+
+function sumCarExpensesInCurrency(
+  expenses: CarExpense[],
+  currency: string
+): number {
+  return expenses
+    .filter((e) => e.currency === currency)
+    .reduce((sum, e) => sum + Number(e.amount), 0);
+}
 
 export const weeklyReportService = {
   async calculateTotalEarnings(reportId: string): Promise<number> {
@@ -294,10 +304,8 @@ export const weeklyReportService = {
 
   async getCarStatistics(carId: string, startDate?: Date, endDate?: Date) {
     try {
-      // Use the edge function to fetch reports with proper authorization
       let reports = await carWeeklyReportsService.getCarWeeklyReports(carId);
 
-      // Apply date range filters client-side
       if (startDate || endDate) {
         reports = reports.filter((report) => {
           const reportDate = new Date(report.week_start_date);
@@ -314,7 +322,6 @@ export const weeklyReportService = {
         });
       }
 
-      // Sort by week_start_date ascending
       reports.sort((a, b) => {
         return (
           new Date(a.week_start_date).getTime() -
@@ -322,7 +329,21 @@ export const weeklyReportService = {
         );
       });
 
+      const carExpenses = await carExpenseService.getCarExpensesForCar(
+        carId,
+        startDate,
+        endDate
+      );
+
+      const statsCurrency =
+        reports.length > 0 ? reports[0]?.currency || "XAF" : "XAF";
+      const totalCarLevelExpenses = sumCarExpensesInCurrency(
+        carExpenses,
+        statsCurrency
+      );
+
       if (!reports || reports.length === 0) {
+        const totalProfit = -totalCarLevelExpenses;
         return {
           totalReports: 0,
           averageWeeklyMileage: 0,
@@ -339,13 +360,14 @@ export const weeklyReportService = {
           totalTaxiIncome: 0,
           averageWeeklyDriverEarnings: 0,
           totalDriverEarnings: 0,
+          averageWeeklyCarLevelExpenses: 0,
+          totalCarLevelExpenses,
           averageWeeklyProfit: 0,
-          totalProfit: 0,
-          currency: "XAF",
+          totalProfit,
+          currency: statsCurrency,
         };
       }
 
-      // Calculate statistics
       const totalReports = reports.length;
       const totalMileage = reports.reduce(
         (sum, report) => sum + (report.end_mileage - report.start_mileage),
@@ -380,7 +402,11 @@ export const weeklyReportService = {
       const totalIncome =
         totalRideShareIncome + totalRentalIncome + totalTaxiIncome;
       const totalAllExpenses = totalExpenses + totalGasExpenses;
-      const totalProfit = totalIncome;
+      const totalProfit =
+        totalIncome -
+        totalAllExpenses -
+        totalDriverEarnings -
+        totalCarLevelExpenses;
 
       return {
         totalReports,
@@ -398,9 +424,12 @@ export const weeklyReportService = {
         totalTaxiIncome,
         averageWeeklyDriverEarnings: totalDriverEarnings / totalReports,
         totalDriverEarnings,
+        averageWeeklyCarLevelExpenses:
+          totalCarLevelExpenses / totalReports,
+        totalCarLevelExpenses,
         averageWeeklyProfit: totalProfit / totalReports,
         totalProfit,
-        currency: reports[0]?.currency || "XAF",
+        currency: statsCurrency,
       };
     } catch (error) {
       console.error("Error calculating car statistics:", error);

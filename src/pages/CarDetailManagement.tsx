@@ -1,4 +1,4 @@
-import { Add, ArrowBack, Edit, EventBusy } from "@mui/icons-material";
+import { Add, ArrowBack, Edit, EventBusy, ReceiptLong } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -28,6 +28,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import CarExpenseDialog from "../components/CarExpenseDialog";
 import CarOwners from "../components/CarOwners";
 import CarStatistics from "../components/CarStatistics";
 import DriverAssignment from "../components/DriverAssignment";
@@ -76,6 +77,8 @@ const CarDetailManagement: React.FC = () => {
   const [wouldRecommend, setWouldRecommend] = useState<boolean>(true);
   const [anonymousRating, setAnonymousRating] = useState<boolean>(false);
   const [terminating, setTerminating] = useState<boolean>(false);
+  const [carExpenseDialogOpen, setCarExpenseDialogOpen] = useState(false);
+  const [carStatisticsRefreshKey, setCarStatisticsRefreshKey] = useState(0);
 
   const loadData = useCallback(async () => {
     if (!carId) return;
@@ -387,7 +390,10 @@ const CarDetailManagement: React.FC = () => {
 
         {/* Car Statistics Section */}
         <Grid size={12}>
-          <CarStatistics carId={carId!} />
+          <CarStatistics
+            carId={carId!}
+            statisticsRefreshKey={carStatisticsRefreshKey}
+          />
         </Grid>
 
         {/* Weekly Reports Filters Section */}
@@ -499,6 +505,22 @@ const CarDetailManagement: React.FC = () => {
                     >
                       {t("carManagement.addNewReport")}
                     </Button>
+                    <Tooltip title={t("carExpense.addTooltip")}>
+                      <IconButton
+                        color="primary"
+                        onClick={() => setCarExpenseDialogOpen(true)}
+                        aria-label={t("carExpense.addTooltip")}
+                        sx={{
+                          border: "1px solid",
+                          borderColor: "primary.main",
+                          minWidth: 44,
+                          minHeight: 44,
+                          borderRadius: 1,
+                        }}
+                      >
+                        <ReceiptLong />
+                      </IconButton>
+                    </Tooltip>
                     <Button
                       variant="outlined"
                       color="primary"
@@ -672,6 +694,17 @@ const CarDetailManagement: React.FC = () => {
         carId={carId || null}
         cars={car ? [car] : []}
       />
+
+      {carId && (
+        <CarExpenseDialog
+          open={carExpenseDialogOpen}
+          onClose={() => setCarExpenseDialogOpen(false)}
+          carId={carId}
+          onSaved={() =>
+            setCarStatisticsRefreshKey((key) => key + 1)
+          }
+        />
+      )}
 
       {/* Terminate/Complete Contract Dialog */}
       <Dialog
